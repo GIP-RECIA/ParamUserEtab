@@ -1,0 +1,140 @@
+version: 1
+
+dn: dc=esco-centre,dc=fr
+dc: esco-centre
+objectClass: dcObject
+objectClass: organization
+description: Racine pour l'annuaire en Region Centre
+o: Refentiel esco-centre
+
+dn: ou=people,dc=esco-centre,dc=fr
+objectClass: organizationalUnit
+ou: people
+userPassword:: password
+
+
+dn: ou=structures,dc=esco-centre,dc=fr
+objectClass: organizationalUnit
+ou: structures
+
+dn: uid=testing,ou=people,dc=esco-centre,dc=fr
+objectClass: eduMember
+objectClass: ENTAuxEnseignant
+objectClass: ENTPerson
+objectClass: ESCOAddons
+cn: ROBINSON THOMAS
+ENTPersonJointure: AC-ORLEANS-TOURS$17
+ENTPersonLogin: thomas.robinson
+sn: ROBINSON
+displayName: THOMAS ROBINSON
+ENTPersonSexe: F
+ESCOSIREN: 72766660008945
+ESCOSIRENCourant: 72766660008945
+ESCOUAI: 7899AZER
+ESCOUAICourant: 7899AZER
+isMemberOf: test:Applications:Abcd:AZERTY_0370001A
+isMemberOf: test:Applications:Espace_Null:AZERTY_0370001A
+isMemberOf: test:Applications:Espaces_libre:AZERTY_0370001A
+isMemberOf: test:Applications:Folscop:AZERTY_0370001A
+isMemberOf: test:Applications:BDRR:AZERTY_0370001A
+isMemberOf: test:Applications:List_bidoun:AZERTY_0370001A
+isMemberOf: test:Applications:PearlCrab:AZERTY_0370001A
+isMemberOf: test:Applications:Pixel:AZERTY_0370001A
+isMemberOf: test:Applications:Promotor:AZERTY_0370001A
+isMemberOf: test:Applications:SACados:AZERTY_0370001A
+isMemberOf: etab18:admin:local:admin_FICTIF CLG 18_7899AZER
+uid: testing
+userPassword:: password
+
+dn: ENTStructureSIREN=72766660008945,ou=structures,dc=esco-centre,dc=fr
+objectClass: ENTEtablissement
+objectClass: ENTStructure
+objectClass: OrganizationalUnit
+ENTStructureNomCourant: CLG$FICTIF CLG 18$WHR
+ENTStructureSIREN: 72766660008945
+ENTStructureJointure: AC-ORLEANS-TOURS$17
+ou: CLG$FICTIF CLG 18$WHR
+ENTStructureTypeStruct: COLLEGE
+ENTStructureUAI: 7899AZER
+
+dn: ENTStructureSIREN=01234567890123,ou=structures,dc=esco-centre,dc=fr
+objectClass: ENTEtablissement
+objectClass: ENTStructure
+objectClass: OrganizationalUnit
+ENTStructureNomCourant: LGT Léonardo Di Caprio
+ENTStructureSIREN: 01234567890123
+ENTStructureJointure: AC-ORLEANS-TOURS$01
+ou: LT Léonardo Di Caprio
+ENTStructureTypeStruct: LYCEE ENSEIGNT GENERAL ET TECHNOLOGIQUE
+ENTStructureUAI: 1234567A
+
+
+dn: ENTStructureSIREN=98765432109876,ou=structures,dc=esco-centre,dc=fr
+objectClass: ENTServAcAcademie
+objectClass: ENTStructure
+objectClass: OrganizationalUnit
+ENTStructureNomCourant: Inspection de la région
+ENTStructureSIREN: 98765432109876
+ENTStructureJointure: AC-ORLEANS-TOURS$02
+ou: INSPECT CENTRE
+ENTStructureTypeStruct: INSPECTIONS ACADEMIQUES
+ENTStructureUAI: 1234567B
+
+dn: ENTStructureSIREN=85245674136982,ou=structures,dc=esco-centre,dc=fr
+objectClass: ENTEtablissement
+objectClass: ENTStructure
+objectClass: OrganizationalUnit
+ENTStructureNomCourant: LGT Claude Nougaro
+ESCOStructureNomCourt: Lycée Claude Nougaro
+ENTStructureSIREN: 85245674136982
+ENTStructureJointure: AC-ORLEANS-TOURS$03
+ESCOStructureLogo: lycee-jpg
+ou: LGT Claude Nougaro
+ENTStructureTypeStruct: LYCEE ENSEIGNT GENERAL ET TECHNOLOGIQUE
+ENTStructureUAI: 1234567C
+
+dn: ENTStructureSIREN=74539856210245,ou=structures,dc=esco-centre,dc=fr
+objectClass: ENTEtablissement
+objectClass: ENTStructure
+objectClass: OrganizationalUnit
+ENTStructureNomCourant: LGT Marcel Renault-ORL._TOURS
+ENTStructureSIREN: 74539856210245
+ENTStructureJointure: AC-ORLEANS-TOURS$04
+ou: LGT Marcel Renault
+ENTStructureTypeStruct: LYCEE ENSEIGNT GENERAL ET TECHNOLOGIQUE
+ENTStructureUAI: 1234567D
+
+dn: ENTStructureSIREN=96478532698745,ou=structures,dc=esco-centre,dc=fr
+objectClass: ENTEtablissement
+objectClass: ENTStructure
+objectClass: OrganizationalUnit
+ENTStructureNomCourant: LP Maxime Bossard-ORL._TOURS
+ENTStructureSIREN: 96478532698745
+ENTStructureJointure: AC-ORLEANS-TOURS$05
+ou: LP Maxime Bossard
+ENTStructureTypeStruct: LYCEE PROFESSIONNEL
+ENTStructureUAI: 1234567E
+
+dn: ENTStructureSIREN=73914568796320,ou=structures,dc=esco-centre,dc=fr
+objectClass: ENTEntreprise
+objectClass: ENTStructure
+objectClass: OrganizationalUnit
+ENTStructureNomCourant: BOULANGERIE
+ENTStructureSIREN: 73914568796320
+ENTStructureJointure: AC-ORLEANS-TOURS$06
+ou: BOULANGERIE
+ENTStructureTypeStruct: AUTRE
+
+dn: ENTStructureSIREN=73914568796321,ou=structures,dc=esco-centre,dc=fr
+objectClass: ENTCollLoc
+objectClass: ENTStructure
+objectClass: OrganizationalUnit
+ENTStructureNomCourant: Recia
+ESCOStructureNomCourt: GIP RECIA
+ENTStructureSIREN: 73914568796321
+ENTStructureJointure: GIP-RECIA$01
+ESCOStructureLogo: truc-jpg
+ou: Recia
+ENTStructureTypeStruct: AUTRE
+
+
