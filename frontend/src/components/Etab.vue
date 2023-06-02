@@ -68,7 +68,7 @@ const handleResize = () => {
 
 function filteredName() {
   let name = "";
-  if (!etabJson) {
+  if (!etabJson.value) {
     return [];
   }
   name = etabJson.value.find((etab) => etab.idSiren.toString() === currentEtab.value);
@@ -102,18 +102,18 @@ function select(e, isSelected) {
 </script>
 
 <template>
-  <div class="list" v-if="!isMobile">
+  <div v-if="!isMobile" class="list">
     <ListEtab
       class-input="input-search"
       class-li="item etab"
       class-div="list-etab"
-      :dataJson="etabJson"
-      :dataCurrent="currentEtab"
+      :data-json="etabJson"
+      :data-current="currentEtab"
       @selectEtab="select($event, false)"
     ></ListEtab>
   </div>
-  <div class="dropdown-wrapper" v-else>
-    <div @click="isVisible = !isVisible" class="selected-etab">
+  <div v-else class="dropdown-wrapper">
+    <div class="selected-etab" @click="isVisible = !isVisible">
       <span>{{ nameEtabSelected }}</span>
     </div>
     <div v-if="isVisible" class="dropdown-popover">
@@ -121,7 +121,7 @@ function select(e, isSelected) {
         class-input="search-etab"
         class-li="opt-list"
         class-div="options"
-        :dataJson="etabJson"
+        :data-json="etabJson"
         @selectEtab="select($event, true)"
       ></ListEtab>
     </div>

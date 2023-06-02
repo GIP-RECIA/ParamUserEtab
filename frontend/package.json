@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "json": "json-server --watch ./src/data/api.json",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
+    "lint": "eslint --ext .js,.vue --ignore-path .eslintignore --fix src",
     "format": "prettier .  --write"
   },
   "dependencies": {
