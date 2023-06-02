@@ -3,13 +3,13 @@ spring.main.allow-bean-definition-overriding : true
 ## Regex configuration ## 
 #ldapformatter.groups-regex=^CLG(\\$).*(\\$.*)
 ldapformatter : 
-    groups-regex : (\\$)
+    groups-regex : "(\\$)"
     index-list-replacement.1 : ""
     index-list-replacement.2 : ""
 
 
 userformatter : 
-    user-groups-regex : [^:]+:admin:local:admin_(?:([^_]+)_)?([^:]+)$
+    user-groups-regex : "[^:]+:admin:local:admin_(?:([^_]+)_)?([^:]+)$"
 
 
 ## User Info cofiguration ## 
@@ -48,7 +48,7 @@ ldap :
     class-value-struct-u-a-i: ENTEtablissement, ENTServAc
     other-attributes: ENTStructureJointure, ESCOStructureLogo, ENTStructureSiteWeb
 
-    struct-id-template: %siren
+    struct-id-template: "%siren"
     struct-dn: 
 
 # ldap.write.attribute.StructureLogo=
