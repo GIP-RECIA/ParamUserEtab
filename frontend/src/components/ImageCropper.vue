@@ -9,7 +9,7 @@ const m = (key) => t(`image-cropper.${key}`);
 
 const props = defineProps({
   imageUrl: String,
-  idEtab: Number,
+  idEtab: String,
 });
 
 console.log("imageUrl : ", props.imageUrl);
@@ -160,11 +160,11 @@ const cropImage = () => {
   <div class="avatar-upload">
     <div class="avatar-edit">
       <input
-        type="file"
         ref="imageInput"
+        type="file"
         accept=".jpg, .jpeg, .png"
-        @change="fileChanged"
         :style="{ display: 'none' }"
+        @change="fileChanged"
       />
       <label @click="open = true"></label>
     </div>
@@ -176,7 +176,7 @@ const cropImage = () => {
   <!-- Modal -->
   <Teleport to="body">
     <div v-if="open" class="modal">
-      <input type="hidden" name="idEtab" id="idEtab" :value="idEtab" />
+      <input id="idEtab" type="hidden" name="idEtab" :value="idEtab" />
       <div>
         <div class="close">
           <button type="button" class="close" @click="closeModal">x</button>

@@ -35,19 +35,19 @@ const filteredData = computed(() => filteredList());
 <template>
   <div class="search-bar">
     <input
+      v-model="input"
       :class="classInput"
       type="text"
       :placeholder="m('recherche')"
-      v-model="input"
     />
   </div>
   <div :class="classDiv">
     <ul class="content">
       <li
-        :class="classLi"
         v-for="etab in filteredData"
-        :key="etab"
         :id="etab.idSiren"
+        :key="etab"
+        :class="classLi"
         @click="selected"
       >
         {{ etab.etabName }}
@@ -55,7 +55,7 @@ const filteredData = computed(() => filteredList());
     </ul>
   </div>
 
-  <div class="item error" v-if="input && filteredData.length === 0">
+  <div v-if="input && filteredData.length === 0" class="item error">
     <p>{{ m("aucun-res") }}</p>
   </div>
 </template>

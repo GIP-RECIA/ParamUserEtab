@@ -65,8 +65,8 @@ async function updateInfo() {
   <div class="title-info">{{ m("info") }}</div>
   <div class="container">
     <ImageCropper
-      :imageUrl="details.structLogo"
-      :idEtab="details.id"
+      :image-url="details.structLogo"
+      :id-etab="details.id"
       @updated="handleUpdated"
     />
 
@@ -95,8 +95,7 @@ async function updateInfo() {
         <input
           class="input-field"
           type="text"
-          disabled
-          readonly="readonly"
+          :placeholder="m('lien-placeholder')"
           :value="details.structSiteWeb"
         />
         <span>{{ m("lien") }}</span>
