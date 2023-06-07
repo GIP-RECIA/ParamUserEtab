@@ -20,8 +20,12 @@ function filteredList() {
   if (!props.dataJson) {
     return [];
   }
-  return props.dataJson.filter((etab) =>
+  const filteredData = props.dataJson.filter((etab) =>
     etab.etabName.toLowerCase().includes(input.value.toLowerCase())
+  );
+
+  return filteredData.sort((a, b) =>
+    a.etabName.localeCompare(b.etabName)
   );
 }
 

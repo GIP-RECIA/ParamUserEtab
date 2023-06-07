@@ -14,11 +14,11 @@ const props = defineProps({
   detail: String,
 });
 
-watchEffect(async () => {
-  console.log("props.detail: ", props.detail);
-  const url = `/parametab/${props.detail}`;
-  console.log("url : ", url);
-  await fetchDetailData(props.detail);
+watchEffect(() => {
+  void (async () => {
+    await fetchDetailData(props.detail);
+    })()
+
 });
 
 async function fetchDetailData(id) {
@@ -36,24 +36,22 @@ const handleUpdated = async ({ urlEtab }) => {
 };
 
 async function updateInfo() {
-  const dataJson = `http://localhost:3000/etablissements/${props.detail.id}`;
-  let cName = document.getElementById("customName");
-  console.log(cName.value);
+  console.warn(details.value)
+  const dataJson = `/parametab/updateV2/${props.detail}`;
 
-  console.log(dataJson);
 
-  axios
-    .patch(dataJson, { customName: cName.value })
-    .then(async (response) => {
-      console.log(response);
-      Swal.fire({
-        title: "Sauvegardé",
-        icon: "success",
-      });
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+  // axios
+  //   .put(dataJson, details.value)
+  //   .then(async (response) => {
+  //     console.log(response);
+  //     Swal.fire({
+  //       title: "Sauvegardé",
+  //       icon: "success",
+  //     });
+  //   })
+  //   .catch(function (error) {
+  //     console.log(error);
+  //   });
 }
 </script>
 
@@ -87,7 +85,7 @@ async function updateInfo() {
           class="input-field"
           type="text"
           :placeholder="m('nom-personnalise-placeholder')"
-          :value="details.structCustomDisplayName"
+          v-model="details.structCustomDisplayName"
         />
         <span>{{ m("nom-personnalise-titre") }}</span>
       </label>
@@ -96,7 +94,7 @@ async function updateInfo() {
           class="input-field"
           type="text"
           :placeholder="m('lien-placeholder')"
-          :value="details.structSiteWeb"
+          v-model="details.structSiteWeb"
         />
         <span>{{ m("lien") }}</span>
       </label>
