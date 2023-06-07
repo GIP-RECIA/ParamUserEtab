@@ -421,9 +421,9 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
 	}
 
 	@Override
-	public void updateStructure(DTOStructure dtoStructure) {
+	public void updateStructure(String customName, String siteWeb, String logo, String id) {
 
-		this.structureDao.saveStructure(dtoStructure);
+		this.structureDao.saveStructure(customName, siteWeb, logo, id);
 
 	}
 	

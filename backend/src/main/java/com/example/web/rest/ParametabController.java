@@ -57,6 +57,9 @@ public class ParametabController {
 	@Autowired
 	private LogoStorageServiceImpl logoStorageServiceImpl;
 
+	@Autowired
+	private IStructureDao structureDao;
+
 	private IImageUrlPath oldUrl;
 	private IImageUrlPath newUrl;
 
@@ -114,7 +117,7 @@ public class ParametabController {
 	public ResponseEntity<DTOStructure> convertToDTO(@PathVariable("id") final String id) {
 	
 		try {
-			Structure structure = structureService.retrieveStructureById(id);
+			Structure structure = structureDao.findOneStructureById(id);
 			if (structure == null) {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
@@ -158,7 +161,7 @@ public class ParametabController {
      */
 
 	 @PutMapping("/updateV2/{id}")
-	 public ResponseEntity<Void> updateV2(@PathVariable("id") final String id, @RequestBody DTOStructure structDto) {
+	 public ResponseEntity<DTOStructure> updateV2(@PathVariable("id") final String id, @RequestBody DTOStructure structDto) {
  
 		 try {
 			System.out.println("structureService : " +structureService);
@@ -176,8 +179,8 @@ public class ParametabController {
 				System.out.println(dtoStructure);
 				dtoStructure.setStructCustomDisplayName(structDto.getStructCustomDisplayName());
 				dtoStructure.setStructSiteWeb(structDto.getStructSiteWeb());
-				structureService.updateStructure(dtoStructure);
-				return new ResponseEntity<>(HttpStatus.OK);
+				structureService.updateStructure(dtoStructure.getStructCustomDisplayName(), dtoStructure.getStructSiteWeb(), null, dtoStructure.getId());
+				return new ResponseEntity<>(dtoStructure, HttpStatus.OK);
 			}
 			 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		 } catch (Exception e) {
@@ -196,7 +199,7 @@ public class ParametabController {
 				log.info("struct id: " + structDto.getId());
 				log.info("struct dn: " + structDto.getStructCustomDisplayName());
 				log.info("struct logo: " + structDto.getStructLogo());
-				structureService.updateStructure(structDto);
+				structureService.updateStructure(null, null, structDto.getStructLogo(), structDto.getId());
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -22,7 +22,6 @@ import java.util.Map;
 import org.springframework.lang.Nullable;
 
 import com.example.model.Structure;
-import com.example.web.DTOStructure;
 
 public interface IStructureService {
 
@@ -51,6 +50,6 @@ public interface IStructureService {
 
 	// essayer d'ajouter cette function, puis l'appliquer la function saveStructure dans cette methode 
 	// on pourra donc faire le test unitaire avec ce service ??  
-	void updateStructure(DTOStructure dtoStructure);
+	void updateStructure(String customName, String siteWeb, String logo, String id);
 
 }
