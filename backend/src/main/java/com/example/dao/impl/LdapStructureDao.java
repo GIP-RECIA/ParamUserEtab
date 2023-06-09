@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.naming.Name;
@@ -51,6 +52,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.dao.IStructureDao;
 import com.example.dao.bean.IStructureFormatter;
 import com.example.model.Structure;
+import com.example.web.DTOStructure;
 
 /**
  * @author GIP RECIA 2013 - Maxime BOSSARD.
@@ -153,7 +155,7 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 
 
 	@Override
-	public void saveStructure(String customName, String siteWeb, String logo, String id) {
+	public void saveStructure(DTOStructure dto, String customName, String siteWeb, String logo, String id) {
 
 		// Validate input
 	   if ( id == null || id.isEmpty()) {
@@ -165,7 +167,7 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 	   List<ModificationItem> mods = new ArrayList<>();
    
 	   if (customName != null || siteWeb != null) {
-		   updateForm(customName, siteWeb, id, mods);
+		   updateForm(dto, customName, siteWeb, id, mods);
 	   }
    
 	   if (logo != null) {
@@ -173,6 +175,7 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 	   }
    
 	   this.ldapTemplate.modifyAttributes(dn, mods.toArray(new ModificationItem[mods.size()]));
+	   System.out.println("mods : " + mods.toString());
 	   log.info("Structure with ID {} updated in LDAP. Display name: {}. Logo: {}. Site web: {}.",
 		   id, customName, logo, siteWeb);
    
@@ -210,13 +213,16 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 		}
 	}
 
-	//@SuppressWarnings("unused")
-	private void updateLogo(String logo, String id, List<ModificationItem> mods) {
+	@SuppressWarnings("unused")
+	private void updateLogo(DTOStructure dto, String logo, String id, List<ModificationItem> mods) {
 		// save in database 
-		updateDataInDatabase(null, null, logo, id);
+		updateDataInDatabase(dto, null, null, logo, id);
 
 		// save in ldap
-		if ( logo != null ) {
+		List<String> listValue = checkValue(dto);
+		String structLogo = listValue.get(2); // Third element in the list
+
+		if ( logo != null && !logo.equals(structLogo)) {
 			for (String attr : otherAttributes) {
 
 				if (attr.equals("ESCOStructureLogo")) {
@@ -229,17 +235,21 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 
 
 	//@SuppressWarnings("unused")
-	private void updateForm(String customName, String siteWeb, String id, List<ModificationItem> mods) {
+	private void updateForm(DTOStructure dto, String customName, String siteWeb, String id, List<ModificationItem> mods) {
 		// save in database 
-		updateDataInDatabase(customName, siteWeb, null, id);
+		updateDataInDatabase(dto, customName, siteWeb, null, id);
 
 		// save in ldap
-		if ( customName != null ) {
+		List<String> listValue = checkValue(dto);
+		String displayName = listValue.get(0); // First element in the list
+		String structSiteWeb = listValue.get(1); // Second element in the list
+
+		if ( customName != null && !customName.equals(displayName) ) {
 			Attribute updCustomName = new BasicAttribute(this.structDisplayNameLdapAttr, customName);
 			mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, updCustomName));
 		}
 
-		if ( siteWeb != null ) {
+		if ( siteWeb != null && !siteWeb.equals(structSiteWeb)) {
 			for (String attr : otherAttributes) {
 
 				if (attr.equals("ENTStructureSiteWeb")) {
@@ -250,21 +260,31 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 		}
 	}
 
-	private void updateDataInDatabase(String customName, String siteWeb, String logo, String id) {
+	private void updateDataInDatabase(DTOStructure dto, String customName, String siteWeb, String logo, String id) {
 		String updateQuery = "UPDATE astructure SET ";
 		List<Object> params = new ArrayList<>();
 	
-		if (customName != null) {
+
+		List<String> listValue = checkValue(dto);
+		String displayName = listValue.get(0); // First element in the list
+		String structSiteWeb = listValue.get(1); // Second element in the list
+		String structLogo = listValue.get(2); // Third element in the list
+
+		boolean checkCustomName = customName != null && !customName.equals(displayName);
+		boolean checkSiteWeb = siteWeb != null && !siteWeb.equals(structSiteWeb);
+		boolean checkLogo = logo != null && !logo.equals(structLogo);
+	
+		if (checkCustomName) {
 			updateQuery += "astructure.nomCourt = ?, ";
 			params.add(customName);
 		}
 	
-		if (siteWeb != null) {
+		if (checkSiteWeb) {
 			updateQuery += "astructure.siteWeb = ?, ";
 			params.add(siteWeb);
 		}
-
-		if (logo != null) {
+	
+		if (checkLogo) {
 			updateQuery += "astructure.logo = ?, ";
 			params.add(logo);
 		}
@@ -276,8 +296,42 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 		updateQuery += " WHERE id = ?";
 		params.add(id);
 
-		System.out.println("updateQuery : " + updateQuery);
-		System.out.println("params : " + params.toString());
+		if (checkCustomName || checkSiteWeb || checkLogo) {
+			System.out.println("updateQuery : " + updateQuery);
+			System.out.println("params : " + params.toString());
+		}
+		else {
+			System.out.println("nothing updating : " + updateQuery);
+			System.out.println("else params : " + params.toString());
+		}
 
+	}
+
+	private List<String> checkValue(DTOStructure dto) {
+
+		String displayName = dto.getDisplayName();
+		Map<String, List<String>> otherAttr = dto.getOtherAttributes();
+		List<String> getValues = new ArrayList<>();
+	
+		getValues.add(displayName);
+		String testSiteWeb = null;
+		String testLogo = null;
+		for (Map.Entry<String, List<String>> entry : otherAttr.entrySet()) {
+			String key = entry.getKey();
+			List<String> valueList = entry.getValue();
+	
+			if (key.equals("ENTStructureSiteWeb") && valueList != null && !valueList.isEmpty() ) {
+				testSiteWeb = valueList.get(0);				
+			}
+	
+			if (key.equals("ESCOStructureLogo") && valueList != null && !valueList.isEmpty() ) {
+				testLogo =  valueList.get(0);				
+			}	
+		}
+		getValues.add(testSiteWeb);
+		getValues.add(testLogo);
+		System.out.println("getValues = " + getValues.toString());
+	
+		return getValues;
 	}
 }
