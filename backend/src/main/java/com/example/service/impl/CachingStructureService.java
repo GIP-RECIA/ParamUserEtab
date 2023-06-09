@@ -148,7 +148,6 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
 		} else {
 			struct = (Structure) cachedValue.get();
 		}
-		System.out.println(cachedValue.get().toString());
 
 		return struct;
 	}
@@ -421,9 +420,9 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
 	}
 
 	@Override
-	public void updateStructure(String customName, String siteWeb, String logo, String id) {
+	public void updateStructure(DTOStructure dto, String customName, String siteWeb, String logo, String id) {
 
-		this.structureDao.saveStructure(customName, siteWeb, logo, id);
+		this.structureDao.saveStructure(dto, customName, siteWeb, logo, id);
 
 	}
 	

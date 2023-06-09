@@ -22,6 +22,7 @@ package com.example.dao;
 import java.util.Collection;
 
 import com.example.model.Structure;
+import com.example.web.DTOStructure;
 
 /**
  * @author GIP RECIA - Julien Gribonvald.
@@ -44,6 +45,6 @@ public interface IStructureDao {
 	 */
 	Structure findOneStructureById(final String id);
 
-	void saveStructure(String customName, String siteWeb, String logo, String id);
+	void saveStructure(DTOStructure dto, String customName, String siteWeb, String logo, String id);
 
 }

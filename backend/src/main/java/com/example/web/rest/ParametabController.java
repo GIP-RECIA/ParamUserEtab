@@ -117,7 +117,7 @@ public class ParametabController {
 	public ResponseEntity<DTOStructure> convertToDTO(@PathVariable("id") final String id) {
 	
 		try {
-			Structure structure = structureDao.findOneStructureById(id);
+			Structure structure = structureService.retrieveStructureById(id);
 			if (structure == null) {
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
@@ -139,11 +139,7 @@ public class ParametabController {
 
 		try {
 			if (structDto != null && structDto.getId() != null) {
-				log.info("struct id: " + structDto.getId());
-				log.info("struct dn: " + structDto.getStructCustomDisplayName());
-				log.info("struct logo: " + structDto.getStructLogo());
-				log.info("struct siteweb: " + structDto.getStructSiteWeb());
-				structureService.updateStructure(structDto);
+				//structureService.updateStructure(structDto);
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -164,8 +160,6 @@ public class ParametabController {
 	 public ResponseEntity<DTOStructure> updateV2(@PathVariable("id") final String id, @RequestBody DTOStructure structDto) {
  
 		 try {
-			System.out.println("structureService : " +structureService);
-			System.out.println("id entry : " + id);
 			if ( id != null) {
 				Structure structure = structureService.retrieveStructureById(id);
 				if (structure == null) {
@@ -173,13 +167,12 @@ public class ParametabController {
 					log.info("struct is null");
 					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 				}
-				System.out.println("structure : " +structure);
 
 				DTOStructure dtoStructure = structure2DTOStructure.toDTO(structure);
-				System.out.println(dtoStructure);
 				dtoStructure.setStructCustomDisplayName(structDto.getStructCustomDisplayName());
 				dtoStructure.setStructSiteWeb(structDto.getStructSiteWeb());
-				structureService.updateStructure(dtoStructure.getStructCustomDisplayName(), dtoStructure.getStructSiteWeb(), null, dtoStructure.getId());
+				structureService.updateStructure(dtoStructure, dtoStructure.getStructCustomDisplayName(), dtoStructure.getStructSiteWeb(), null, dtoStructure.getId());
+				structureService.invalidateStructureById(id); // refresh cache 
 				return new ResponseEntity<>(dtoStructure, HttpStatus.OK);
 			}
 			 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -199,7 +192,7 @@ public class ParametabController {
 				log.info("struct id: " + structDto.getId());
 				log.info("struct dn: " + structDto.getStructCustomDisplayName());
 				log.info("struct logo: " + structDto.getStructLogo());
-				structureService.updateStructure(null, null, structDto.getStructLogo(), structDto.getId());
+				//structureService.updateStructure(structDto, null, null, structDto.getStructLogo(), structDto.getId());
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
