@@ -1,7 +1,6 @@
 package com.example.dao.bean;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import com.example.model.Person;
-import com.example.model.Structure;
-import com.example.service.IStructureService;
 import com.example.service.IUniteAdministrativeImmatriculeService;
 
 import lombok.Getter;
