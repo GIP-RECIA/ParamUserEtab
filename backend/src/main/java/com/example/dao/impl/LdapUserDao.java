@@ -19,7 +19,6 @@
  */
 package com.example.dao.impl;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -126,8 +125,6 @@ public class LdapUserDao implements IUserDao, InitializingBean {
 		try {
 			allInfos = this.ldapTemplate.search(this.userDn, this.personFiltre, new PersonAttributesMapper(uid, currentStructIdLdapKey, groupAttributes));
 		} catch (Exception e) {
-			// TODO: handle exception
-			System.out.println("userdn : " +userDn+ " filter : " +personFiltre);
 			LOG.error("error :", e);
 			allInfos = null;
 		}

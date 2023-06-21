@@ -18,11 +18,7 @@
  *
  */
 package com.example.service;
-
-import java.util.Collection;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 import com.example.model.Person;
 
@@ -33,29 +29,6 @@ import com.example.model.Person;
  */
 public interface IUserInfoService {
 
-	/**
-	 * 
-	 * @deprecated
-	 * 
-	 */
-	@Deprecated
-	Collection<String> getChangeableEtabCodes(HttpServletRequest request);
-
-	Collection<String> getChangeableStructIds(HttpServletRequest request);
-
-	/**
-	 * 
-	 * @deprecated
-	 * 
-	 */
-	@Deprecated
-	String getCurrentEtabCode(HttpServletRequest request);
-
-	String getCurrentStructId(HttpServletRequest request);
-
-	String getUserId(HttpServletRequest request);
-
-	// utilise cette service pour faire le test unitaire ??? 
 	List<Person> getAllEtablissement();
 
 }

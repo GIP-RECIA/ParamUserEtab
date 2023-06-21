@@ -22,11 +22,6 @@ public class Person implements Serializable{
     @NonNull
     protected String currentStruct;
 
-
-    // isMemberOf
-    //@NonNull
-    //private List<String> isMemberOf;
-
     private List<Map<String, String>> isMemberOf;
 
     

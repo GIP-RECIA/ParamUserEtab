@@ -21,14 +21,9 @@ package com.example.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -40,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import com.example.dao.IUserDao;
 import com.example.dao.bean.IUserFormatter;
@@ -84,77 +78,6 @@ public class BasicUserInfoService implements IUserInfoService , InitializingBean
 
 	private String msg = "Unable to retrieve {} attribute in Portal UserInfo !";
 
-	@Override
-	public Collection<String> getChangeableEtabCodes(HttpServletRequest request) {
-		final Collection<String> etabCodes = this.getUserInfo(request, this.etabCodesInfoKey);
-		final Collection<String> etabCodesCaseSensitive = new HashSet<>(etabCodes.size());
-
-		if (etabCodes.isEmpty()) {
-			// Multivalued attribute which should not be empty
-			log.warn(msg, this.etabCodesInfoKey);
-		} else {
-			for (final String id : etabCodes) {
-				etabCodesCaseSensitive.add(id.toUpperCase());
-			}
-		}
-
-		return etabCodesCaseSensitive;
-	}
-
-	@Override
-	public Collection<String> getChangeableStructIds(HttpServletRequest request) {
-		final Collection<String> structIds = this.getUserInfo(request, this.structIdsInfoKey);
-
-		if (structIds.isEmpty()) {
-			// Multivalued attribute which should not be empty
-			log.warn(msg, this.structIdsInfoKey);
-		}
-		return structIds;
-	}
-
-	@Override
-	public String getCurrentEtabCode(HttpServletRequest request) {
-		String escoUaiCourant = null;
-
-		final List<String> uaiCourant = this.getUserInfo(request, this.currentEtabCodeInfoKey);
-
-		if (uaiCourant.size() == 1) {
-			// Monovalued attribute
-			escoUaiCourant = uaiCourant.iterator().next().toUpperCase();
-		}
-
-		if (!StringUtils.hasText(escoUaiCourant)) {
-			escoUaiCourant = null;
-			log.warn(msg, this.currentEtabCodeInfoKey);
-		}
-
-		return escoUaiCourant;
-	}
-
-	@Override
-	public String getCurrentStructId(HttpServletRequest request) {
-		String escoSIRENCourant = null;
-
-		final List<String> sirenCourant = this.getUserInfo(request, this.currentStructIdInfoKey);
-
-		if (sirenCourant.size() == 1) {
-			// Monovalued attribute
-			escoSIRENCourant = sirenCourant.iterator().next();
-		}
-
-		if (!StringUtils.hasText(escoSIRENCourant)) {
-			escoSIRENCourant = null;
-			log.warn(msg, this.currentStructIdInfoKey);
-		}
-
-		return escoSIRENCourant;
-	}
-
-	@Override
-	public String getUserId(HttpServletRequest request) {
-		return request.getRemoteUser();
-	}
-
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -180,39 +103,6 @@ public class BasicUserInfoService implements IUserInfoService , InitializingBean
 		this.emptyUserInfoMap.put(this.currentEtabCodeInfoKey, Arrays.asList(new String[] { "1234567B" }));
 		this.emptyUserInfoMap.put(this.structIdsInfoKey, Arrays.asList(new String[] { "88888888888888" }));
 		this.emptyUserInfoMap.put(this.currentStructIdInfoKey, Arrays.asList(new String[] { "88888888888888" }));
-	}
-
-	/**
-	 * Retrieve the user info attribute from portlet context, or the Mocked user info
-	 * if the system property etablissement-swapper.testEnv = true.
-	 *
-	 * @param request the portlet request
-	 * @param attributeName the attribute to retrieve
-	 * @return the user info attribute values
-	 */
-	@SuppressWarnings("unchecked")
-	public List<String> getUserInfo(HttpServletRequest request, final String attributeName) {
-		Map<String, List<String>> userInfo = (Map<String, List<String>>) request
-				.getAttribute("org.jasig.portlet.USER_INFO_MULTIVALUED");
-
-		if ((userInfo == null) && "true".equals(System.getProperty("etablissement-swapper.testEnv"))) {
-			userInfo = this.testUserInfoMap;
-		}
-
-		List<String> attributeValues = null;
-
-		if (userInfo != null) {
-			attributeValues = userInfo.get(attributeName);
-		} else {
-			log.error("Unable to retrieve Portal UserInfo !");
-			//throw new IllegalStateException("Unable to retrieve Portal UserInfo !");
-		}
-
-		if (attributeValues == null) {
-			attributeValues = Collections.emptyList();
-		}
-
-		return attributeValues;
 	}
 
 

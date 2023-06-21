@@ -25,9 +25,6 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import javax.naming.directory.Attribute;
-import javax.naming.directory.BasicAttribute;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +40,6 @@ import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import com.example.dao.IStructureDao;
 import com.example.model.Structure;

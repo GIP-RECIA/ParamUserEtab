@@ -19,8 +19,6 @@ package com.example.service;
 import java.util.Collection;
 import java.util.Map;
 
-import org.springframework.lang.Nullable;
-
 import com.example.model.Structure;
 import com.example.web.DTOStructure;
 
