@@ -10,6 +10,7 @@ const m = (key) => t(`image-cropper.${key}`);
 const props = defineProps({
   imageUrl: String,
   idEtab: String,
+  detailEtab: Object,
 });
 
 console.log("imageUrl : ", props.imageUrl);
@@ -66,6 +67,11 @@ watchEffect(() => {
   } else {
     imageSrc.value = null;
   }
+
+  // set image par defaut if structLogo is null
+  // if (props.detailEtab.structLogo == null) {
+  //   props.detailEtab.structLogo = "/src/assets/flower.jpg";
+  // }
 });
 
 watch(
@@ -106,7 +112,7 @@ const handleCropImage = (urlEtab) => {
   cropper.getCroppedCanvas().toBlob((blob) => {
     console.log(blob);
 
-    const url = `http://localhost:8080/parametab/fileUpload`;
+    const url = `/parametab/fileUpload/${props.idEtab}`;
     console.log(url);
 
     // axios
@@ -137,12 +143,19 @@ const cropImage = () => {
 
     const formData = new FormData();
 
+    // append DTO as JSON string
+    formData.append("details", JSON.stringify(props.detailEtab));
+
     // add name for the image
     formData.append("name", "image-name-" + new Date().getTime());
 
     // append image file
-    formData.append("file", blob);
-    const url = `http://localhost:8080/parametab/fileUpload`;
+    formData.append("file", blob, "logo." + blob.type.split("/")[1]);
+    const url = `/parametab/fileUpload/${props.idEtab}`;
+
+    console.log("formdata : ", formData);
+    console.log("url : ", url);
+    console.log("detailEtab : ", props.detailEtab);
 
     axios
       .post(url, formData)
@@ -152,7 +165,7 @@ const cropImage = () => {
       .catch(function (error) {
         console.log(error);
       });
-  });
+  }, "image/jpeg");
 };
 </script>
 
@@ -195,7 +208,7 @@ const cropImage = () => {
           <button class="btn-selectImg" @click="imageInput.click()">
             {{ m("selectionner-image") }}
           </button>
-          <button v-show="imageSrc" class="btn-cropImg" @click="handleCropImage">
+          <button v-show="imageSrc" class="btn-cropImg" @click="cropImage">
             {{ m("appliquer") }}
           </button>
           <button class="btn-close" @click="closeModal">{{ m("fermer") }}</button>
@@ -232,6 +245,8 @@ const cropImage = () => {
   height: 120px;
   overflow: hidden;
   margin: auto;
+  border: 0 solid #eee;
+  border-radius: 4px;
 }
 
 /* .modal {

@@ -63,6 +63,7 @@ async function updateInfo() {
   <div class="title-info">{{ m("info") }}</div>
   <div class="container">
     <ImageCropper
+      :detail-etab="details"
       :image-url="details.structLogo"
       :id-etab="details.id"
       @updated="handleUpdated"

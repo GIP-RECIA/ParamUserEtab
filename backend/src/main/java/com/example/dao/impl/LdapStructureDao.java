@@ -171,10 +171,10 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 	   }
    
 	   if (logo != null) {
-		   //updateLogo(logo, id, mods);
+		   //updateLogo(dto, logo, id, mods);
 	   }
    
-	   this.ldapTemplate.modifyAttributes(dn, mods.toArray(new ModificationItem[mods.size()]));
+	   //this.ldapTemplate.modifyAttributes(dn, mods.toArray(new ModificationItem[mods.size()]));
 	   System.out.println("mods : " + mods.toString());
 	   log.info("Structure with ID {} updated in LDAP. Display name: {}. Logo: {}. Site web: {}.",
 		   id, customName, logo, siteWeb);

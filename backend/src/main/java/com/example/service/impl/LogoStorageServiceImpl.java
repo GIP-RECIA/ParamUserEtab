@@ -1,5 +1,6 @@
 package com.example.service.impl;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.service.IImageUrlPath;
@@ -115,35 +117,56 @@ public class LogoStorageServiceImpl implements ILogoStorageService  {
 
     // save file 
     @Override
-    public String save(MultipartFile logo) {
+    public String save(MultipartFile logo, String id) {
 
-        // Normalize file name 
-        String originalFileName = logo.getOriginalFilename();
+        // Determine the file name
+        String originalFileName = logo.getOriginalFilename(); // or generate a unique file name
+
         String fileName = "logoportail0." + getFileExtension(originalFileName);
 
+        // Construct the destination path
+        String destinationPath = "uploads/file/" + id + "/" + fileName;
 
+        // Save the file to disk
         try {
-            // check if the filename contains invalid characters 
-            if (fileName.contains("..")) {
-                throw new RuntimeException("Filename contains invalid path sequence " +fileName);
+            // Ensure the directories exist
+            Path directory = Paths.get("uploads/file/" + id);
+            Files.createDirectories(directory);
+
+            // Save the file
+            Path filePath = Paths.get(destinationPath);
+            Files.write(filePath, logo.getBytes());
+            System.out.println(filePath);
+        } catch (IOException e) {
+            // Handle the exception appropriately
+            e.printStackTrace();
+        }
+
+        // Return the file path
+        return destinationPath;
+    }
+
+    @Override
+    public void saving(String pathName, MultipartFile logo, String id) {
+
+        // Save the file to disk
+        try {
+            // Ensure the directories exist
+            Path directory = Paths.get("uploads/file/" + id);
+            Files.createDirectories(directory);
+
+            System.out.println("### pathName saving : " + pathName);
+
+            // Save the file
+            if (pathName != null) {
+                Path destinationPath = Paths.get(pathName);
+                Files.write(destinationPath, logo.getBytes());
+                System.out.println(destinationPath);
             }
-
-            Path targetLocation = root.resolve(fileName);
-            log.info("location : " + targetLocation);
-            
-            int i = 0;
-            if(Files.exists(targetLocation)) {
-                i++;
-                log.info("file exists : ", i);
-                fileName = "logoportail" + i + "."+ getFileExtension(originalFileName);
-                
-            }
-
-            Files.copy(logo.getInputStream(), root.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-            return "/uploads/files/" + fileName;
-
-        } catch (Exception e) {
-            throw new RuntimeException("Could not store file " +fileName+ ".Please try again.");
+        } catch (IOException e) {
+            // Handle the exception appropriately
+            e.printStackTrace();
+            System.out.println("error create file : " + e);
         }
     }
 
