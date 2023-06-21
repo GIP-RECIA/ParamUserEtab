@@ -30,6 +30,7 @@ import com.example.service.IUserInfoService;
 import com.example.service.impl.LogoStorageServiceImpl;
 import com.example.web.DTOStructure;
 import com.example.web.Structure2DTOStructureImpl;
+import com.google.gson.Gson;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -206,35 +207,35 @@ public class ParametabController {
 
     // upload logo to disk, database, and ldap 
     @PostMapping("/fileUpload/{id}")
-    public ResponseEntity<?> uploadFile(@RequestPart(name ="file", required = false) MultipartFile file, @ModelAttribute DTOStructure structDto, @PathVariable("id") final String id) {
+    public ResponseEntity<?> uploadFile(@RequestPart(name ="file", required = false) MultipartFile file, @RequestPart(name ="details") String detailsJson, @PathVariable("id") final String id) {
 
         try {
  
-			if (structDto != null) {
-				log.info("struct id: " + structDto.getId());
-				log.info("struct dn: " + structDto.getStructCustomDisplayName());
-				structDto.setId(id);
-				log.info("struct id after set : " + structDto.getId());
-				// save the logo to disk 
-				//String fileName = logoStorage.save(file);
-				//structDto.setStructLogo(fileName);
-				// get the path of photo -> update in ldap and database 
+			if (detailsJson != null) {
+				// Parse the detailsJson string back to DTO
+    			DTOStructure dto = new Gson().fromJson(detailsJson, DTOStructure.class);
 
-				newUrl = calculNewImageUrlPath(structDto, oldUrl);
+				newUrl = calculNewImageUrlPath(dto, oldUrl);
+				String pathName = newUrl.getPathName();
+				String getNewURL = newUrl.getUrl();
 				if (newUrl != null) {
-					log.info("newUrl : ", newUrl.getPathName());
+					log.info("newUrl : ", pathName);
+					// save the logo to disk 
+					// logoStorage.saving(pathName, file, id);
 				}
 				else {
 					log.info("newUrl is null");
+					return new ResponseEntity<>("erreur : impossible de sauvegarder l'image !", HttpStatus.BAD_REQUEST);
 				}
 
+				dto.setStructLogo(getNewURL);
 
-				log.info("struct logo: " + structDto.getStructLogo());
-				//structureService.updateStructure(structDto);
+				oldUrl = newUrl;
+				structureService.updateStructure(dto, null, null, dto.getStructLogo(), id);
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
+            return new ResponseEntity<>("Erreur : l'établissement n'est pas défini !", HttpStatus.BAD_REQUEST);
 
-            return new ResponseEntity<>("Error : impossible to save image !", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.getMessage();
             log.info("error upload file : ", e );
