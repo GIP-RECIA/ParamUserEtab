@@ -118,15 +118,34 @@
 				</configuration>
             </plugin>
 			<plugin>
-				<groupId>org.jasig.maven</groupId>
-				<artifactId>maven-notice-plugin</artifactId>
-				<version>1.1.0</version>
+				<groupId>com.mycila</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>4.2</version>
 				<configuration>
-					<licenseMapping>
-                        <param>src/etc/license-mappings.xml</param>
-                    </licenseMapping>
+					<strictCheck>true</strictCheck>
+					<header>etc/header.txt</header>
+					<includes>
+						<include>src/**/*.java</include>
+						<include>src/**/*.xml</include>
+						<include>src/**/*.properties</include>
+						<include>src/**/*.css</include>
+					</includes>
+					<excludes>
+						<exclude>**/dist/**</exclude>
+					</excludes>
 				</configuration>
-			</plugin>
+				</plugin>
+				<plugin>
+					<groupId>org.jasig.maven</groupId>
+					<artifactId>notice-maven-plugin</artifactId>
+					<version>2.0.0</version>
+					<configuration>
+						<noticeTemplate>etc/NOTICE.template</noticeTemplate>
+						<licenseMapping>
+							<param>etc/license-mappings.xml</param>
+						</licenseMapping>
+					</configuration>
+				</plugin>
 		</plugins>
 	</build>
 
