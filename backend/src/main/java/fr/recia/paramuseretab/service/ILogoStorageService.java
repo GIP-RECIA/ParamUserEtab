@@ -1,0 +1,14 @@
+package fr.recia.paramuseretab.service;
+
+import org.springframework.web.multipart.MultipartFile;
+
+public interface ILogoStorageService {
+
+    IImageUrlPath makeImageUrlPath(String url);
+
+    IImageUrlPath makeImageUrlPath(String nom, int version);
+
+    public String save(MultipartFile logo, String id);
+
+    public void saving(String pathName, MultipartFile logo, String id);
+}

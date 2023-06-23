@@ -48,13 +48,13 @@
 
     <!-- structure DAO Mock -->
     <bean id="mockStructuresDao" class="org.mockito.Mockito" factory-method="mock">
-        <constructor-arg value="com.example.dao.IStructureDao" />
+        <constructor-arg value="fr.recia.paramuseretab.dao.IStructureDao" />
     </bean>
     <!--<mockito:mock id="mockEtablissementsDao" class="org.esco.portlet.changeetab.dao.IEtablissementDao" />-->
 
     <!-- Tested service -->
     <bean id="cachingStructureService"
-        class="com.example.service.impl.CachingStructureService">
+        class="fr.recia.paramuseretab.service.impl.CachingStructureService">
 
         <property name="structureCache" ref="structuresCache" />
         <property name="etabsCodeIdCache" ref="etabsCodeIdCache" />

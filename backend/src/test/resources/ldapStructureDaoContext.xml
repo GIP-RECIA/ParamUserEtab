@@ -32,7 +32,7 @@
         <property name="contextSource" ref="contextSource" />
     </bean>
 
-    <bean id="ldapStructureDao" class="com.example.dao.impl.LdapStructureDao">
+    <bean id="ldapStructureDao" class="fr.recia.paramuseretab.dao.impl.LdapStructureDao">
         <property name="ldapTemplate" ref="ldapTemplate" />
         <property name="structureBase" value="ou=structures,dc=esco-centre,dc=fr" />
         <property name="allStructFilter" value="(|(ObjectClass=ENTEtablissement)(ObjectClass=ENTServAc)(ObjectClass=ENTCollLoc))" />
@@ -62,7 +62,7 @@
         <property name="structureFormatters">
             <list>
                 <!-- Pour les lycées et CLG remplacement du premier - par un espace (afin d'avoir "CLG MONTRESOR") et supression de la chaîne -ac-ORL._TOURS -->
-                <!--<bean class="com.example.dao.bean.LdapEtablissementDisplayNameFormater">-->
+                <!--<bean class="fr.recia.paramuseretab.dao.bean.LdapEtablissementDisplayNameFormater">-->
                     <!--<property name="groupsRegex" value="[^-]*(-).*(-ac-ORL._TOURS)" />-->
                     <!--<property name="indexListReplacement">-->
                         <!--<util:map>-->
