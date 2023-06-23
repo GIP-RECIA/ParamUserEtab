@@ -8,8 +8,8 @@
 		<version>2.7.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>parametab-project</artifactId>
+	<groupId>fr.recia</groupId>
+	<artifactId>paramuseretab</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>parametab-project</name>
 	<description>Spring Boot backend application</description>
