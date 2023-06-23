@@ -45,6 +45,7 @@ dist
 dist-ssr
 coverage
 *.local
+frontend/src/data 
 
 ### Tests ###
 playwright-report
@@ -54,6 +55,7 @@ test-results
 ### Logs ###
 logs
 *.log
+*.gz
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
