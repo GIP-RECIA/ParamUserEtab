@@ -13,9 +13,6 @@ const props = defineProps({
   detailEtab: Object,
 });
 
-console.log("imageUrl : ", props.imageUrl);
-console.log("idEtab : ", props.idEtab);
-
 const imageInput = ref(null);
 const selectedFile = ref(null);
 const imageSrc = ref(null);
@@ -34,13 +31,6 @@ const fileChanged = (e) => {
     selectedFile.value = files[0];
   }
 };
-
-// const emit = defineEmits({
-//   updated: async ({ urlEtab }) => {
-//     const res = await axios.get(urlEtab);
-//     etabJson.value = res.data;
-//   },
-// });
 
 const emit = defineEmits(["updated"]);
 
@@ -105,42 +95,8 @@ const closeModal = () => {
   }
 };
 
-const handleCropImage = (urlEtab) => {
-  const dataCropped = cropper.getCroppedCanvas();
-  console.log("dataCropped : ", dataCropped);
-
-  cropper.getCroppedCanvas().toBlob((blob) => {
-    console.log(blob);
-
-    const url = `/parametab/fileUpload/${props.idEtab}`;
-    console.log(url);
-
-    // axios
-    //   .post(url, { structLogo: blob })
-    //   .then(async (response) => {
-    //     console.log(response);
-    //     open.value = false;
-    //     emit("updated", { urlEtab });
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
-  });
-};
-
-async function updatedEtabs(url) {
-  open.value = false;
-  const res = await axios.get(url);
-  etabJson.value = res.data;
-}
-
 const cropImage = () => {
-  const dataCropped = cropper.getCroppedCanvas();
-  console.log(dataCropped);
-
   cropper.getCroppedCanvas().toBlob((blob) => {
-    console.log(blob);
-
     const formData = new FormData();
 
     // append DTO as JSON string
@@ -153,18 +109,10 @@ const cropImage = () => {
     formData.append("file", blob, "logo." + blob.type.split("/")[1]);
     const url = `/parametab/fileUpload/${props.idEtab}`;
 
-    console.log("formdata : ", formData);
-    console.log("url : ", url);
-    console.log("detailEtab : ", props.detailEtab);
-
     axios
       .post(url, formData)
-      .then((response) => {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+      .then((response) => {})
+      .catch(function (error) {});
   }, "image/jpeg");
 };
 </script>

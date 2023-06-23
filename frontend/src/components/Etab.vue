@@ -12,18 +12,11 @@ const windowWidth = ref(window.innerWidth);
 const isVisible = ref(false);
 const nameEtabSelected = ref("");
 
-// console.log("cr etab : ", currentEtab);
-
 onMounted(async () => {
   const res = await axios.get("/parametab/");
   parametab.value = res.data; // ajouté pour testé API
-  //etabJson.value = res.data; // commenté pour testé API
   // Access the list of "isMemberOf"
   etabJson.value = parametab.value[0].isMemberOf; // ajouté pour testé API
-
-  console.log("isMemberOfList: ", etabJson.value); // ajouté pour testé API
-  //console.log("currentEtab: ", parametab.value[0].currentStruct); // ajouté pour testé API
-  //currentEtab.value = etabJson.value[0]; // commenté pour testé API
   currentEtab.value = parametab.value[0].currentStruct; // ajouté pour testé API
   window.addEventListener("resize", handleResize);
 });

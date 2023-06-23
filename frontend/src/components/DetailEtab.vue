@@ -17,8 +17,7 @@ const props = defineProps({
 watchEffect(() => {
   void (async () => {
     await fetchDetailData(props.detail);
-    })()
-
+  })();
 });
 
 async function fetchDetailData(id) {
@@ -36,21 +35,18 @@ const handleUpdated = async ({ urlEtab }) => {
 };
 
 async function updateInfo() {
-  console.warn(details.value)
+  console.warn(details.value);
   const dataJson = `/parametab/updateV2/${props.detail}`;
-
 
   // axios
   //   .put(dataJson, details.value)
   //   .then(async (response) => {
-  //     console.log(response);
   //     Swal.fire({
   //       title: "Sauvegardé",
   //       icon: "success",
   //     });
   //   })
   //   .catch(function (error) {
-  //     console.log(error);
   //   });
 }
 </script>
