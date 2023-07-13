@@ -1,28 +1,28 @@
-<script setup>
+<script setup lang="ts">
 import { ref, watchEffect, onMounted, onUnmounted, watch, defineEmits } from "vue";
 import Cropper from "cropperjs";
 import axios from "axios";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
-const m = (key) => t(`image-cropper.${key}`);
+const m = (key: string): string => t(`image-cropper.${key}`);
 
-const props = defineProps({
-  imageUrl: String,
-  idEtab: String,
-  detailEtab: Object,
-});
+const props = defineProps<{
+  imageUrl: string;
+  idEtab: string;
+  detailEtab: object;
+}>();
 
-const imageInput = ref(null);
-const selectedFile = ref(null);
-const imageSrc = ref(null);
-const img = ref(null);
+const imageInput = ref<any>(null);
+const selectedFile = ref<any>(null);
+const imageSrc = ref<string | ArrayBuffer | null>();
+const img = ref<any>(null);
 const fileReader = new FileReader();
-const open = ref(false);
-let cropper = null;
+const open = ref<boolean>(false);
+let cropper: any = null;
 
-fileReader.onload = (event) => {
-  imageSrc.value = event.target.result;
+fileReader.onload = (event: ProgressEvent<FileReader>) => {
+  imageSrc.value = event?.target?.result;
 };
 
 const fileChanged = (e) => {

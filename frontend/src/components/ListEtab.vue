@@ -1,32 +1,32 @@
-<script setup>
-import { ref, computed } from "vue";
+<script setup lang="ts">
+import { ref, computed, type Ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
-const m = (key) => t(`list-etab.${key}`);
+const m = (key: string): string => t(`list-etab.${key}`);
 
-const props = defineProps({
-  dataJson: Array,
-  classInput: String,
-  classLi: String,
-  classDiv: String,
-  dataCurrent: String,
-});
+const props = defineProps<{
+  dataJson: any[];
+  classInput: string;
+  classLi: string;
+  classDiv: string;
+  dataCurrent: string;
+}>();
 
 const emit = defineEmits(["selectEtab"]);
-let input = ref("");
+let input: Ref<string> = ref("");
 
-function filteredList() {
+function filteredList(): any[] {
   if (!props.dataJson) {
+    console.log("props datajson null");
     return [];
   }
-  const filteredData = props.dataJson.filter((etab) =>
+  const filteredData = props.dataJson.filter((etab: any) =>
     etab.etabName.toLowerCase().includes(input.value.toLowerCase())
   );
+  console.log("list-etab: ", filteredData);
 
-  return filteredData.sort((a, b) =>
-    a.etabName.localeCompare(b.etabName)
-  );
+  return filteredData.sort((a: any, b: any) => a.etabName.localeCompare(b.etabName));
 }
 
 function selected(e) {

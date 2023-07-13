@@ -1,26 +1,28 @@
-<script setup>
+<script setup lang="ts">
 import { ref, watchEffect } from "vue";
 import ImageCropper from "./ImageCropper.vue";
 import axios from "axios";
 import Swal from "sweetalert2";
+// import type { StructureDetail } from "../types/structureType";
 
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
-const m = (key) => t(`detail-etab.${key}`);
-const details = ref([]);
+const m = (key: string): string => t(`detail-etab.${key}`);
+// const details = ref<Array<StructureDetail> | undefined>();
+const details = ref<any[]>([]);
 
-const props = defineProps({
-  detail: String,
-});
+const props = defineProps<{
+  detail: string;
+}>();
 
-watchEffect(() => {
+watchEffect((): void => {
   void (async () => {
     await fetchDetailData(props.detail);
   })();
 });
 
-async function fetchDetailData(id) {
+async function fetchDetailData(id: string) {
   try {
     const response = await axios.get(`/parametab/${id}`);
     details.value = response.data;
@@ -31,23 +33,22 @@ async function fetchDetailData(id) {
 
 const handleUpdated = async ({ urlEtab }) => {
   const res = await axios.get(urlEtab);
-  detail.value = res.data;
+  details.value = res.data;
 };
 
 async function updateInfo() {
   console.warn(details.value);
   const dataJson = `/parametab/updateV2/${props.detail}`;
 
-  // axios
-  //   .put(dataJson, details.value)
-  //   .then(async (response) => {
-  //     Swal.fire({
-  //       title: "Sauvegardé",
-  //       icon: "success",
-  //     });
-  //   })
-  //   .catch(function (error) {
-  //   });
+  axios
+    .put(dataJson, details.value)
+    .then(async (response) => {
+      Swal.fire({
+        title: "Sauvegardé",
+        icon: "success",
+      });
+    })
+    .catch(function (error) {});
 }
 </script>
 
@@ -67,13 +68,7 @@ async function updateInfo() {
 
     <div class="infos">
       <label class="label">
-        <input
-          class="input-field"
-          type="text"
-          readonly="readonly"
-          :value="details.name"
-          disabled
-        />
+        <input class="input-field" type="text" :value="details.name" disabled />
         <span>{{ m("nom-institutionnel") }}</span>
       </label>
       <label class="label">

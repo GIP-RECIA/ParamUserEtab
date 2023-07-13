@@ -1,36 +1,36 @@
-<script setup>
-import { ref, onMounted, computed, onBeforeUnmount, onUpdated } from "vue";
+<script setup lang="ts">
+import { ref, onMounted, computed, onBeforeUnmount, onUpdated, type HTMLAttributes } from "vue";
 import DetailEtab from "./DetailEtab.vue";
 import ListEtab from "./ListEtab.vue";
 import axios from "axios";
 
-// const etabs = generateTable();
-const parametab = ref([]); // ajouté pour testé API
-const etabJson = ref([]);
-const currentEtab = ref("");
-const windowWidth = ref(window.innerWidth);
-const isVisible = ref(false);
-const nameEtabSelected = ref("");
+const parametab = ref<any[]>([]);
+const etabJson = ref<any[]>([]);
+const currentEtab = ref<string>("");
+const windowWidth = ref<number>(window.innerWidth);
+const isVisible = ref<boolean>(false);
+const nameEtabSelected = ref<string>("");
 
 onMounted(async () => {
   const res = await axios.get("/parametab/");
   parametab.value = res.data; // ajouté pour testé API
   // Access the list of "isMemberOf"
-  etabJson.value = parametab.value[0].isMemberOf; // ajouté pour testé API
-  currentEtab.value = parametab.value[0].currentStruct; // ajouté pour testé API
+  // ajouté pour testé API
+  etabJson.value = parametab.value[0].isMemberOf;
+  currentEtab.value = parametab.value[0].currentStruct;
   window.addEventListener("resize", handleResize);
 });
 
 onUpdated(() => {
-  let id = document.getElementById(currentEtab.value); // ajouté pour testé API, avant c'était value.id
+  let id = document.getElementById(currentEtab.value);
   if (id != null) {
     id.classList.add("active");
   } else {
     const findName = filteredName();
     nameEtabSelected.value = findName;
   }
-  let listEtab = document.querySelector(".list");
-  let activeElement = document.querySelector(".content .active");
+  let listEtab: HTMLElement | null = document.querySelector(".list");
+  let activeElement: HTMLElement | null = document.querySelector(".content .active");
 
   if (listEtab) {
     if (activeElement) {
@@ -60,17 +60,17 @@ const handleResize = () => {
 };
 
 function filteredName() {
-  let name = "";
+  let name: any = "";
   if (!etabJson.value) {
     return [];
   }
-  name = etabJson.value.find((etab) => etab.idSiren.toString() === currentEtab.value);
+  name = etabJson.value.find((etab: any) => etab.idSiren.toString() === currentEtab.value);
   return name.etabName;
 }
 
-function select(e, isSelected) {
+function select(e: any, isSelected: boolean) {
   let id = e.target.getAttribute("id");
-  let selectedEtab = etabJson.value.find((etab) => etab.idSiren.toString() === id);
+  let selectedEtab = etabJson.value.find((etab: any) => etab.idSiren.toString() === id);
 
   if (selectedEtab !== currentEtab.value) {
     // return true
