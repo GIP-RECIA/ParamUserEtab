@@ -3,14 +3,14 @@ import { ref, watchEffect } from "vue";
 import ImageCropper from "./ImageCropper.vue";
 import axios from "axios";
 import Swal from "sweetalert2";
-// import type { StructureDetail } from "../types/structureType";
+import type { StructureDetail } from "../types/structureType";
 
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 const m = (key: string): string => t(`detail-etab.${key}`);
-// const details = ref<Array<StructureDetail> | undefined>();
-const details = ref<any[]>([]);
+const details = ref<StructureDetail>({});
+// const details = ref<any[]>([]);
 
 const props = defineProps<{
   detail: string;

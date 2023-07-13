@@ -3,6 +3,7 @@ import { ref, watchEffect, onMounted, onUnmounted, watch, defineEmits } from "vu
 import Cropper from "cropperjs";
 import axios from "axios";
 import { useI18n } from "vue-i18n";
+import type { StructureDetail } from "@/types/structureType";
 
 const { t } = useI18n();
 const m = (key: string): string => t(`image-cropper.${key}`);
@@ -10,7 +11,7 @@ const m = (key: string): string => t(`image-cropper.${key}`);
 const props = defineProps<{
   imageUrl: string;
   idEtab: string;
-  detailEtab: object;
+  detailEtab: StructureDetail;
 }>();
 
 const imageInput = ref<any>(null);
