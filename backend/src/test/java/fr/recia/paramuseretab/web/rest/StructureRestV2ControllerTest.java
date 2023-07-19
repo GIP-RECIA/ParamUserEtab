@@ -29,44 +29,49 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
+import fr.recia.paramuseretab.ParametabProjectApplication;
 import lombok.extern.slf4j.Slf4j;
 import fr.recia.paramuseretab.dao.IStructureDao;
 import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.service.IStructureService;
 import fr.recia.paramuseretab.service.impl.CachingStructureService;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.joda.time.Duration;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.Cache;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:cachingStructureServiceContext.xml", "classpath:restApiContext.xml"})
+@SpringBootTest(classes = ParametabProjectApplication.class, properties = "spring.config.name=application-test")
+@WebAppConfiguration
 @Slf4j
 public class StructureRestV2ControllerTest {
 
-    @Autowired
-    private CachingStructureService service;
+    @Mock
+    private IStructureDao mockedStructureDao;
 
-    @SuppressWarnings("unused")
-    private IStructureDao mockedDao;
-
-    @Autowired
     private IStructureService structureService;
 
-    private MockMvc restContentMockMvc;
+    private MockMvc mvc;
+
+    @InjectMocks
+    private StructureRestV2Controller structureRestV2Controller;
 
     private List<Structure> structures = new ArrayList<>();
 
@@ -79,38 +84,58 @@ public class StructureRestV2ControllerTest {
     private String SIREN_3= "SIREN_3";
 
     private Map<String, List<String>> otherAttrs = new HashMap<>();
+    
+
+    @Autowired
+    @Qualifier("structuresCache")
+    private Cache structureCache;
+
+    @Autowired
+    @Qualifier("etabsCodeIdCache")
+    private Cache etabsCodeIdCache;
+
+    private AutoCloseable closeable;
+
+
+//    @BeforeEach
+//    public void setup() {
+//        closeable = MockitoAnnotations.openMocks(this);
+//
+//    }
+
+    @PreDestroy
+    void closeService() throws Exception {
+        closeable.close();
+    }
+
 
     @PostConstruct
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        closeable = MockitoAnnotations.openMocks(this);
 
-        StructureRestV2Controller structureRestV2Controller = new StructureRestV2Controller();
+        mvc = MockMvcBuilders.standaloneSetup(structureRestV2Controller).build();
+
+        structureService = new CachingStructureService();
+        ReflectionTestUtils.setField(structureService, "structureCache", this.structureCache);
+        ReflectionTestUtils.setField(structureService, "etabsCodeIdCache", this.etabsCodeIdCache);
+        ReflectionTestUtils.setField(structureService, "structureDao", this.mockedStructureDao);
+        ReflectionTestUtils.setField(structureService, "cachingDuration", Duration.millis(Long.valueOf("1000")));
+        log.info("Configuring Caching Structure Service {}", structureService);
 
         ReflectionTestUtils.setField(structureRestV2Controller, "structureService", structureService);
-
-        this.restContentMockMvc = MockMvcBuilders.standaloneSetup(structureRestV2Controller).build();
+        ReflectionTestUtils.setField(structureRestV2Controller, "structureDao", this.mockedStructureDao);
 
         otherAttrs.put("street", Arrays.asList("Adresse 1"));
         otherAttrs.put("phone", Arrays.asList("+33 1 10 10 10 10", "+33 2 20 20 20 20"));
 
-        structure1 = new Structure(SIREN_1, "name1", "name1", "desc1", otherAttrs);
+        structure1 = new Structure(SIREN_1, "namé1", "nameé1", "descé1", otherAttrs);
         structure2 = new Structure(SIREN_2, "name2", "name2", "desc2", otherAttrs);
         structure3 = new Structure(SIREN_3, "name3", "name3", "desc3", otherAttrs);
         structures.add(structure1);
         structures.add(structure2);
         structures.add(structure3);
-    }
 
-    /**
-     * Setter of mockedDao.
-     *
-     * @param mockedDao the mockedDao to set
-     */
-    @Autowired
-    public void setMockedDao(final IStructureDao mockedDao) {
-        this.mockedDao = mockedDao;
-        // Init DAO mock
-        Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
+        Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
 
             @Override
             public Collection<? extends Structure> answer(InvocationOnMock invocation) throws Throwable {
@@ -121,22 +146,26 @@ public class StructureRestV2ControllerTest {
 
     @Test
     public void testRefresh() throws Exception {
-        restContentMockMvc.perform(
-                post("/rest/v2/structures/refresh/" + SIREN_1).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        mvc.perform(
+                post("/rest/v2/structures/refresh/" + SIREN_1).contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testretrieveStructFromId() throws Exception {
-        restContentMockMvc.perform(
-                get("/rest/v2/structures/struct/" + SIREN_1).contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(
+                get("/rest/v2/structures/struct/" + SIREN_1).contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.id").value(SIREN_1))
                 .andExpect(jsonPath("$.name").exists())
+                .andExpect(jsonPath("$.name").value(structure1.getName()))
                 .andExpect(jsonPath("$.displayName").exists())
+                .andExpect(jsonPath("$.displayName").value(structure1.getDisplayName()))
                 .andExpect(jsonPath("$.description").exists())
+                .andExpect(jsonPath("$.description").value(structure1.getDescription()))
                 .andExpect(jsonPath("$.otherAttributes").exists())
                 .andExpect(jsonPath("$.otherAttributes.street").exists())
                 .andExpect(jsonPath("$.otherAttributes.street").isArray())

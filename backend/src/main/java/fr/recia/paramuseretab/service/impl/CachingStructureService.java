@@ -53,7 +53,6 @@ import fr.recia.paramuseretab.web.DTOStructure;
 @Service
 //@Repository
 @Slf4j
-@EnableCaching
 @ConfigurationProperties(prefix = "structureservice")
 public class CachingStructureService implements IUniteAdministrativeImmatriculeService, InitializingBean {
 

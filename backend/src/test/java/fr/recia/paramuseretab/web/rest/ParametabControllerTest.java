@@ -15,16 +15,14 @@
  */
 package fr.recia.paramuseretab.web.rest;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -49,14 +47,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
+import javax.annotation.PostConstruct;
+
 @Slf4j
-@RunWith(MockitoJUnitRunner.class)
-@ContextConfiguration(classes = ParametabProjectApplication.class)
-@WebMvcTest(ParametabController.class)
+@SpringBootTest(classes = ParametabProjectApplication.class, properties = "spring.config.name=application-test")
 @WebAppConfiguration
 public class ParametabControllerTest {
 
-    @Autowired
     private MockMvc mvc;
 
     @Mock
@@ -73,7 +70,7 @@ public class ParametabControllerTest {
         
     private static ObjectMapper mapper = new ObjectMapper();
 
-    @Before
+    @PostConstruct
     public void setup() {
 
         /**

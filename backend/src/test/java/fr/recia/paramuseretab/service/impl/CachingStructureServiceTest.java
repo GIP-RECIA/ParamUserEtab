@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import fr.recia.paramuseretab.ParametabProjectApplication;
 import lombok.extern.slf4j.Slf4j;
 
 import fr.recia.paramuseretab.dao.IStructureDao;
@@ -33,23 +34,31 @@ import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
 import fr.mby.utils.common.test.LoadRunner;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.joda.time.Duration;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.Cache;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * @author GIP RECIA 2013 - Maxime BOSSARD.
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:cachingStructureServiceContext.xml"})
 @Slf4j
+@SpringBootTest(classes = ParametabProjectApplication.class, properties = "spring.config.name=application-test")
+@AutoConfigurationPackage(basePackages = {"fr.recia.paramuseretab.dao.impl", "fr.recia.paramuseretab.service.impl"})
 public class CachingStructureServiceTest {
 
 	private static final List<String> valStreet_1 = new ArrayList<String>(1);
@@ -126,22 +135,34 @@ public class CachingStructureServiceTest {
 
 	private static final Collection<UniteAdministrativeImmatriculee> emptyStructsFromDao = Collections.emptyList();
 
-	@Autowired
+
 	private CachingStructureService service;
 
-	@SuppressWarnings("unused")
-	private IStructureDao mockedDao;
+    @Autowired
+    @Qualifier("structuresCache")
+    private Cache structureCache;
 
-	/**
-	 * Setter of mockedDao.
-	 *
-	 * @param mockedDao the mockedDao to set
-	 */
-	@Autowired
-	public void setMockedDao(final IStructureDao mockedDao) {
-		this.mockedDao = mockedDao;
+    @Autowired
+    @Qualifier("etabsCodeIdCache")
+    private Cache etabsCodeIdCache;
+
+    @Mock
+	private IStructureDao mockedStructureDao;
+
+    private AutoCloseable closeable;
+
+
+    @BeforeEach
+	public void setup() {
+        closeable = MockitoAnnotations.openMocks(this);
+        service = new CachingStructureService();
+		ReflectionTestUtils.setField(service, "structureCache", this.structureCache);
+		ReflectionTestUtils.setField(service, "etabsCodeIdCache", this.etabsCodeIdCache);
+		ReflectionTestUtils.setField(service, "structureDao", this.mockedStructureDao);
+		ReflectionTestUtils.setField(service, "cachingDuration", Duration.millis(Long.valueOf("1000")));
+		log.info("Configuring Caching Structure Service {}", service);
 		// Init DAO mock
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
 
 			@Override
 			public Collection<? extends Structure> answer(InvocationOnMock invocation) throws Throwable {
@@ -149,6 +170,11 @@ public class CachingStructureServiceTest {
 			}
 		});
 	}
+
+    @AfterEach
+    void closeService() throws Exception {
+        closeable.close();
+    }
 
 	@Test
 	public void testRetrieveOneExistingEtab() throws Exception {
@@ -158,9 +184,9 @@ public class CachingStructureServiceTest {
 
 		final Map<String, UniteAdministrativeImmatriculee> etabs = this.service.retrieveEtablissementsByCodes(uais);
 
-		Assert.assertNotNull("Should return an empty collection !", etabs);
-		Assert.assertEquals("Should return only one etab !", 1, etabs.size());
-		Assert.assertTrue("Bad struct returned !", etabs.containsValue(CachingStructureServiceTest.ETAB_2));
+		Assertions.assertNotNull(etabs, "Should return an empty collection !");
+		Assertions.assertEquals(1, etabs.size(), "Should return only one etab !");
+		Assertions.assertTrue(etabs.containsValue(CachingStructureServiceTest.ETAB_2), "Bad struct returned !");
 		log.debug("End of testRetrieveOneExistingEtab");
 	}
 
@@ -168,7 +194,7 @@ public class CachingStructureServiceTest {
 	public void testRetrieveOneExistingStruct() throws Exception {
 		log.debug("Running testRetrieveOneExistingStruct");
 
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
 
 			@Override
 			public Collection<? extends Structure> answer(InvocationOnMock invocation) throws Throwable {
@@ -180,9 +206,9 @@ public class CachingStructureServiceTest {
 
 		final Map<String, Structure> structs = this.service.retrieveStructuresByIds(sirens);
 
-		Assert.assertNotNull("Should return an empty collection !", structs);
-		Assert.assertEquals("Should return only one etab !", 1, structs.size());
-		Assert.assertTrue("Bad struct returned !", structs.containsValue(CachingStructureServiceTest.ETAB_2));
+		Assertions.assertNotNull(structs, "Should return an empty collection !");
+		Assertions.assertEquals(1, structs.size(), "Should return only one etab !");
+		Assertions.assertTrue(structs.containsValue(CachingStructureServiceTest.ETAB_2), "Bad struct returned !");
 		log.debug("End of testRetrieveOneExistingStruct");
 	}
 
@@ -195,10 +221,10 @@ public class CachingStructureServiceTest {
 
 		final Map<String, UniteAdministrativeImmatriculee> etabs = this.service.retrieveEtablissementsByCodes(uais);
 
-		Assert.assertNotNull("Should return an empty collection !", etabs);
-		Assert.assertEquals("Should return only one etab !", 2, etabs.size());
-		Assert.assertTrue("Bad etab in returned list !", etabs.containsValue(CachingStructureServiceTest.ETAB_1));
-		Assert.assertTrue("Bad etab in returned list !", etabs.containsValue(CachingStructureServiceTest.ETAB_3));
+		Assertions.assertNotNull(etabs, "Should return an empty collection !");
+		Assertions.assertEquals(2, etabs.size(), "Should return 2 etab !");
+		Assertions.assertTrue(etabs.containsValue(CachingStructureServiceTest.ETAB_1), "Bad etab in returned list !");
+		Assertions.assertTrue(etabs.containsValue(CachingStructureServiceTest.ETAB_3), "Bad etab in returned list !");
 		log.debug("End of testRetrieveSeveralExistingEtabs");
 	}
 
@@ -211,10 +237,10 @@ public class CachingStructureServiceTest {
 
 		final Map<String, Structure> structs = this.service.retrieveStructuresByIds(sirens);
 
-		Assert.assertNotNull("Should return an empty collection !", structs);
-		Assert.assertEquals("Should return only one etab !", 2, structs.size());
-		Assert.assertTrue("Bad struct in returned list !", structs.containsValue(CachingStructureServiceTest.ETAB_3));
-		Assert.assertTrue("Bad struct in returned list !", structs.containsValue(CachingStructureServiceTest.STRUCT_5));
+		Assertions.assertNotNull(structs, "Should return an empty collection !");
+		Assertions.assertEquals(2, structs.size(), "Should return 2 struct !");
+		Assertions.assertTrue(structs.containsValue(CachingStructureServiceTest.ETAB_3), "Bad struct in returned list !");
+		Assertions.assertTrue(structs.containsValue(CachingStructureServiceTest.STRUCT_5), "Bad struct in returned list !");
 		log.debug("End of testRetrieveSeveralExistingStructs");
 	}
 
@@ -226,8 +252,8 @@ public class CachingStructureServiceTest {
 
 		final Map<String, UniteAdministrativeImmatriculee> etabs = this.service.retrieveEtablissementsByCodes(uais);
 
-		Assert.assertNotNull("Should return an empty collection !", etabs);
-		Assert.assertEquals("Should return an empty collection !", 0, etabs.size());
+		Assertions.assertNotNull(etabs, "Should return an empty collection !");
+		Assertions.assertEquals(0, etabs.size(), "Should return an empty collection !");
 		log.debug("End of testRetrieveNotExistingEtab");
 	}
 
@@ -239,38 +265,38 @@ public class CachingStructureServiceTest {
 
 		final Map<String, Structure> structs = this.service.retrieveStructuresByIds(sirens);
 
-		Assert.assertNotNull("Should return an empty collection !", structs);
-		Assert.assertEquals("Should return an empty collection !", 0, structs.size());
+		Assertions.assertNotNull(structs, "Should return an empty collection !");
+		Assertions.assertEquals(0, structs.size(), "Should return an empty collection !");
 		log.debug("End of testRetrieveNotExistingEtab");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testRetrieveEtablissementsByUaisWithNullParam() throws Exception {
 		log.debug("Running testRetrieveEtablissementsByUaisWithNullParam");
-		this.service.retrieveEtablissementsByCodes(null);
+		Assertions.assertThrows(IllegalArgumentException.class, () -> this.service.retrieveEtablissementsByCodes(null));
 		log.debug("End of testRetrieveEtablissementsByUaisWithNullParam");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testRetrieveEtablissementsBySirensWithNullParam() throws Exception {
 		log.debug("Running testRetrieveEtablissementsBySirensWithNullParam");
-		this.service.retrieveStructuresByIds(null);
+		Assertions.assertThrows(IllegalArgumentException.class, () -> this.service.retrieveStructuresByIds(null));
 		log.debug("End of testRetrieveEtablissementsBySirensWithNullParam");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testRetrieveEtablissementsByUaisWithEmptyParam() throws Exception {
 		log.debug("Running testRetrieveEtablissementsByUaisWithEmptyParam");
 		final List<String> s = Collections.emptyList();
-		this.service.retrieveEtablissementsByCodes(s);
+		Assertions.assertThrows(IllegalArgumentException.class, () -> this.service.retrieveEtablissementsByCodes(s));
 		log.debug("End of testRetrieveEtablissementsByUaisWithEmptyParam");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testRetrieveEtablissementsBySirensWithEmptyParam() throws Exception {
 		log.debug("Running testRetrieveEtablissementsBySirensWithEmptyParam");
 		final List<String> s = Collections.emptyList();
-		this.service.retrieveStructuresByIds(s);
+		Assertions.assertThrows(IllegalArgumentException.class, () -> this.service.retrieveStructuresByIds(s));
 		log.debug("End of testRetrieveEtablissementsBySirensWithEmptyParam");
 	}
 
@@ -281,7 +307,7 @@ public class CachingStructureServiceTest {
 		uais.add(CachingStructureServiceTest.UAI_2);
 
 		// Init DAO mock
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<UniteAdministrativeImmatriculee>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<UniteAdministrativeImmatriculee>>() {
 
 			@Override
 			public Collection<UniteAdministrativeImmatriculee> answer(InvocationOnMock invocation) throws Throwable {
@@ -291,7 +317,7 @@ public class CachingStructureServiceTest {
 
 		final Map<String, UniteAdministrativeImmatriculee> etabs = this.service.retrieveEtablissementsByCodes(uais);
 
-		Assert.assertNotNull("Should return an empty collection !", etabs);
+		Assertions.assertNotNull(etabs, "Should return an empty collection !");
 		log.debug("End of testRetrieveOneExistingEmptyEtab");
 	}
 
@@ -302,7 +328,7 @@ public class CachingStructureServiceTest {
 		sirens.add(CachingStructureServiceTest.SIREN_2);
 
 		// Init DAO mock
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
 
 			@Override
 			public Collection<? extends Structure> answer(InvocationOnMock invocation) throws Throwable {
@@ -312,7 +338,7 @@ public class CachingStructureServiceTest {
 
 		final Map<String, Structure> structs = this.service.retrieveStructuresByIds(sirens);
 
-		Assert.assertNotNull("Should return an empty collection !", structs);
+		Assertions.assertNotNull(structs, "Should return an empty collection !");
 		log.debug("End of testRetrieveOneExistingEmptyStruct");
 	}
 
@@ -324,7 +350,7 @@ public class CachingStructureServiceTest {
 		uais.add(CachingStructureServiceTest.UAI_1);
 
 		// Init DAO mock
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<UniteAdministrativeImmatriculee>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<UniteAdministrativeImmatriculee>>() {
 
 			@Override
 			public Collection<UniteAdministrativeImmatriculee> answer(InvocationOnMock invocation) throws Throwable {
@@ -334,7 +360,7 @@ public class CachingStructureServiceTest {
 
 		final Map<String, UniteAdministrativeImmatriculee> etabs = this.service.retrieveEtablissementsByCodes(uais);
 
-		Assert.assertNotNull("Should return an empty collection !", etabs);
+		Assertions.assertNotNull(etabs, "Should return an empty collection !");
 		log.debug("End of testRetrieveSeveralExistingEmptyEtabs");
 	}
 
@@ -346,7 +372,7 @@ public class CachingStructureServiceTest {
 		sirens.add(CachingStructureServiceTest.SIREN_5);
 
 		// Init DAO mock
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
 
 			@Override
 			public Collection<? extends Structure> answer(InvocationOnMock invocation) throws Throwable {
@@ -356,7 +382,7 @@ public class CachingStructureServiceTest {
 
 		final Map<String, Structure> structs = this.service.retrieveStructuresByIds(sirens);
 
-		Assert.assertNotNull("Should return an empty collection !", structs);
+		Assertions.assertNotNull(structs, "Should return an empty collection !");
 		log.debug("End of testRetrieveSeveralExistingEmptyStructs");
 	}
 
@@ -369,7 +395,7 @@ public class CachingStructureServiceTest {
 		final Map<String, UniteAdministrativeImmatriculee> etabs = this.service.retrieveEtablissementsByCodes(uais);
 
 		// Init DAO mock
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<UniteAdministrativeImmatriculee>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<UniteAdministrativeImmatriculee>>() {
 
 			@Override
 			public Collection<UniteAdministrativeImmatriculee> answer(InvocationOnMock invocation) throws Throwable {
@@ -377,8 +403,8 @@ public class CachingStructureServiceTest {
 			}
 		});
 
-		Assert.assertNotNull("Should return an empty collection !", etabs);
-		Assert.assertEquals("Should return an empty collection !", 0, etabs.size());
+		Assertions.assertNotNull(etabs, "Should return an empty collection !");
+		Assertions.assertEquals(0, etabs.size(), "Should return an empty collection !");
 		log.debug("End of testRetrieveNotExistingEmptyEtab");
 	}
 
@@ -391,7 +417,7 @@ public class CachingStructureServiceTest {
 		final Map<String, Structure> structs = this.service.retrieveStructuresByIds(sirens);
 
 		// Init DAO mock
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
 
 			@Override
 			public Collection<? extends Structure> answer(InvocationOnMock invocation) throws Throwable {
@@ -399,16 +425,16 @@ public class CachingStructureServiceTest {
 			}
 		});
 
-		Assert.assertNotNull("Should return an empty collection !", structs);
-		Assert.assertEquals("Should return an empty collection !", 0, structs.size());
+		Assertions.assertNotNull(structs, "Should return an empty collection !");
+		Assertions.assertEquals(0, structs.size(), "Should return an empty collection !");
 		log.debug("End of testRetrieveNotExistingEmptyStruct");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testRetrieveEmptyEtablissementsByUaisWithNullParam() throws Exception {
 		log.debug("Running testRetrieveEmptyEtablissementsByUaisWithNullParam");
 		// Init DAO mock
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<UniteAdministrativeImmatriculee>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<UniteAdministrativeImmatriculee>>() {
 
 			@Override
 			public Collection<UniteAdministrativeImmatriculee> answer(InvocationOnMock invocation) throws Throwable {
@@ -416,15 +442,15 @@ public class CachingStructureServiceTest {
 			}
 		});
 
-		this.service.retrieveEtablissementsByCodes(null);
+		Assertions.assertThrows(IllegalArgumentException.class, () -> this.service.retrieveEtablissementsByCodes(null));
 		log.debug("End of testRetrieveEmptyEtablissementsByUaisWithNullParam");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testRetrieveEmptyStructuresBySirensWithNullParam() throws Exception {
 		log.debug("Running testRetrieveEmptyStructuresBySirensWithNullParam");
 		// Init DAO mock
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
 
 			@Override
 			public Collection<? extends Structure> answer(InvocationOnMock invocation) throws Throwable {
@@ -432,15 +458,15 @@ public class CachingStructureServiceTest {
 			}
 		});
 
-		this.service.retrieveStructuresByIds(null);
+		Assertions.assertThrows(IllegalArgumentException.class, () -> this.service.retrieveStructuresByIds(null));
 		log.debug("End of testRetrieveEmptyStructuresBySirensWithNullParam");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testRetrieveEmptyEtablissementsByUaisWithEmptyParam() throws Exception {
 		log.debug("Running testRetrieveEmptyEtablissementsByUaisWithEmptyParam");
 		// Init DAO mock
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<UniteAdministrativeImmatriculee>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<UniteAdministrativeImmatriculee>>() {
 
 			@Override
 			public Collection<UniteAdministrativeImmatriculee> answer(InvocationOnMock invocation) throws Throwable {
@@ -449,15 +475,15 @@ public class CachingStructureServiceTest {
 		});
 
 		final List<String> s = Collections.emptyList();
-		this.service.retrieveEtablissementsByCodes(s);
+		Assertions.assertThrows(IllegalArgumentException.class, () -> this.service.retrieveEtablissementsByCodes(s));
 		log.debug("End of testRetrieveEmptyEtablissementsByUaisWithEmptyParam");
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testRetrieveEmptyStructuresBySirensWithEmptyParam() throws Exception {
 		log.debug("Running testRetrieveEmptyStructuresBySirensWithEmptyParam");
 		// Init DAO mock
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
 
 			@Override
 			public Collection<? extends Structure> answer(InvocationOnMock invocation) throws Throwable {
@@ -466,7 +492,7 @@ public class CachingStructureServiceTest {
 		});
 
 		final List<String> s = Collections.emptyList();
-		this.service.retrieveStructuresByIds(s);
+		Assertions.assertThrows(IllegalArgumentException.class, () -> this.service.retrieveStructuresByIds(s));
 		log.debug("End of testRetrieveEmptyStructuresBySirensWithEmptyParam");
 	}
 
@@ -476,7 +502,7 @@ public class CachingStructureServiceTest {
 		this.service.setCachingDuration(100);
 
 		// define a random on etabs retrived to test when the ldap dao returned errors
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
 
 			@Override
 			public Collection<? extends Structure> answer(InvocationOnMock invocation) throws Throwable {
@@ -500,21 +526,19 @@ public class CachingStructureServiceTest {
 				final Map<String, UniteAdministrativeImmatriculee> etabs = CachingStructureServiceTest.this.service
 						.retrieveEtablissementsByCodes(uais);
 
-				Assert.assertNotNull("Should return an empty collection !", etabs);
+				Assertions.assertNotNull(etabs, "Should return an empty collection !");
 				//Manage the case of the randomMockedFindAllEtablissements returned 0 etabs
 				if (etabs.size() != 0) {
-					Assert.assertEquals("Should return only one etab !", 2, etabs.size());
-					Assert.assertTrue("Bad etab in returned list !",
-							etabs.containsValue(CachingStructureServiceTest.ETAB_1));
-					Assert.assertTrue("Bad etab in returned list !",
-							etabs.containsValue(CachingStructureServiceTest.ETAB_3));
+					Assertions.assertEquals(2, etabs.size(), "Should return 2 etabs !");
+					Assertions.assertTrue(etabs.containsValue(CachingStructureServiceTest.ETAB_1), "Bad etab in returned list !");
+					Assertions.assertTrue(etabs.containsValue(CachingStructureServiceTest.ETAB_3), "Bad etab in returned list !");
 				}
 
 				return null;
 			}
 		};
 
-		Assert.assertTrue("LoadRunner run failed !", runner.getFinishedTestWithoutErrorCount() == nbIterations);
+		Assertions.assertEquals(runner.getFinishedTestWithoutErrorCount(), nbIterations, "LoadRunner run failed !");
 
 		long endTime = System.currentTimeMillis();
 
@@ -528,7 +552,7 @@ public class CachingStructureServiceTest {
 		this.service.setCachingDuration(100);
 
 		// define a random on etabs retrived to test when the ldap dao returned errors
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
 
 			@Override
 			public Collection<? extends Structure> answer(InvocationOnMock invocation) throws Throwable {
@@ -561,21 +585,20 @@ public class CachingStructureServiceTest {
 				final Map<String, Structure> structs = CachingStructureServiceTest.this.service
 						.retrieveStructuresByIds(sirens);
 
-				Assert.assertNotNull("Should return an empty collection !", structs);
+				Assertions.assertNotNull(structs, "Should return an empty collection !");
 				//Manage the case of the randomMockedFindAllEtablissements returned 0 etabs
 				if (structs.size() != 0) {
-					Assert.assertEquals("Should return only one struct !", 2, structs.size());
-					Assert.assertTrue("Bad struct in returned list !",
-							structs.containsValue(CachingStructureServiceTest.ETAB_1));
-					Assert.assertTrue("Bad struct in returned list !",
-							structs.containsValue(CachingStructureServiceTest.STRUCT_5));
+					Assertions.assertEquals(2, structs.size(), "Should return 2 etabs !");
+					Assertions.assertTrue(structs.containsValue(CachingStructureServiceTest.ETAB_1), "Bad etab in returned list !");
+					Assertions.assertTrue(structs.containsValue(CachingStructureServiceTest.STRUCT_5), "Bad etab in returned list !");
 				}
+
 
 				return null;
 			}
 		};
 
-		Assert.assertTrue("LoadRunner run failed !", runner.getFinishedTestWithoutErrorCount() == nbIterations);
+		Assertions.assertEquals(runner.getFinishedTestWithoutErrorCount(), nbIterations, "LoadRunner run failed !");
 
 		long endTime = System.currentTimeMillis();
 
@@ -590,7 +613,7 @@ public class CachingStructureServiceTest {
 		this.service.setCachingDuration(700);
 		this.service.setRefreshExpiredDuration(400);
 
-		Mockito.when(mockedDao.findOneStructureById(Mockito.anyString())).then(new Answer<Structure>() {
+		Mockito.when(mockedStructureDao.findOneStructureById(Mockito.anyString())).then(new Answer<Structure>() {
 			@Override
 			public Structure answer(InvocationOnMock invocation) throws Throwable {
 				return CachingStructureServiceTest.MODIFIED_STRUCT_5;
@@ -601,10 +624,10 @@ public class CachingStructureServiceTest {
 
 		// for the first call structures are retrieved from allStruct
 		Structure struct = CachingStructureServiceTest.this.service.retrieveStructureById(CachingStructureServiceTest.SIREN_5);
-		Assert.assertNotNull("Structure retrieved should not be null", struct);
-		Assert.assertEquals("Bad struct in returned list !", CachingStructureServiceTest.STRUCT_5, struct);
+		Assertions.assertNotNull(struct, "Structure retrieved should not be null");
+		Assertions.assertEquals(CachingStructureServiceTest.STRUCT_5, struct, "Bad struct in returned list !");
 
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
 			@Override
 			public Collection<? extends Structure> answer(InvocationOnMock invocation) throws Throwable {
 				return CachingStructureServiceTest.allStructsWithModifiedFromDao;
@@ -617,15 +640,15 @@ public class CachingStructureServiceTest {
 
 		// on check si on n'est pas en dehors de la durée de refresh et qu'on récupère toujours l'ancien non mis à jour
 		if (!((invalidated + this.service.getRefreshExpiredDuration()) > System.currentTimeMillis())) {
-			Assert.assertEquals("Bad struct in returned list !", CachingStructureServiceTest.STRUCT_5, struct);
+			Assertions.assertEquals(CachingStructureServiceTest.STRUCT_5, struct, "Bad struct in returned list !");
 		}
 		while (!((invalidated + this.service.getRefreshExpiredDuration()) < System.currentTimeMillis())) {
 			// wait
 		}
 		// should be refreshed for one struct and not globally
 		struct = CachingStructureServiceTest.this.service.retrieveStructureById(CachingStructureServiceTest.SIREN_5);
-		Assert.assertNotNull("Structure modified retrieved should not be null", struct);
-		Assert.assertEquals("Bad struct in returned list !", CachingStructureServiceTest.MODIFIED_STRUCT_5, struct);
+		Assertions.assertNotNull(struct, "Structure modified retrieved should not be null");
+		Assertions.assertEquals(CachingStructureServiceTest.MODIFIED_STRUCT_5, struct, "Bad struct in returned list !");
 
 		long endTime = System.currentTimeMillis();
 
@@ -640,7 +663,7 @@ public class CachingStructureServiceTest {
 		this.service.setCachingDuration(500);
 		this.service.setRefreshExpiredDuration(200);
 
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
 			@Override
 			public Collection<? extends Structure> answer(InvocationOnMock invocation) throws Throwable {
 				return CachingStructureServiceTest.allStructsFromDao;
@@ -652,10 +675,10 @@ public class CachingStructureServiceTest {
 		Structure struct = CachingStructureServiceTest.this.service.retrieveStructureById(CachingStructureServiceTest.SIREN_5);
 		long loaded = System.currentTimeMillis();
 
-		Assert.assertNotNull("Structure retrieved should not be null", struct);
-		Assert.assertEquals("Bad struct in returned list !", CachingStructureServiceTest.STRUCT_5, struct);
+		Assertions.assertNotNull(struct, "Structure retrieved should not be null");
+		Assertions.assertEquals(CachingStructureServiceTest.STRUCT_5, struct, "Bad struct in returned list !");
 
-		Mockito.when(mockedDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
+		Mockito.when(mockedStructureDao.findAllStructures()).then(new Answer<Collection<? extends Structure>>() {
 			@Override
 			public Collection<? extends Structure> answer(InvocationOnMock invocation) throws Throwable {
 				return CachingStructureServiceTest.allStructsWithModifiedFromDao;
@@ -669,10 +692,10 @@ public class CachingStructureServiceTest {
 		}
 
 		struct = CachingStructureServiceTest.this.service.retrieveStructureById(CachingStructureServiceTest.SIREN_5);
-		Assert.assertNotNull("Structure modified retrieved should not be null", struct);
-		Assert.assertEquals("Bad struct modified  in returned list !", CachingStructureServiceTest.MODIFIED_STRUCT_5, struct);
+		Assertions.assertNotNull(struct, "Structure modified retrieved should not be null");
+		Assertions.assertEquals(CachingStructureServiceTest.MODIFIED_STRUCT_5, struct, "Bad struct modified  in returned list !");
 
-		Assert.assertTrue("The Invalidated List should be empty !", CachingStructureServiceTest.this.service.getExpiredIds().isEmpty());
+		Assertions.assertTrue(CachingStructureServiceTest.this.service.getExpiredIds().isEmpty(), "The Invalidated List should be empty !");
 
 		long endTime = System.currentTimeMillis();
 

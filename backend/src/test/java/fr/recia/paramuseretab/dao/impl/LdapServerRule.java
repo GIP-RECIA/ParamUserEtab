@@ -17,14 +17,17 @@ package fr.recia.paramuseretab.dao.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.rules.ExternalResource;
 
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.schema.Schema;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-public class LdapServerRule extends ExternalResource {
+public class LdapServerRule implements BeforeAllCallback, AfterAllCallback {
 	private static final Log LOG = LogFactory.getLog(LdapServerRule.class);
 
 	public static final String DefaultDn = "cn=Directory Manager";
@@ -50,12 +53,12 @@ public class LdapServerRule extends ExternalResource {
 	}
 
 	@Override
-	protected void before() {
+	public void beforeAll(final ExtensionContext context) throws Exception {
 		start();
 	}
 
 	@Override
-	protected void after() {
+	public void afterAll(final ExtensionContext context) {
 		stop();
 	}
 
@@ -63,30 +66,25 @@ public class LdapServerRule extends ExternalResource {
 		return getServer().getListenPort();
 	}
 
-	private void start() {
+	private void start() throws Exception {
 		InMemoryDirectoryServerConfig config;
 
-		try {
-			LOG.info("LDAP server " + toString() + " starting...");
-			config = new InMemoryDirectoryServerConfig(getBaseDn());
-			config.addAdditionalBindCredentials(getDn(), getPassword());
-			if (!validateSchema) {
-				config.setSchema(null);
-			} else if (schemaFilePath != null) {
-				config.setSchema(Schema.mergeSchemas(Schema.getDefaultStandardSchema(),
-						Schema.getSchema(schemaFilePath)));
-			} else {
-				config.setSchema(Schema.getDefaultStandardSchema());
-			}
-			config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("LDAP", getListenPort()));
-			setServer(new InMemoryDirectoryServer(config));
-			getServer().importFromLDIF(true, getLDiffPath());
-			getServer().startListening();
-			LOG.info("LDAP server " + toString() + " started. Listen on port " + getServer().getListenPort());
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		LOG.info("LDAP server " + toString() + " starting...");
+		config = new InMemoryDirectoryServerConfig(getBaseDn());
+		config.addAdditionalBindCredentials(getDn(), getPassword());
+		if (!validateSchema) {
+			config.setSchema(null);
+		} else if (schemaFilePath != null) {
+			config.setSchema(Schema.mergeSchemas(Schema.getDefaultStandardSchema(),
+					Schema.getSchema(schemaFilePath)));
+		} else {
+			config.setSchema(Schema.getDefaultStandardSchema());
 		}
-
+		config.setListenerConfigs(InMemoryListenerConfig.createLDAPConfig("LDAP", getListenPort()));
+		setServer(new InMemoryDirectoryServer(config));
+		getServer().importFromLDIF(true, getLDiffPath());
+		getServer().startListening();
+		LOG.info("LDAP server " + toString() + " started. Listen on port " + getServer().getListenPort());
 	}
 
 	private void stop() {

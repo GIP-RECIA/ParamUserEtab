@@ -25,16 +25,22 @@ import lombok.extern.slf4j.Slf4j;
 import fr.recia.paramuseretab.dao.IStructureDao;
 import fr.recia.paramuseretab.ParametabProjectApplication;
 import fr.recia.paramuseretab.model.Structure;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.event.annotation.BeforeTestExecution;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
  * FIXME: Unable to load the Apache Directory for the test !
@@ -43,9 +49,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @Slf4j
-@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(locations = "classpath:ldapStructureDaoContext.xml")
 @SpringBootTest(classes = ParametabProjectApplication.class, properties = "spring.config.name=application-test")
+@AutoConfigurationPackage(basePackages = "fr.recia.paramuseretab.dao.impl")
 public class LdapStructureDaoTest {
 
 	private static int port = 42539;
@@ -53,9 +58,6 @@ public class LdapStructureDaoTest {
 	private static String defaultPartitionName = "root";
 	private static String principal = "uid=admin,ou=system";
 	private static String credentials = "secret";
-
-	/*@Autowired
-	private LdapContextSource contextSource;*/
 
 	@Autowired
 	private LdapTemplate ldapTemplate;
@@ -70,8 +72,8 @@ public class LdapStructureDaoTest {
 	@Value(value = "classpath:init.ldif")
 	private Resource initLdif;*/
 
-	@Rule
-	public final LdapServerRule LDAP_RULE = new LdapServerRule(defaultPartitionSuffix, ClassLoader.getSystemResource(
+	@RegisterExtension
+	public final static LdapServerRule server = new LdapServerRule(defaultPartitionSuffix, ClassLoader.getSystemResource(
 			"init.ldif").getPath(), LdapStructureDaoTest.port, true, ClassLoader.getSystemResource(
 			"esco-structure-schema.ldif").getPath());
 
@@ -89,9 +91,9 @@ public class LdapStructureDaoTest {
 	public void testFindAllStructures() throws Exception {
 		final Collection<? extends Structure> structs = this.dao.findAllStructures();
 
-		Assert.assertNotNull("Structs list shoud be empty not null !", structs);
+		Assertions.assertNotNull(structs, "Structs list shoud be empty not null !");
 
-		Assert.assertTrue("Structs list shoud not be empty !", structs.size() > 0);
+		Assertions.assertTrue(structs.size() > 0, "Structs list shoud not be empty !");
 
 		for (Structure struct : structs) {
 			log.debug("returned struct : {}", struct);
@@ -102,14 +104,14 @@ public class LdapStructureDaoTest {
 	public void testFindOneStructures() throws Exception {
 		final Collection<? extends Structure> structs = this.dao.findAllStructures();
 
-		Assert.assertNotNull("Structs list shoud be empty not null !", structs);
+		Assertions.assertNotNull(structs, "Structs list shoud be empty not null !");
 
-		Assert.assertTrue("Structs list shoud not be empty !", structs.size() > 0);
+		Assertions.assertTrue(structs.size() > 0, "Structs list shoud not be empty !");
 
 		final Structure structComparison = structs.iterator().next();
 
 		final Structure structToCompare = this.dao.findOneStructureById(structComparison.getId());
 
-		Assert.assertTrue("Struct comparison should be equal", structToCompare.equals(structComparison));
+		Assertions.assertTrue(structToCompare.equals(structComparison), "Struct comparison should be equal");
 	}
 }

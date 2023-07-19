@@ -25,7 +25,7 @@
   </appender>
 
   <logger name="fr.recia" level="DEBUG"/>
-  <logger name="fr.recia.paramuseretab.service.impl.CachingStructureService" level="INFO"/>
+  <logger name="fr.recia.paramuseretab.service.impl.CachingStructureService" level="DEBUG"/>
 
   <root level="INFO">
     <appender-ref ref="STDOUT" />
