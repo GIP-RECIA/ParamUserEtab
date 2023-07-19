@@ -12,7 +12,7 @@ userformatter :
     user-groups-regex : "[^:]+:admin:local:admin_(?:([^_]+)_)?([^:]+)$"
 
 
-## User Info cofiguration ## 
+## User Info configuration ##
 # server.error.whitelabel.enabled:false
 userinfo :
     current-etab-code-info-key : ESCOUAICourant
@@ -75,5 +75,3 @@ logostorage :
     prefix-image-path: ./upload/logos
     prefix-image-name: logoportail
     format-image: jpg
-
-

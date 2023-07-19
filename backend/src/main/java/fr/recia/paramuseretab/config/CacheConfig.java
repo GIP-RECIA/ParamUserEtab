@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.paramuseretab.web;
+package fr.recia.paramuseretab.config;
 
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;

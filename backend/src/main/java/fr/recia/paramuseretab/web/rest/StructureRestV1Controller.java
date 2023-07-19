@@ -26,10 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
 import fr.recia.paramuseretab.service.IUniteAdministrativeImmatriculeService;
@@ -39,7 +36,7 @@ import fr.recia.paramuseretab.service.IUniteAdministrativeImmatriculeService;
  */
 
 @RestController
-//@RequestMapping(value = "/rest/v1/structures")
+@RequestMapping(value = "/rest/v1/structures")
 public class StructureRestV1Controller {
 
 	//@Autowired
@@ -76,16 +73,4 @@ public class StructureRestV1Controller {
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
-
-	@GetMapping("/abc")
-	public String index() {
-		return "abc";
-	}
-
-
-	@GetMapping("/connect") 
-	public String connect() {
-		return "connected to ldap";
-	}
-
 }
