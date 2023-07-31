@@ -18,6 +18,7 @@
  */
 package fr.recia.paramuseretab.dao.impl;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -101,9 +102,11 @@ public class LdapUserDao implements IUserDao, InitializingBean {
 		} else {
 			mods = new ModificationItem[1];
 		}
-		final Name dn = LdapNameBuilder.newInstance(this.userDn.replace(this.userIdTemplate, userId)).build();
+		//final Name dn = LdapNameBuilder.newInstance(this.userDn.replace(this.userIdTemplate, userId)).build();
 		mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, replaceCurrentStructAttr);
-		this.ldapTemplate.modifyAttributes(dn, mods);
+		//this.ldapTemplate.modifyAttributes(dn, mods);
+		System.out.println("mods changeEtab : " + Arrays.toString(mods));
+	
 	}
 
 	@Override

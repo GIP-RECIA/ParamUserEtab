@@ -117,5 +117,24 @@ public class BasicUserInfoService implements IUserInfoService , InitializingBean
 		return etablissementsFiltered;
 	}
 
+
+	@Override
+	public String getUserID() {
+
+		String id = null;
+
+		List<Person> infoPerson = this.getAllEtablissement();
+		if (!infoPerson.isEmpty()) {
+			for (Person person : infoPerson) {
+				id = person.getUid();
+			}
+		}
+
+		System.out.println("userID : " + id);
+
+		return id; 
+
+	}
+
 	
 }

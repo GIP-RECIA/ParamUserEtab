@@ -30,4 +30,6 @@ public interface IUserInfoService {
 
 	List<Person> getAllEtablissement();
 
+	String getUserID();
+
 }
