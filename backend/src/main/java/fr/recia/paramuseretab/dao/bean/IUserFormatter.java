@@ -21,5 +21,5 @@ import fr.recia.paramuseretab.model.Person;
 
 public interface IUserFormatter {
     
-    List<Person> formatPerson(List<Person> person);
+    Person formatPerson(Person person);
 }

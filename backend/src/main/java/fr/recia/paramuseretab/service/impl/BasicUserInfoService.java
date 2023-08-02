@@ -106,14 +106,14 @@ public class BasicUserInfoService implements IUserInfoService , InitializingBean
 
 
 	@Override
-	public List<Person> getAllEtablissement() {
-		List<Person> allInfo = this.userDao.getAllUsersInfo();
-		List<Person> etablissementsFiltered = new ArrayList<>();
-		if (!allInfo.isEmpty()) {
-			List<Person> formattedPersons = this.groupFormatters.formatPerson(allInfo);
-			etablissementsFiltered.addAll(formattedPersons);
+	public Person getAllEtablissement() {
+		Person allInfo = this.userDao.getAllUsersInfo();
+		Person etablissementsFiltered = null;
+		// if (!allInfo.isEmpty()) {
+			Person formattedPersons = this.groupFormatters.formatPerson(allInfo);
+			etablissementsFiltered = formattedPersons;
 			System.out.println("ok");
-		}
+		// }
 		return etablissementsFiltered;
 	}
 
@@ -123,12 +123,13 @@ public class BasicUserInfoService implements IUserInfoService , InitializingBean
 
 		String id = null;
 
-		List<Person> infoPerson = this.getAllEtablissement();
-		if (!infoPerson.isEmpty()) {
-			for (Person person : infoPerson) {
-				id = person.getUid();
-			}
-		}
+		Person infoPerson = this.getAllEtablissement();
+		// if (!infoPerson.) {
+		// 	for (Person person : infoPerson) {
+		// 		id = person.getUid();
+		// 	}
+		// }
+		id = infoPerson.getUid();
 
 		System.out.println("userID : " + id);
 

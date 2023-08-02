@@ -60,11 +60,12 @@ public class LdapUserGroupFormatter implements IUserFormatter, InitializingBean 
 	}
 
     @Override
-    public List<Person> formatPerson(List<Person> inputs) {
-        List<Person> formattedPersons = new ArrayList<>();
+    public Person formatPerson(Person inputs) {
+        //List<Person> formattedPersons = new ArrayList<>();
+        Person formattedPersons = null;
     
-        for (Person input : inputs) {
-            List<Map<String, String>> groupes = input.getIsMemberOf();
+        //for (Person input : inputs) {
+            List<Map<String, String>> groupes = inputs.getIsMemberOf();
             List<Map<String, String>> listGroups = new ArrayList<>();
     
             for (Map<String, String> groupe : groupes) {
@@ -94,9 +95,9 @@ public class LdapUserGroupFormatter implements IUserFormatter, InitializingBean 
                 }
             }
     
-            Person formattedPerson = new Person(input.getUid(), input.getCurrentStruct(), listGroups);
-            formattedPersons.add(formattedPerson);
-        }
+             formattedPersons = new Person(inputs.getUid(), inputs.getCurrentStruct(), listGroups);
+            //formattedPersons.add(formattedPerson);
+        //}
     
         return formattedPersons;
     }
