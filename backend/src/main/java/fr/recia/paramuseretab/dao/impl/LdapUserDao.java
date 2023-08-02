@@ -121,8 +121,7 @@ public class LdapUserDao implements IUserDao, InitializingBean {
 	}
 
 	@Override
-	public List<Person> getAllUsersInfo() {
-		// edited, adding try catch 
+	public Person getAllUsersInfo() {
 		List<Person> allInfos;
 		try {
 			allInfos = this.ldapTemplate.search(this.userDn, this.personFiltre, new PersonAttributesMapper(uid, currentStructIdLdapKey, groupAttributes));
@@ -130,8 +129,7 @@ public class LdapUserDao implements IUserDao, InitializingBean {
 			LOG.error("error :", e);
 			allInfos = null;
 		}
-		return allInfos;
-		
+		return allInfos.isEmpty()? null : allInfos.get(0);
 	}
 
 

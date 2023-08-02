@@ -31,6 +31,6 @@ public interface IUserDao {
 
 	void saveCurrentStructure(String userId, Structure struct);
 
-	List<Person> getAllUsersInfo();
+	Person getAllUsersInfo();
 
 }

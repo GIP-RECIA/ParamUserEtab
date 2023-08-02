@@ -118,7 +118,7 @@ public class ParametabController {
 	 */
 
 	@GetMapping("/")
-	public ResponseEntity<List<Person>> getEtabs() {
+	public ResponseEntity<Person> getEtabs() {
 		return new ResponseEntity<>(userInfoService.getAllEtablissement(),  HttpStatus.OK);
 	}
 
