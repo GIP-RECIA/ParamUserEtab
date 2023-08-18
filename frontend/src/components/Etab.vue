@@ -4,7 +4,7 @@ import DetailEtab from "./DetailEtab.vue";
 import ListEtab from "./ListEtab.vue";
 import axios from "axios";
 
-const parametab = ref<any[]>([]);
+const parametab = ref<any>([]);
 const etabJson = ref<any[]>([]);
 const currentEtab = ref<string>("");
 const windowWidth = ref<number>(window.innerWidth);
@@ -15,9 +15,8 @@ onMounted(async () => {
   const res = await axios.get("/parametab/");
   parametab.value = res.data; // ajouté pour testé API
   // Access the list of "isMemberOf"
-  // ajouté pour testé API
-  etabJson.value = parametab.value[0].isMemberOf;
-  currentEtab.value = parametab.value[0].currentStruct;
+  etabJson.value = parametab.value.isMemberOf;
+  currentEtab.value = parametab.value.currentStruct;
   window.addEventListener("resize", handleResize);
 });
 
