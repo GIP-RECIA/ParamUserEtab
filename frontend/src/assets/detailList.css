@@ -171,6 +171,12 @@
     cursor: pointer;
   }
 
+  .btn-valider:disabled {
+    color: #757575;
+    background-color: #d6d6d6;
+    cursor: not-allowed;
+  }
+
   *:disabled {
     color: black;
 }
