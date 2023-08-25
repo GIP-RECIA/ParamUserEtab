@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { ref, watchEffect, computed } from "vue";
 import ImageCropper from "./ImageCropper.vue";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -23,11 +23,13 @@ watchEffect((): void => {
 });
 
 async function fetchDetailData(id: string) {
-  try {
-    const response = await axios.get(`/parametab/${id}`);
-    details.value = response.data;
-  } catch (error) {
-    console.error("error: ", error);
+  if (id != "") {
+    try {
+      const response = await axios.get(`/parametab/${id}`);
+      details.value = response.data;
+    } catch (error) {
+      console.error("error: ", error);
+    }
   }
 }
 
@@ -48,8 +50,22 @@ async function updateInfo() {
         icon: "success",
       });
     })
-    .catch(function (error) {});
+    .catch(function (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!",
+      });
+    });
 }
+
+const isButtonDisabled = computed(() => {
+  return (
+    (details.value.structCustomDisplayName === null ||
+      details.value.structCustomDisplayName === "") &&
+    (details.value.structSiteWeb === null || details.value.structSiteWeb === "")
+  );
+});
 </script>
 
 <template>
@@ -91,7 +107,9 @@ async function updateInfo() {
         <span>{{ m("lien") }}</span>
       </label>
       <br />
-      <button class="btn-valider" @click="updateInfo">{{ m("valider") }}</button>
+      <button :disabled="isButtonDisabled" class="btn-valider" @click="updateInfo">
+        {{ m("valider") }}
+      </button>
     </div>
   </div>
 </template>

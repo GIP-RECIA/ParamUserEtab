@@ -9,8 +9,8 @@ const { t } = useI18n();
 const m = (key: string): string => t(`image-cropper.${key}`);
 
 const props = defineProps<{
-  imageUrl: string;
-  idEtab: string;
+  imageUrl: string | undefined;
+  idEtab: string | undefined;
   detailEtab: StructureDetail;
 }>();
 
