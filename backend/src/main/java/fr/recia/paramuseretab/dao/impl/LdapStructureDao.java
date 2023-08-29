@@ -39,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.AndFilter;
 import org.springframework.ldap.filter.EqualsFilter;
@@ -93,6 +94,9 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 
 	@Autowired
 	private LdapTemplate ldapTemplate;
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
 	private List<IStructureFormatter> structureFormatters;
@@ -298,6 +302,8 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 		if (checkCustomName || checkSiteWeb || checkLogo) {
 			System.out.println("updateQuery : " + updateQuery);
 			System.out.println("params : " + params.toString());
+			log.debug("updated : ", updateQuery, params.toString());
+			//jdbcTemplate.update(updateQuery, params.toArray());
 		}
 		else {
 			System.out.println("nothing updating : " + updateQuery);
