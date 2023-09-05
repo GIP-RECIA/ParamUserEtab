@@ -167,7 +167,8 @@ const cropImage = () => {
   </Teleport>
 </template>
 
-<style>
+<style scoped>
+@import "cropperjs/dist/cropper.css";
 .btn-selectImg,
 .btn-cropImg,
 .btn-close {
@@ -267,5 +268,101 @@ button.close {
   flex-wrap: wrap;
   max-width: 100%;
   overflow: hidden;
+}
+
+.image {
+  flex: 1 30%;
+  text-align: center;
+}
+
+.image-preview {
+  border: 1px solid black;
+  background-color: #fff;
+  max-width: 120px;
+  max-height: 120px;
+  border-radius: 3px;
+  position: relative;
+}
+
+.avatar-upload {
+  /* position: relative;
+  max-width: 205px;
+  margin: 50px auto; */
+  flex: 1 20%;
+  text-align: center;
+}
+
+.avatar-upload .avatar-edit {
+  position: absolute;
+  z-index: 1;
+  top: calc(50% - 70px);
+  right: calc(50% - 65px - 80px); /* adjust the 60px value as needed */
+}
+
+.avatar-upload .avatar-edit input {
+  display: none;
+}
+
+.avatar-upload .avatar-edit input + label {
+  display: inline-block;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 0;
+  border-radius: 100%;
+  background: #ffffff;
+  border: 1px solid transparent;
+  box-shadow: 0px 2px 4px 3px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  font-weight: normal;
+  transition: all 0.2s ease-in-out;
+}
+
+.avatar-upload .avatar-edit input + label:hover {
+  background: #f1f1f1;
+  border-color: #d6d6d6;
+}
+
+.avatar-upload .avatar-edit input + label:after {
+  content: "\f040";
+  font-family: "FontAwesome";
+  color: #757575;
+  position: absolute;
+  top: 6px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  margin: auto;
+}
+
+.avatar-upload .imagePreview {
+  /* width: auto;
+  height: auto; */
+  position: relative;
+  border: 3px solid #eef0f8;
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);
+  border-radius: 3px;
+}
+
+.avatar-upload .avatar-preview > div {
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.clipper {
+  height: 100%;
+  width: 100%;
+  max-height: 300px;
+  max-width: 400px;
+}
+
+.cropper {
+  margin-top: 50px;
+  height: 600px;
+  width: 600px;
+  background: #ddd;
 }
 </style>
