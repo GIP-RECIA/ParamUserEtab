@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import "./assets/list.css";
-import "./assets/detailList.css";
-import "cropperjs/dist/cropper.css";
+import './assets/detailList.css';
+import './assets/list.css';
+import 'cropperjs/dist/cropper.css';
 </script>
 
 <template>

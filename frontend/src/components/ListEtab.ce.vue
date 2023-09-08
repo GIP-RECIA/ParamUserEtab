@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref,watchEffect, computed, type Ref } from "vue";
-import { useI18n } from "vue-i18n";
+import { type Ref, computed, ref, watchEffect } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const m = (key: string): string => t(`list-etab.${key}`);
@@ -13,25 +13,22 @@ const props = defineProps<{
   dataCurrent: string;
 }>();
 
-const emit = defineEmits(["selectEtab"]);
-let input: Ref<string> = ref("");
+const emit = defineEmits<(e: 'selectEtab', payload: any, isSelected: boolean) => void>();
+let input: Ref<string> = ref('');
 
 function filteredList(): any[] {
   if (!props.dataJson) {
-    console.log("props datajson null");
+    console.log('props datajson null');
     return [];
   }
-  const jsonData = JSON.parse(props.dataJson)
-  const filteredData = jsonData.filter((etab: any) =>
-    etab.etabName.toLowerCase().includes(input.value.toLowerCase())
-  );
+  const jsonData = JSON.parse(props.dataJson);
+  const filteredData = jsonData.filter((etab: any) => etab.etabName.toLowerCase().includes(input.value.toLowerCase()));
 
   return filteredData.sort((a: any, b: any) => a.etabName.localeCompare(b.etabName));
 }
 
-function selected(e : any) {
-  console.log("selected test", e)
-  emit("selectEtab", e, false);
+function selected(id: string) {
+  emit('selectEtab', id, false);
 }
 
 const filteredData = computed(() => filteredList());
@@ -39,12 +36,7 @@ const filteredData = computed(() => filteredList());
 
 <template>
   <div class="search-bar">
-    <input
-      v-model="input"
-      :class="classInput"
-      type="text"
-      :placeholder="m('recherche')"
-    />
+    <input v-model="input" :class="classInput" type="text" :placeholder="m('recherche')" />
   </div>
   <div :class="classDiv">
     <ul class="content">
@@ -52,8 +44,8 @@ const filteredData = computed(() => filteredList());
         v-for="etab in filteredData"
         :id="etab.idSiren"
         :key="etab"
-        :class="classLi"
-        @click="selected(etab.idSiren)"
+        :class="[classLi, etab.idSiren == dataCurrent ? 'active' : '']"
+        @click="selected(etab)"
       >
         {{ etab.etabName }}
       </li>
@@ -61,7 +53,7 @@ const filteredData = computed(() => filteredList());
   </div>
 
   <div v-if="input && filteredData.length === 0" class="item error">
-    <p>{{ m("aucun-res") }}</p>
+    <p>{{ m('aucun-res') }}</p>
   </div>
 </template>
 
@@ -107,7 +99,7 @@ const filteredData = computed(() => filteredList());
 
 -->
 <style scoped>
-@import "../assets/base.css";
+@import '../assets/base.css';
 
 .container {
   display: flex;
@@ -144,12 +136,14 @@ const filteredData = computed(() => filteredList());
   width: 350px;
   margin: 20px auto;
   padding: 10px 45px;
-  background: white url("search-icon.svg") no-repeat 15px center;
+  background: white url('search-icon.svg') no-repeat 15px center;
   background-size: 15px 15px;
   font-size: 16px;
   border: none;
   border-radius: 5px;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  box-shadow:
+    rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 }
 
 .item {
@@ -157,7 +151,9 @@ const filteredData = computed(() => filteredList());
   padding: 10px 20px;
   color: black;
   border-radius: 5px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+  box-shadow:
+    rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+    rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
 }
 
 .etab {
@@ -214,7 +210,7 @@ ul .etab:hover {
   overflow-y: scroll;
 }
 .dropdown-wrapper .selected-etab {
-  background: white url("chevron-down.svg") no-repeat right;
+  background: white url('chevron-down.svg') no-repeat right;
   background-position-x: right 15px;
   background-size: 15px 15px;
   border: 2px solid lightgray;
@@ -245,7 +241,7 @@ ul .etab:hover {
   border: 2px solid lightgray;
   font-size: 16px;
   padding: 10px 45px;
-  background: white url("search-icon.svg") no-repeat 15px center;
+  background: white url('search-icon.svg') no-repeat 15px center;
   background-size: 15px 15px;
   border-radius: 5px;
 }

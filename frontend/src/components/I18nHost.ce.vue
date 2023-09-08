@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import i18n from "@/i18n";
-import { provide } from "vue";
-import { I18nInjectionKey } from "vue-i18n";
-import "../main.ts";
+import '../main.ts';
+import i18n from '@/i18n';
+import { provide } from 'vue';
+import { I18nInjectionKey } from 'vue-i18n';
+
 // import "../assets/list.css";
 // import "../assets/detailList.css";
 //import "cropperjs/dist/cropper.css";
@@ -16,7 +17,7 @@ provide(I18nInjectionKey, i18n);
   </div>
 </template>
 <style>
-@import "../assets/base.css";
+@import '../assets/base.css';
 
 #components {
   max-width: 1280px;

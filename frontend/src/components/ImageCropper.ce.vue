@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, watchEffect, onMounted, onUnmounted, watch, defineEmits } from "vue";
-import Cropper from "cropperjs";
-import axios from "axios";
-import { useI18n } from "vue-i18n";
 import type { StructureDetail } from "@/types/structureType";
+import axios from "axios";
+import Cropper from "cropperjs";
+import { onMounted, onUnmounted, ref, watch, watchEffect } from "vue";
+import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 const m = (key: string): string => t(`image-cropper.${key}`);
@@ -136,35 +136,36 @@ const cropImage = () => {
   </div>
 
   <!-- Modal -->
-  <Teleport to="body">
-    <div v-if="open" class="modal">
-      <input id="idEtab" type="hidden" name="idEtab" :value="idEtab" />
-      <div>
-        <div class="close">
-          <button type="button" class="close" @click="closeModal">x</button>
+
+  <div v-if="open" class="modal">
+    <input id="idEtab" type="hidden" name="idEtab" :value="idEtab" />
+    <div>
+      <div class="close">
+        <button type="button" class="close" @click="closeModal">x</button>
+      </div>
+      <div class="images">
+        <div v-show="imageSrc" class="cropImg">
+          <img ref="img" :src="imageSrc" alt="" width="280" />
         </div>
-        <div class="images">
-          <div v-show="imageSrc" class="cropImg">
-            <img ref="img" :src="imageSrc" alt="" width="280" />
+        <div class="previewImg">
+          <div id="previewImg">
+            <img :src="imageUrl" alt="" width="270" height="120" />
           </div>
-          <div class="previewImg">
-            <div id="previewImg">
-              <img :src="imageUrl" alt="" width="270" height="120" />
-            </div>
-          </div>
-        </div>
-        <div class="buttons">
-          <button class="btn-selectImg" @click="imageInput.click()">
-            {{ m("selectionner-image") }}
-          </button>
-          <button v-show="imageSrc" class="btn-cropImg" @click="cropImage">
-            {{ m("appliquer") }}
-          </button>
-          <button class="btn-close" @click="closeModal">{{ m("fermer") }}</button>
         </div>
       </div>
+      <div class="buttons">
+        <button class="btn-selectImg" @click="imageInput.click()">
+          {{ m("selectionner-image") }}
+        </button>
+        <button v-show="imageSrc" class="btn-cropImg" @click="cropImage">
+          {{ m("appliquer") }}
+        </button>
+        <button class="btn-close" @click="closeModal">
+          {{ m("fermer") }}
+        </button>
+      </div>
     </div>
-  </Teleport>
+  </div>
 </template>
 
 <style scoped>
