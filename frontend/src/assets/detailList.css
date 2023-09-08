@@ -5,35 +5,36 @@
   margin: 10px;
   max-height: 100%;
   height: max-content;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 1px 2px 0 rgba(0, 0, 0, 0.12),
+    0 1px 2px 0 rgba(0, 0, 0, 0.12);
 }
 
 .title-info {
-    margin: 15px auto;
-    padding: 5px 15px;
-    background-color: #eeeeee;
-    font-weight: bold;
-    font-size: medium;
+  margin: 15px auto;
+  padding: 5px 15px;
+  background-color: #eeeeee;
+  font-weight: bold;
+  font-size: medium;
 }
 
 .warn {
-    font-style: italic;
-    font-size: small;
-    left: 3px;
-    top: 5px;
+  font-style: italic;
+  font-size: small;
+  left: 3px;
+  top: 5px;
 }
 
 .image {
-    flex: 1 30%;
-    text-align: center;
+  flex: 1 30%;
+  text-align: center;
 }
 
 .infos {
-    flex-grow: 1;
-    padding-left: 10px;
-    padding-right: 10px;
+  flex-grow: 1;
+  padding-left: 10px;
+  padding-right: 10px;
 }
-
 
 .image-preview {
   border: 1px solid black;
@@ -69,7 +70,7 @@
   height: 34px;
   margin-bottom: 0;
   border-radius: 100%;
-  background: #FFFFFF;
+  background: #ffffff;
   border: 1px solid transparent;
   box-shadow: 0px 2px 4px 3px rgba(0, 0, 0, 0.18);
   cursor: pointer;
@@ -83,7 +84,7 @@
 }
 
 .avatar-upload .avatar-edit input + label:after {
-  content: "\f040";
+  content: '\f040';
   font-family: 'FontAwesome';
   color: #757575;
   position: absolute;
@@ -112,71 +113,70 @@
   background-position: center;
 }
 
-  
-  .clipper {
-    height: 100%;
-    width: 100%;
-    max-height: 300px;
-    max-width: 400px;
-  }
+.clipper {
+  height: 100%;
+  width: 100%;
+  max-height: 300px;
+  max-width: 400px;
+}
 
-  .cropper {
-    margin-top: 50px;
-    height: 600px;
-    width: 600px;
-    background: #DDD;
-  }
+.cropper {
+  margin-top: 50px;
+  height: 600px;
+  width: 600px;
+  background: #ddd;
+}
 
-  .label {
-    display: flex;
-    flex-direction: column;
-    padding-top: 5px;
-  }
+.label {
+  display: flex;
+  flex-direction: column;
+  padding-top: 5px;
+}
 
-  .label > span {
-    color: cadetblue;
-    display: block;
-    font-size: 0.875rem;
-    margin-top: 0.625rem;
-    order: 1;
-    transition: all 0.25s;
-    font-weight: 500;
-  }
+.label > span {
+  color: cadetblue;
+  display: block;
+  font-size: 0.875rem;
+  margin-top: 0.625rem;
+  order: 1;
+  transition: all 0.25s;
+  font-weight: 500;
+}
 
-  .label input {
-    order: 2;
-    outline: none;
-    top: 0.08rem;
-  }
+.label input {
+  order: 2;
+  outline: none;
+  top: 0.08rem;
+}
 
-  .input-field {
-    border: 0;
-    border-bottom: 2px solid #eee;
-  }
+.input-field {
+  border: 0;
+  border-bottom: 2px solid #eee;
+}
 
-  .input-field:focus {
-    border-bottom: 2px solid cadetblue;
-  }
+.input-field:focus {
+  border-bottom: 2px solid cadetblue;
+}
 
-  .input-field:disabled {
-    cursor: not-allowed;
-  }
+.input-field:disabled {
+  cursor: not-allowed;
+}
 
-  .btn-valider {
-    padding: 5px;
-    width: 30%;
-    border-radius: 10px;
-    background-color: cadetblue;
-    color: white;
-    cursor: pointer;
-  }
+.btn-valider {
+  padding: 5px;
+  width: 30%;
+  border-radius: 10px;
+  background-color: cadetblue;
+  color: white;
+  cursor: pointer;
+}
 
-  .btn-valider:disabled {
-    color: #757575;
-    background-color: #d6d6d6;
-    cursor: not-allowed;
-  }
+.btn-valider:disabled {
+  color: #757575;
+  background-color: #d6d6d6;
+  cursor: not-allowed;
+}
 
-  *:disabled {
-    color: black;
+*:disabled {
+  color: black;
 }

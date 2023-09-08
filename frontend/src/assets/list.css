@@ -1,4 +1,4 @@
-@import "./base.css";
+@import './base.css';
 
 .container {
   display: flex;
@@ -35,12 +35,13 @@
   width: 350px;
   margin: 20px auto;
   padding: 10px 45px;
-  background: white url("search-icon.svg") no-repeat 15px center;
+  background: white url('search-icon.svg') no-repeat 15px center;
   background-size: 15px 15px;
   font-size: 16px;
   border: none;
   border-radius: 5px;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+  box-shadow:
+    rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 }
 
@@ -49,7 +50,8 @@
   padding: 10px 20px;
   color: black;
   border-radius: 5px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+  box-shadow:
+    rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
     rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
 }
 
@@ -80,7 +82,6 @@ ul .etab:hover {
   color: black;
 }
 
-
 .search-bar {
   background-color: white;
   position: sticky;
@@ -108,7 +109,7 @@ ul .etab:hover {
   overflow-y: scroll;
 }
 .dropdown-wrapper .selected-etab {
-  background: white url("chevron-down.svg") no-repeat right;
+  background: white url('chevron-down.svg') no-repeat right;
   background-position-x: right 15px;
   background-size: 15px 15px;
   border: 2px solid lightgray;
@@ -139,7 +140,7 @@ ul .etab:hover {
   border: 2px solid lightgray;
   font-size: 16px;
   padding: 10px 45px;
-  background: white url("search-icon.svg") no-repeat 15px center;
+  background: white url('search-icon.svg') no-repeat 15px center;
   background-size: 15px 15px;
   border-radius: 5px;
 }

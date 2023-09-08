@@ -1,6 +1,6 @@
-import en from "./locales/en.json";
-import fr from "./locales/fr.json";
-import { createI18n } from "vue-i18n";
+import en from './locales/en.json';
+import fr from './locales/fr.json';
+import { createI18n } from 'vue-i18n';
 
 function getBrowserLang(availableLanguages: Array<string>): string {
   // These window.navigator contain language information
@@ -13,11 +13,11 @@ function getBrowserLang(availableLanguages: Array<string>): string {
   // 4. userLanguage    -> Language of Windows Regional Options
   // 5. systemLanguage  -> UI Language of Windows
   const browserLanguagePropertyKeys: Array<string> = [
-    "languages",
-    "language",
-    "browserLanguage",
-    "userLanguage",
-    "systemLanguage",
+    'languages',
+    'language',
+    'browserLanguage',
+    'userLanguage',
+    'systemLanguage',
   ];
 
   const allLangs: Array<string> = browserLanguagePropertyKeys
@@ -32,12 +32,10 @@ function getBrowserLang(availableLanguages: Array<string>): string {
     .filter((v: any, i: any, a: any) => a.indexOf(v) === i);
 
   // Returns first language matched in available languages
-  const detectedLocale: string | undefined = allLangs.find((x) =>
-    availableLanguages.includes(x)
-  );
+  const detectedLocale: string | undefined = allLangs.find((x) => availableLanguages.includes(x));
 
   // If no locale is detected, fallback to 'en'
-  return detectedLocale || "en";
+  return detectedLocale || 'en';
 }
 
 function getPageLang(availableLanguages: Array<string>): string {
@@ -47,11 +45,9 @@ function getPageLang(availableLanguages: Array<string>): string {
     // we add the the shorten two char lang in the list in case the more specific lang isn't provided
     const allLangs = [pageLang, pageLang.substring(0, 2)];
     // Returns first language matched in available languages
-    const detectedLocale: string | undefined = allLangs.find((x) =>
-      availableLanguages.includes(x)
-    );
+    const detectedLocale: string | undefined = allLangs.find((x) => availableLanguages.includes(x));
     // If no available language is detected, fallback to 'en'
-    return detectedLocale || "en";
+    return detectedLocale || 'en';
   }
   // if no lang is retrieved from the document page we try to resolve from the browser
   return getBrowserLang(availableLanguages);
@@ -60,9 +56,9 @@ function getPageLang(availableLanguages: Array<string>): string {
 export default createI18n<false>({
   legacy: false,
   globalInjection: true,
-  locale: getPageLang(["fr-FR", "fr", "en-US", "en"]),
+  locale: getPageLang(['fr-FR', 'fr', 'en-US', 'en']),
   allowComposition: true,
-  fallbackLocale: "en",
+  fallbackLocale: 'en',
   messages: {
     en,
     fr,

@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { ref, watchEffect, computed } from "vue";
+import type { StructureDetail } from "../types/structureType";
 import axios from "axios";
 import Swal from "sweetalert2";
-import type { StructureDetail } from "../types/structureType";
-
+import { computed, ref, watchEffect } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -16,7 +15,6 @@ const props = defineProps<{
 }>();
 
 watchEffect((): void => {
-  console.log("detail id current struct: ", props.detail);
   void (async () => {
     await fetchDetailData(props.detail);
   })();
@@ -27,7 +25,6 @@ async function fetchDetailData(id: string) {
     try {
       const response = await axios.get(`/parametab/${id}`);
       details.value = response.data;
-      console.log("details.value : ", details.value);
     } catch (error) {
       console.error("error: ", error);
     }
@@ -67,7 +64,6 @@ const isButtonDisabled = computed(() => {
     (details.value.structSiteWeb === null || details.value.structSiteWeb === "")
   );
 });
-console.log("item: ", details.value.id);
 </script>
 
 <template>
@@ -82,7 +78,9 @@ console.log("item: ", details.value.id);
       :image-url="details.structLogo"
       :id-etab="details.id"
       @updated="handleUpdated"
-    />
+    >
+      <teleport to="body"></teleport
+    ></image-cropper-ce>
 
     <div class="infos">
       <label class="label">
