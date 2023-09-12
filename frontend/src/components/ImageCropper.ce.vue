@@ -20,6 +20,7 @@ const imageSrc = ref<string | ArrayBuffer | null>();
 const img = ref<any>(null);
 const fileReader = new FileReader();
 const open = ref<boolean>(false);
+const prevImg = ref<any>(null);
 let cropper: any = null;
 
 fileReader.onload = (event: ProgressEvent<FileReader>) => {
@@ -41,6 +42,7 @@ onMounted(() => {
       aspectRatio: 270 / 120,
       viewMode: 2,
       background: false,
+      preview: "#previewImg",
     });
   }
 });
@@ -77,7 +79,7 @@ watch(
           viewMode: 2,
           background: false,
           zoomable: true,
-          preview: "#previewImg",
+          preview: prevImg.value,
         });
       }
     }
@@ -148,7 +150,7 @@ const cropImage = () => {
           <img ref="img" :src="imageSrc" alt="" width="280" />
         </div>
         <div class="previewImg">
-          <div id="previewImg">
+          <div ref="prevImg" id="previewImg">
             <img :src="imageUrl" alt="" width="270" height="120" />
           </div>
         </div>
@@ -168,7 +170,7 @@ const cropImage = () => {
   </div>
 </template>
 
-<style scoped>
+<style>
 @import "cropperjs/dist/cropper.css";
 .btn-selectImg,
 .btn-cropImg,
