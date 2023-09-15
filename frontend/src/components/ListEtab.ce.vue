@@ -18,7 +18,6 @@ let input: Ref<string> = ref('');
 
 function filteredList(): any[] {
   if (!props.dataJson) {
-    console.log('props datajson null');
     return [];
   }
   const jsonData = JSON.parse(props.dataJson);
@@ -136,7 +135,7 @@ const filteredData = computed(() => filteredList());
   width: 350px;
   margin: 20px auto;
   padding: 10px 45px;
-  background: white url('search-icon.svg') no-repeat 15px center;
+  background: white url('../assets/search-icon.svg') no-repeat 15px center;
   background-size: 15px 15px;
   font-size: 16px;
   border: none;
@@ -203,13 +202,7 @@ ul .etab:hover {
   }
 }
 
-.dropdown-wrapper {
-  flex: 1 30%;
-  border-radius: 5px;
-  margin: 10px;
-  overflow-y: scroll;
-}
-.dropdown-wrapper .selected-etab {
+.selected-etab {
   background: white url('chevron-down.svg') no-repeat right;
   background-position-x: right 15px;
   background-size: 15px 15px;
@@ -223,32 +216,21 @@ ul .etab:hover {
   font-weight: 600;
   cursor: pointer;
 }
-.dropdown-wrapper .dropdown-popover {
-  position: relative;
-  border: 2px solid lightgray;
-  left: 0;
-  right: 0;
-  background-color: #fff;
-  max-width: 100%;
-  padding: 10px;
-  border-top: none;
-  border-bottom-right-radius: 5px;
-  border-bottom-left-radius: 5px;
-}
-.dropdown-wrapper .search-etab {
+
+.search-etab {
   width: 100%;
   height: 30px;
   border: 2px solid lightgray;
   font-size: 16px;
   padding: 10px 45px;
-  background: white url('search-icon.svg') no-repeat 15px center;
+  background: white url('../assets/search-icon.svg') no-repeat 15px center;
   background-size: 15px 15px;
   border-radius: 5px;
 }
-.dropdown-wrapper .options {
+.options {
   width: 100%;
 }
-.dropdown-wrapper .options ul {
+.options ul {
   list-style: none;
   text-align: left;
   padding-left: 0px;
@@ -257,13 +239,13 @@ ul .etab:hover {
   overflow-x: hidden;
   top: 10px;
 }
-.dropdown-wrapper .options ul .opt-list {
+.options ul .opt-list {
   width: 100%;
   border-bottom: 1px solid lightgray;
   padding: 10px;
   cursor: pointer;
 }
-.dropdown-wrapper .options ul .opt-list:hover {
+.options ul .opt-list:hover {
   background: #d4d4d4;
   /* color: #fff; */
   font-weight: bold;
