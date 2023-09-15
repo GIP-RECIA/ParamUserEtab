@@ -87,37 +87,39 @@ function select(payload: CustomEvent) {
 </script>
 
 <template>
-  <div v-if="!isMobile" class="list">
-    <list-etab-ce
-      class-input="input-search"
-      class-li="item etab"
-      class-div="list-etab"
-      v-bind:data-json="etabJson"
-      :data-current="currentEtab"
-      @selectEtab="select"
-    ></list-etab-ce>
-  </div>
-  <div v-else class="dropdown-wrapper">
-    <div class="selected-etab" @click="isVisible = !isVisible">
-      <span>{{ nameEtabSelected }}</span>
-    </div>
-    <div v-if="isVisible" class="dropdown-popover">
+  <div v-bind="$attrs">
+    <div v-if="!isMobile" class="list">
       <list-etab-ce
-        class-input="search-etab"
-        class-li="opt-list"
-        class-div="options"
+        class-input="input-search"
+        class-li="item etab"
+        class-div="list-etab"
         v-bind:data-json="etabJson"
+        :data-current="currentEtab"
         @selectEtab="select"
       ></list-etab-ce>
     </div>
-  </div>
-  <div class="detail">
-    <detail-etab-ce :detail="currentEtab"></detail-etab-ce>
+    <div v-else class="dropdown-wrapper">
+      <div class="selected-etab" @click="isVisible = !isVisible">
+        <span>{{ nameEtabSelected }}</span>
+      </div>
+      <div v-if="isVisible" class="dropdown-popover">
+        <list-etab-ce
+          class-input="search-etab"
+          class-li="opt-list"
+          class-div="options"
+          v-bind:data-json="etabJson"
+          :data-current="currentEtab"
+          @selectEtab="select"
+        ></list-etab-ce>
+      </div>
+    </div>
+    <div class="detail">
+      <detail-etab-ce :detail="currentEtab"></detail-etab-ce>
+    </div>
   </div>
 </template>
 <style>
-@import "../assets/detailList.css";
-@import "../assets/list.css";
-/* @import "cropperjs/dist/cropper.css"; */
-@import "../assets/main.css";
+@import '../assets/detailList.css';
+@import '../assets/list.css';
+@import '../assets/main.css';
 </style>

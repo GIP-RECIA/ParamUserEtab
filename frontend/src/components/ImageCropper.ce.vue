@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import type { StructureDetail } from "@/types/structureType";
-import axios from "axios";
-import Cropper from "cropperjs";
-import { onMounted, onUnmounted, ref, watch, watchEffect } from "vue";
-import { useI18n } from "vue-i18n";
+import type { StructureDetail } from '@/types/structureType';
+import axios from 'axios';
+import Cropper from 'cropperjs';
+import { onMounted, onUnmounted, ref, watch, watchEffect } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const m = (key: string): string => t(`image-cropper.${key}`);
 
 const props = defineProps<{
-  imageUrl: string | undefined;
+  imageUrl: string | null;
   idEtab: string | undefined;
-  detailEtab: StructureDetail;
+  detailEtab: string;
 }>();
 
 const imageInput = ref<any>(null);
@@ -34,7 +34,7 @@ const fileChanged = (e) => {
   }
 };
 
-const emit = defineEmits(["updated"]);
+const emit = defineEmits(['updated']);
 
 onMounted(() => {
   if (img.value) {
@@ -42,7 +42,7 @@ onMounted(() => {
       aspectRatio: 270 / 120,
       viewMode: 2,
       background: false,
-      preview: "#previewImg",
+      preview: '#previewImg',
     });
   }
 });
@@ -85,8 +85,8 @@ watch(
     }
   },
   {
-    flush: "post",
-  }
+    flush: 'post',
+  },
 );
 
 const closeModal = () => {
@@ -103,25 +103,27 @@ const cropImage = () => {
     const formData = new FormData();
 
     // append DTO as JSON string
-    formData.append("details", JSON.stringify(props.detailEtab));
+    formData.append('details', props.detailEtab);
 
     // add name for the image
-    formData.append("name", "image-name-" + new Date().getTime());
+    formData.append('name', 'image-name-' + new Date().getTime());
 
     // append image file
-    formData.append("file", blob, "logo." + blob.type.split("/")[1]);
+    formData.append('file', blob, 'logo.' + blob.type.split('/')[1]);
     const url = `/parametab/fileUpload/${props.idEtab}`;
 
     axios
       .post(url, formData)
       .then((response) => {})
-      .catch(function (error) {});
-  }, "image/jpeg");
+      .catch(function (error) {
+        console.error('error: ', error);
+      });
+  }, 'image/jpeg');
 };
 </script>
 
 <template>
-  <div class="avatar-upload">
+  <div class="avatar-upload" v-bind="$attrs">
     <div class="avatar-edit">
       <input
         ref="imageInput"
@@ -157,13 +159,13 @@ const cropImage = () => {
       </div>
       <div class="buttons">
         <button class="btn-selectImg" @click="imageInput.click()">
-          {{ m("selectionner-image") }}
+          {{ m('selectionner-image') }}
         </button>
         <button v-show="imageSrc" class="btn-cropImg" @click="cropImage">
-          {{ m("appliquer") }}
+          {{ m('appliquer') }}
         </button>
         <button class="btn-close" @click="closeModal">
-          {{ m("fermer") }}
+          {{ m('fermer') }}
         </button>
       </div>
     </div>
@@ -171,7 +173,7 @@ const cropImage = () => {
 </template>
 
 <style>
-@import "cropperjs/dist/cropper.css";
+@import 'cropperjs/dist/cropper.css';
 .btn-selectImg,
 .btn-cropImg,
 .btn-close {
@@ -326,8 +328,8 @@ button.close {
 }
 
 .avatar-upload .avatar-edit input + label:after {
-  content: "\f040";
-  font-family: "FontAwesome";
+  content: '\f040';
+  font-family: 'FontAwesome';
   color: #757575;
   position: absolute;
   top: 6px;
