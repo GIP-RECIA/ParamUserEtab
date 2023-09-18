@@ -70,8 +70,37 @@ userdao :
 logostorage : 
     default-image-link: /images/logoPortal.png
     prefix-image-link: /annuaires_images/logos
-    prefix-local-url: arametab/image
+    prefix-local-url: parametab/image
 # .prefix-image-path:/mnt/vol_ent/annuaire_images/logos
     prefix-image-path: ./upload/logos
     prefix-image-name: logoportail
     format-image: jpg
+
+## Security config ## 
+
+security-configuration:
+  soffit:
+    jwt.signatureKey: "=== Signature Key ==="
+
+  cors:
+    enable: true
+    allow-credentials: true
+    allowed-origins: >
+      http://localhost:5173
+    exposed-headers: >
+      x-auth-token,
+      x-requested-with,
+      x-xsrf-token
+    allowed-headers: >
+      content-type,
+      authorization,
+      x-com-persist,
+      X-Auth-Token,
+      x-auth-token,
+      x-requested-with,
+      x-xsrf-token
+    allowed-methods: >
+      GET
+      PUT
+      POST
+      DELETE
