@@ -1,10 +1,11 @@
-spring.main.allow-bean-definition-overriding : true
+#spring.main.allow-bean-definition-overriding : true
+
 
 ## Regex configuration ## 
 #ldapformatter.groups-regex=^CLG(\\$).*(\\$.*)
 ldapformatter : 
     groups-regex : "(\\$)"
-    index-list-replacement.1 : ""
+    index-list-replacement:1 : ""
     index-list-replacement.2 : ""
 
 
@@ -12,7 +13,7 @@ userformatter :
     user-groups-regex : "[^:]+:admin:local:admin_(?:([^_]+)_)?([^:]+)$"
 
 
-## User Info configuration ##
+## User Info cofiguration ## 
 # server.error.whitelabel.enabled:false
 userinfo :
     current-etab-code-info-key : ESCOUAICourant
@@ -23,14 +24,49 @@ userinfo :
 ## Structure cache ##
 structureservice:
     caching-duration: 3600000
-spring :
-    cache :
-    cache-names: structuresCache,etabsCodeIdCache
-    type: ehcache
+spring:
+    config:
+        activate:
+            on-profile: "default"
+    datasource:
+        url: jdbc:mariadb://127.0.0.1:3306/sarapis_test?useUnicode=true&characterEncoding=UTF-8&autoreconnect=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Paris
+        username: root
+        password: root 
+    cache:
+        cache-names: structuresCache,etabsCodeIdCache
+        type: ehcache
     ldap : 
         urls: 
         username: 
         password: 
+
+## Security config ## 
+security-configuration:
+  soffit:
+    jwt.signatureKey: ""
+
+  cors:
+    enable: true
+    allow-credentials: true
+    allowed-origins: >
+      http://localhost:5173
+    exposed-headers: >
+      x-auth-token,
+      x-requested-with,
+      x-xsrf-token
+    allowed-headers: >
+      content-type,
+      authorization,
+      x-com-persist,
+      X-Auth-Token,
+      x-auth-token,
+      x-requested-with,
+      x-xsrf-token
+    allowed-methods: >
+      GET
+      PUT
+      POST
+      DELETE
 
 ## LDAP Configuration ##
 
@@ -75,32 +111,3 @@ logostorage :
     prefix-image-path: ./upload/logos
     prefix-image-name: logoportail
     format-image: jpg
-
-## Security config ## 
-
-security-configuration:
-  soffit:
-    jwt.signatureKey: "=== Signature Key ==="
-
-  cors:
-    enable: true
-    allow-credentials: true
-    allowed-origins: >
-      http://localhost:5173
-    exposed-headers: >
-      x-auth-token,
-      x-requested-with,
-      x-xsrf-token
-    allowed-headers: >
-      content-type,
-      authorization,
-      x-com-persist,
-      X-Auth-Token,
-      x-auth-token,
-      x-requested-with,
-      x-xsrf-token
-    allowed-methods: >
-      GET
-      PUT
-      POST
-      DELETE
