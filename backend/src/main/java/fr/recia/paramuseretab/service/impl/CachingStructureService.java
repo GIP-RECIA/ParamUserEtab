@@ -51,7 +51,7 @@ import fr.recia.paramuseretab.web.DTOStructure;
  *
  */
 @Service
-//@Repository
+// @Repository
 @Slf4j
 @ConfigurationProperties(prefix = "structureservice")
 public class CachingStructureService implements IUniteAdministrativeImmatriculeService, InitializingBean {
@@ -310,7 +310,8 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
 
 	/**
 	 * Test if a cache loading is needed.
-	 * Cache loading is needed if Cache is not initialized or is expired and no loading is already in progress.
+	 * Cache loading is needed if Cache is not initialized or is expired and no
+	 * loading is already in progress.
 	 *
 	 * @return true if cache loading is needed.
 	 */
@@ -339,26 +340,26 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
 	protected String genCacheKeyForMapCodeId(final String uai) {
 		final StringBuilder cacheKeyBuilder = new StringBuilder(32);
 		cacheKeyBuilder.append(uai.toLowerCase());
-		//cacheKeyBuilder.append("_");
-		//cacheKeyBuilder.append(instant.getMillis());
+		// cacheKeyBuilder.append("_");
+		// cacheKeyBuilder.append(instant.getMillis());
 
 		return cacheKeyBuilder.toString();
 	}
 
 	/**
-	* Getter of cachingDuration.
-	*
-	* @return the cachingDuration
-	*/
+	 * Getter of cachingDuration.
+	 *
+	 * @return the cachingDuration
+	 */
 	public long getCachingDuration() {
 		return this.cachingDuration.getMillis();
 	}
 
 	/**
-	* Setter of cachingDuration (in ms).
-	*
-	* @param cachingDuration the cachingDuration to set
-	*/
+	 * Setter of cachingDuration (in ms).
+	 *
+	 * @param cachingDuration the cachingDuration to set
+	 */
 	public void setCachingDuration(final long cachingDuration) {
 		this.cachingDuration = Duration.millis(cachingDuration);
 	}
@@ -388,16 +389,19 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
 		Assert.notNull(this.etabsCodeIdCache, "No etabsCodeId cache configured !");
 	}
 
+	/**
+	 * For API parametab : Retrieve the idSiren in the Structure that concerns the
+	 * name of isMemberOf
+	 */
 	@Override
 	public String getSiren(String code, String name) {
-		
-		String siren = null; 
+
+		String siren = null;
 
 		if (code != null) {
 			UniteAdministrativeImmatriculee etab = this.retrieveEtablissementByCode(code);
-			siren = etab.getId(); // get id siren 
-		}
-		else {
+			siren = etab.getId(); // get id siren
+		} else {
 			final Collection<? extends Structure> allstructs = this.structureDao.findAllStructures();
 			if (allstructs != null && !allstructs.isEmpty()) {
 
@@ -419,5 +423,22 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
 		this.structureDao.saveStructure(dto, customName, siteWeb, logo, id);
 
 	}
-	
+
+	/**
+	 * For API changeEtab : Retrieve the etab name (displayName) in the Structure
+	 * that concerns the id (escosiren)
+	 * 
+	 */
+	@Override
+	public String getEtabName(String id) {
+
+		String etabName = null;
+
+		if (id != null) {
+			Structure struct = this.retrieveStructureById(id);
+			etabName = struct.getDisplayName();
+		}
+
+		return etabName;
+	}
 }

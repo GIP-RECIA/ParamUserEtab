@@ -18,8 +18,6 @@
  */
 package fr.recia.paramuseretab.dao;
 
-import java.util.List;
-
 import fr.recia.paramuseretab.model.Person;
 import fr.recia.paramuseretab.model.Structure;
 

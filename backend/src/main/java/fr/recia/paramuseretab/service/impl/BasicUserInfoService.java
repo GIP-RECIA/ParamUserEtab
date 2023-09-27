@@ -18,7 +18,6 @@
  */
 package fr.recia.paramuseretab.service.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -40,16 +39,12 @@ import fr.recia.paramuseretab.dao.bean.IUserFormatter;
 import fr.recia.paramuseretab.model.Person;
 import fr.recia.paramuseretab.service.IUserInfoService;
 
-/**
- * @author GIP RECIA 2013 - Maxime BOSSARD.
- *
- */
 @Data
 @NoArgsConstructor
 @Slf4j
 @Service
 @ConfigurationProperties(prefix = "userinfo")
-public class BasicUserInfoService implements IUserInfoService , InitializingBean  {
+public class BasicUserInfoService implements IUserInfoService, InitializingBean {
 
 	@Autowired
 	private IUserDao userDao;
@@ -77,7 +72,6 @@ public class BasicUserInfoService implements IUserInfoService , InitializingBean
 
 	private String msg = "Unable to retrieve {} attribute in Portal UserInfo !";
 
-	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		Assert.hasText(this.etabCodesInfoKey, "No Etab Codes user info key configured !");
@@ -104,19 +98,12 @@ public class BasicUserInfoService implements IUserInfoService , InitializingBean
 		this.emptyUserInfoMap.put(this.currentStructIdInfoKey, Arrays.asList(new String[] { "88888888888888" }));
 	}
 
-
 	@Override
 	public Person getAllEtablissement() {
 		Person allInfo = this.userDao.getAllUsersInfo();
-		Person etablissementsFiltered = null;
-		// if (!allInfo.isEmpty()) {
-			Person formattedPersons = this.groupFormatters.formatPerson(allInfo);
-			etablissementsFiltered = formattedPersons;
-			System.out.println("ok");
-		// }
-		return etablissementsFiltered;
+		System.out.println("ok");
+		return allInfo;
 	}
-
 
 	@Override
 	public String getUserID() {
@@ -124,18 +111,9 @@ public class BasicUserInfoService implements IUserInfoService , InitializingBean
 		String id = null;
 
 		Person infoPerson = this.getAllEtablissement();
-		// if (!infoPerson.) {
-		// 	for (Person person : infoPerson) {
-		// 		id = person.getUid();
-		// 	}
-		// }
 		id = infoPerson.getUid();
 
-		System.out.println("userID : " + id);
-
-		return id; 
-
+		return id;
 	}
 
-	
 }
