@@ -16,9 +16,7 @@
 package fr.recia.paramuseretab.dao.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.naming.NamingEnumeration;
@@ -28,38 +26,58 @@ import javax.naming.directory.Attributes;
 
 import org.springframework.ldap.core.AttributesMapper;
 
+import fr.recia.paramuseretab.dao.bean.IUserFormatter;
 import fr.recia.paramuseretab.model.Person;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Data
 @AllArgsConstructor
+@Slf4j
 public class PersonAttributesMapper implements AttributesMapper<Person> {
 
-    private String uid; 
+    private String uid;
     private String currentStruct;
-    private Set<String> groupAttributes;
+    private String structIdsInfoKey;
+    private String groupAttributes;
+    private IUserFormatter etabFormatter;
 
     @Override
-    @SuppressWarnings (value="unchecked")
+    @SuppressWarnings(value = "unchecked")
     public Person mapFromAttributes(Attributes attributes) throws NamingException {
         Person person = new Person();
         person.setUid((String) attributes.get(uid).get());
         person.setCurrentStruct((String) attributes.get(currentStruct).get());
 
-        List<Map<String, String>> listGroups = new ArrayList<>();
-        for (String attrName : groupAttributes) {
-            final Attribute dirAttr = attributes.get(attrName);
-            if (dirAttr != null) {
-                for (NamingEnumeration<String> ae = (NamingEnumeration<String>) dirAttr.getAll(); ae.hasMore();) {
-                    Map<String, String> grpItem = new HashMap<>();
-                    grpItem.put("etabName", ae.next());
-                    listGroups.add(grpItem);
-                }
+        List<String> listEtabs = new ArrayList<>();
+        List<String> listIdsEtab = new ArrayList<>();
+        // for (String attrName : groupAttributes) {
+        final Attribute dirAttr = attributes.get(groupAttributes);
+        if (dirAttr != null) {
+            NamingEnumeration<String> ae = (NamingEnumeration<String>) dirAttr.getAll();
+            while (ae.hasMore()) {
+                listEtabs.add(ae.next());
+            }
+        }
+        // }
+
+        final Attribute attrStruct = attributes.get(structIdsInfoKey);
+        if (attrStruct != null) {
+            NamingEnumeration<String> ae = (NamingEnumeration<String>) attrStruct.getAll();
+            while (ae.hasMore()) {
+                listIdsEtab.add(ae.next());
             }
         }
 
-        person.setIsMemberOf(listGroups);
+        person.setSiren(listIdsEtab);
+        person.setIsMemberOf(listEtabs);
+
+        try {
+            person = etabFormatter.formatPerson(person);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
 
         return person;
     }

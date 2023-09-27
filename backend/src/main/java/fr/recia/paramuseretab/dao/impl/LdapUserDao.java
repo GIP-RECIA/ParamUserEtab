@@ -43,6 +43,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import fr.recia.paramuseretab.dao.IUserDao;
+import fr.recia.paramuseretab.dao.bean.IUserFormatter;
 import fr.recia.paramuseretab.model.Person;
 import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
@@ -51,7 +52,7 @@ import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
  * @author GIP RECIA 2013 - Maxime BOSSARD.
  *
  */
-//@Repository
+// @Repository
 @Component
 @Data
 @NoArgsConstructor
@@ -77,6 +78,7 @@ public class LdapUserDao implements IUserDao, InitializingBean {
 	/** Current struct Code LDAP key. */
 	@NonNull
 	private String currentEtabCodeLdapKey;
+	private String structIdsInfoKey;
 
 	@NonNull
 	private String personFiltre;
@@ -84,8 +86,10 @@ public class LdapUserDao implements IUserDao, InitializingBean {
 	@NonNull
 	private String uid;
 
-	private Set<String> groupAttributes;
+	private String groupAttributes;
 
+	@Autowired
+	private IUserFormatter userFormatter;
 
 	@Override
 	public void saveCurrentStructure(final String userId, final Structure struct) {
@@ -102,11 +106,13 @@ public class LdapUserDao implements IUserDao, InitializingBean {
 		} else {
 			mods = new ModificationItem[1];
 		}
-		//final Name dn = LdapNameBuilder.newInstance(this.userDn.replace(this.userIdTemplate, userId)).build();
+		// final Name dn =
+		// LdapNameBuilder.newInstance(this.userDn.replace(this.userIdTemplate,
+		// userId)).build();
 		mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, replaceCurrentStructAttr);
-		//this.ldapTemplate.modifyAttributes(dn, mods);
+		// this.ldapTemplate.modifyAttributes(dn, mods);
 		System.out.println("mods changeEtab : " + Arrays.toString(mods));
-	
+
 	}
 
 	@Override
@@ -124,13 +130,14 @@ public class LdapUserDao implements IUserDao, InitializingBean {
 	public Person getAllUsersInfo() {
 		List<Person> allInfos;
 		try {
-			allInfos = this.ldapTemplate.search(this.userDn, this.personFiltre, new PersonAttributesMapper(uid, currentStructIdLdapKey, groupAttributes));
+			allInfos = this.ldapTemplate.search(this.userDn, this.personFiltre,
+					new PersonAttributesMapper(uid, currentStructIdLdapKey, structIdsInfoKey, groupAttributes,
+							userFormatter));
 		} catch (Exception e) {
 			LOG.error("error :", e);
 			allInfos = null;
 		}
-		return allInfos.isEmpty()? null : allInfos.get(0);
+		return allInfos.isEmpty() ? null : allInfos.get(0);
 	}
-
 
 }

@@ -40,7 +40,9 @@ import fr.recia.paramuseretab.service.ILogoStorageService;
 import fr.recia.paramuseretab.service.IStructureService;
 import fr.recia.paramuseretab.service.IUserInfoService;
 import fr.recia.paramuseretab.service.impl.LogoStorageServiceImpl;
+import fr.recia.paramuseretab.web.DTOPerson;
 import fr.recia.paramuseretab.web.DTOStructure;
+import fr.recia.paramuseretab.web.Person2DTOPersonImpl;
 import fr.recia.paramuseretab.web.Structure2DTOStructureImpl;
 import com.google.gson.Gson;
 
@@ -48,11 +50,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("/parametab")
+@RequestMapping("/test/api")
 public class ParametabController {
-    
 
-    @Autowired
+	@Autowired
 	private IUserInfoService userInfoService;
 
 	@Autowired
@@ -61,8 +62,11 @@ public class ParametabController {
 	@Autowired
 	private Structure2DTOStructureImpl structure2DTOStructure;
 
-    @Autowired 
-    private ILogoStorageService logoStorage;
+	@Autowired
+	private Person2DTOPersonImpl person2dtoPersonImpl;
+
+	@Autowired
+	private ILogoStorageService logoStorage;
 
 	@Autowired
 	private ILogoStorageService logoStorageService;
@@ -81,17 +85,17 @@ public class ParametabController {
 		if (str != null) {
 			String link = str.getStructLogo();
 			if (link != null) {
-				url =  logoStorageService.makeImageUrlPath(link);
+				url = logoStorageService.makeImageUrlPath(link);
 			}
 		}
 		return url;
 	}
 
-	private static boolean mkdir (String rep) {
+	private static boolean mkdir(String rep) {
 		File file = new File(rep);
 		// si le repertoire n'existe pas on le cree.
 		return file.mkdirs() || file.isDirectory();
-		
+
 	}
 
 	private IImageUrlPath calculNewImageUrlPath(DTOStructure str, IImageUrlPath old) {
@@ -104,31 +108,55 @@ public class ParametabController {
 				version = Integer.parseInt(old.getVersion());
 			}
 			log.info("old is null");
-			url = logoStorageService.makeImageUrlPath(str.getId(),	 version + 1);
+			url = logoStorageService.makeImageUrlPath(str.getId(), version + 1);
 			// if (! mkdir(url.getPathUser())) {
-			// 	url = null;
+			// url = null;
 			// }
 		}
 		return url;
 	}
-		
-	
+
+	@GetMapping("/changeetab/")
+	public ResponseEntity<DTOPerson> toDTOChangeEtab() {
+
+		try {
+			Person person = userInfoService.getAllEtablissement();
+
+			DTOPerson dto = person2dtoPersonImpl.toDTOChangeEtab(person);
+			return new ResponseEntity<>(dto, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping("/parametab/")
+	public ResponseEntity<DTOPerson> toDTOParametab() {
+
+		try {
+			Person person = userInfoService.getAllEtablissement();
+
+			DTOPerson dto = person2dtoPersonImpl.toDTOParamEtab(person);
+			return new ResponseEntity<>(dto, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	/**
-	 * GET /etablissments -> Get all the etablissement of a person 
+	 * GET /etablissments -> Get all the etablissement of a person
 	 */
 
 	@GetMapping("/")
 	public ResponseEntity<Person> getEtabs() {
-		return new ResponseEntity<>(userInfoService.getAllEtablissement(),  HttpStatus.OK);
+		return new ResponseEntity<>(userInfoService.getAllEtablissement(), HttpStatus.OK);
 	}
 
-
-    /**
-     * Get info of an etablissement 
-     */
+	/**
+	 * Get info of an etablissement
+	 */
 	@GetMapping("/{id}")
 	public ResponseEntity<DTOStructure> convertToDTO(@PathVariable("id") final String id) {
-	
+
 		try {
 			Structure structure = structureService.retrieveStructureById(id);
 			if (structure == null) {
@@ -143,16 +171,16 @@ public class ParametabController {
 		}
 	}
 
-    /**
-     * Update form etablissement 
-     */
+	/**
+	 * Update form etablissement
+	 */
 
-    @PutMapping("/update")
+	@PutMapping("/update")
 	public ResponseEntity<Void> update(@RequestBody DTOStructure structDto) {
 
 		try {
 			if (structDto != null && structDto.getId() != null) {
-				//structureService.updateStructure(structDto);
+				// structureService.updateStructure(structDto);
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -165,15 +193,16 @@ public class ParametabController {
 	}
 
 	/**
-     * Other version : Update form etablissement 
-	 * define an id of etablissement 
-     */
+	 * Other version : Update form etablissement
+	 * define an id of etablissement
+	 */
 
-	 @PutMapping("/updateV2/{id}")
-	 public ResponseEntity<DTOStructure> updateV2(@PathVariable("id") final String id, @RequestBody DTOStructure structDto) {
- 
-		 try {
-			if ( id != null) {
+	@PutMapping("/updateV2/{id}")
+	public ResponseEntity<DTOStructure> updateV2(@PathVariable("id") final String id,
+			@RequestBody DTOStructure structDto) {
+
+		try {
+			if (id != null) {
 				Structure structure = structureService.retrieveStructureById(id);
 				if (structure == null) {
 
@@ -184,28 +213,31 @@ public class ParametabController {
 				DTOStructure dtoStructure = structure2DTOStructure.toDTO(structure);
 				dtoStructure.setStructCustomDisplayName(structDto.getStructCustomDisplayName());
 				dtoStructure.setStructSiteWeb(structDto.getStructSiteWeb());
-				structureService.updateStructure(dtoStructure, dtoStructure.getStructCustomDisplayName(), dtoStructure.getStructSiteWeb(), null, dtoStructure.getId());
-				structureService.invalidateStructureById(id); // refresh cache 
+				structureService.updateStructure(dtoStructure, dtoStructure.getStructCustomDisplayName(),
+						dtoStructure.getStructSiteWeb(), null, dtoStructure.getId());
+				structureService.invalidateStructureById(id); // refresh cache
 				return new ResponseEntity<>(dtoStructure, HttpStatus.OK);
 			}
-			 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		 } catch (Exception e) {
-			 e.getMessage();
-			 log.info("error update : ", e);
-			 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		 }
- 
-	 }
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			e.getMessage();
+			log.info("error update : ", e);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+	}
 
 	@PutMapping("/updateLogo")
-	public ResponseEntity<Void> updateLogo(@RequestParam("photo") MultipartFile photo, @RequestBody DTOStructure structDto) {
+	public ResponseEntity<Void> updateLogo(@RequestParam("photo") MultipartFile photo,
+			@RequestBody DTOStructure structDto) {
 
 		try {
 			if (structDto != null) {
 				log.info("struct id: " + structDto.getId());
 				log.info("struct dn: " + structDto.getStructCustomDisplayName());
 				log.info("struct logo: " + structDto.getStructLogo());
-				//structureService.updateStructure(structDto, null, null, structDto.getStructLogo(), structDto.getId());
+				// structureService.updateStructure(structDto, null, null,
+				// structDto.getStructLogo(), structDto.getId());
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -217,25 +249,25 @@ public class ParametabController {
 
 	}
 
-    // upload logo to disk, database, and ldap 
-    @PostMapping("/fileUpload/{id}")
-    public ResponseEntity<?> uploadFile(@RequestPart(name ="file", required = false) MultipartFile file, @RequestPart(name ="details") String detailsJson, @PathVariable("id") final String id) {
+	// upload logo to disk, database, and ldap
+	@PostMapping("/fileUpload/{id}")
+	public ResponseEntity<?> uploadFile(@RequestPart(name = "file", required = false) MultipartFile file,
+			@RequestPart(name = "details") String detailsJson, @PathVariable("id") final String id) {
 
-        try {
- 
+		try {
+
 			if (detailsJson != null) {
 				// Parse the detailsJson string back to DTO
-    			DTOStructure dto = new Gson().fromJson(detailsJson, DTOStructure.class);
+				DTOStructure dto = new Gson().fromJson(detailsJson, DTOStructure.class);
 
 				newUrl = calculNewImageUrlPath(dto, oldUrl);
 				String pathName = newUrl.getPathName();
 				String getNewURL = newUrl.getUrl();
 				if (newUrl != null) {
 					log.info("newUrl : ", pathName);
-					// save the logo to disk 
+					// save the logo to disk
 					// logoStorage.saving(pathName, file, id);
-				}
-				else {
+				} else {
 					log.info("newUrl is null");
 					return new ResponseEntity<>("erreur : impossible de sauvegarder l'image !", HttpStatus.BAD_REQUEST);
 				}
@@ -246,21 +278,21 @@ public class ParametabController {
 				structureService.updateStructure(dto, null, null, dto.getStructLogo(), id);
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
-            return new ResponseEntity<>("Erreur : l'établissement n'est pas défini !", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Erreur : l'établissement n'est pas défini !", HttpStatus.BAD_REQUEST);
 
-        } catch (Exception e) {
-            e.getMessage();
-            log.info("error upload file : ", e );
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
+		} catch (Exception e) {
+			e.getMessage();
+			log.info("error upload file : ", e);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
 
 	/**
-	 * Test API pour structLogo par default s'il n'est pas renseigné 
+	 * Test API pour structLogo par default s'il n'est pas renseigné
 	 */
 	@GetMapping("/test/{id}")
 	public ResponseEntity<DTOStructure> testing(@PathVariable("id") final String id) {
-	
+
 		try {
 			Structure structure = structureService.retrieveStructureById(id);
 			if (structure == null) {
@@ -268,11 +300,10 @@ public class ParametabController {
 			}
 			DTOStructure dtoStructure = structure2DTOStructure.toDTO(structure);
 			oldUrl = calculOldImageUrlPath(dtoStructure);
-			// manip structLogo 
+			// manip structLogo
 			if (oldUrl != null) {
 				dtoStructure.setStructLogo(oldUrl.getLocalUrl());
-			}
-			else {
+			} else {
 				dtoStructure.setStructLogo(logoStorageServiceImpl.getDefaultImageLink());
 			}
 

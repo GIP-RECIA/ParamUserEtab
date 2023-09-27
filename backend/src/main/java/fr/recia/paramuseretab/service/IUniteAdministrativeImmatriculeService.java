@@ -24,14 +24,14 @@ import java.util.Map;
 import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
 
 /**
- * @author GIP RECIA 2013 - Maxime BOSSARD.
  * @deprecated
  */
 @Deprecated
 public interface IUniteAdministrativeImmatriculeService extends IStructureService {
 
 	/**
-	 * Return a Collection of UniteAdministrativeImmatriculee matching the supplied codes.
+	 * Return a Collection of UniteAdministrativeImmatriculee matching the supplied
+	 * codes.
 	 *
 	 * @param codes List of ids of etablissements to retrive
 	 * @return a never null Map of Id, only Etab wich may be empty
@@ -51,5 +51,7 @@ public interface IUniteAdministrativeImmatriculeService extends IStructureServic
 	UniteAdministrativeImmatriculee retrieveEtablissementByCode(String code);
 
 	String getSiren(String code, String name);
+
+	String getEtabName(String id);
 
 }
