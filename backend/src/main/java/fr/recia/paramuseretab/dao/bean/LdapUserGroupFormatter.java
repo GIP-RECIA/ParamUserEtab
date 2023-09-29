@@ -16,9 +16,7 @@
 package fr.recia.paramuseretab.dao.bean;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,6 +61,11 @@ public class LdapUserGroupFormatter implements IUserFormatter, InitializingBean 
         return input;
     }
 
+    /*
+     * Use regex to format the 'isMemberOf' values in order to extract the name of
+     * the 'etablissement' and the UAI.
+     * 
+     */
     private List<String> format(List<String> inputs) {
 
         List<String> formattedList = new ArrayList<>();
@@ -80,7 +83,7 @@ public class LdapUserGroupFormatter implements IUserFormatter, InitializingBean 
                     } else {
                         etabName = group2;
                     }
-                    log.debug("Matcher found groups displayName, and applied replacement value is : {}", etabName);
+                    log.debug("Matcher found groups isMemberOf, and applied replacement value is : {}", etabName);
 
                     listEtab.add(etabName);
                     formattedList.addAll(listEtab);

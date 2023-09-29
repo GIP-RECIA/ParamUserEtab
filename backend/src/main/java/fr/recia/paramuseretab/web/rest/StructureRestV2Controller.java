@@ -29,14 +29,9 @@ import org.springframework.web.bind.annotation.*;
 import fr.recia.paramuseretab.dao.IStructureDao;
 import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.service.IStructureService;
-import fr.recia.paramuseretab.web.DTOStructure;
-import fr.recia.paramuseretab.web.Structure2DTOStructureImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Created by jgribonvald on 27/03/17.
- */
 @Slf4j
 @RestController
 @RequestMapping(value = "/rest/v2/structures")
@@ -47,9 +42,6 @@ public class StructureRestV2Controller {
 
 	@Autowired
 	private IStructureDao structureDao;
-
-	@Autowired
-	private Structure2DTOStructureImpl structure2DTOStructure;
 
 	/*
 	 * Return always Json data (Accept Http Header value has no impact)

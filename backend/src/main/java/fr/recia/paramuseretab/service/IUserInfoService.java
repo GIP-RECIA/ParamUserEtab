@@ -17,15 +17,9 @@
  *
  */
 package fr.recia.paramuseretab.service;
-import java.util.List;
 
 import fr.recia.paramuseretab.model.Person;
 
-
-/**
- * @author GIP RECIA 2013 - Maxime BOSSARD.
- *
- */
 public interface IUserInfoService {
 
 	Person getAllEtablissement();

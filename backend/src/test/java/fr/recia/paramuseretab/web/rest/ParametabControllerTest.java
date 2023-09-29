@@ -96,24 +96,26 @@ public class ParametabControllerTest {
     private Person person;
     private Structure struct;
     private Map<String, List<String>> otherAttrs = new HashMap<>();
-    private List<Map<String, String>> listMemberOf = new ArrayList<>();
+    private List<Map<String, String>> listEtab = new ArrayList<>();
+    private List<String> siren = new ArrayList<>();
+    private List<String> isMemberOf = new ArrayList<>();
 
     private Map<String, String> groupe1 = new HashMap<>();
     private Map<String, String> groupe2 = new HashMap<>();
     private Map<String, String> groupe3 = new HashMap<>();
-        
+
     private static ObjectMapper mapper = new ObjectMapper();
 
     private MockMultipartFile file;
     private String detailsJson;
-    private MockMultipartHttpServletRequestBuilder multipartReq; 
+    private MockMultipartHttpServletRequestBuilder multipartReq;
 
     @PostConstruct
     public void setup() {
 
         /**
-         * TO DO: 
-         * Initialize an etablissement ?? 
+         * TO DO:
+         * Initialize an etablissement ??
          * 
          */
         groupe1.put("idSiren", "410xx");
@@ -125,35 +127,34 @@ public class ParametabControllerTest {
         groupe3.put("idSiren", "ABCD123");
         groupe3.put("etabName", "Etablissement 3");
 
-        listMemberOf.add(groupe1);
-        listMemberOf.add(groupe2);
-        listMemberOf.add(groupe3);
+        listEtab.add(groupe1);
+        listEtab.add(groupe2);
+        listEtab.add(groupe3);
 
         otherAttrs.put("ESCOStructureLogo", Arrays.asList("image0.png"));
         otherAttrs.put("ENTStructureSiteWeb", Arrays.asList("etab01aze.com"));
-        struct = new Structure("ABCD123", "Etablissement A1", "Etab A1" , "Etab public", otherAttrs);
-        person = new Person("admin123", "4250xx", listMemberOf);
+        struct = new Structure("ABCD123", "Etablissement A1", "Etab A1", "Etab public", otherAttrs);
+        person = new Person("admin123", "4250xx", siren, isMemberOf);
         mvc = MockMvcBuilders.standaloneSetup(parametabController).build();
 
         file = new MockMultipartFile("file", "test.jpg", "image/jpeg", "test image".getBytes());
 
-        // Prepare the detailJson 
+        // Prepare the detailJson
         detailsJson = "{ \"id\":\"ABCD123\",\"name\":\"Etablissement A1\",\"displayName\":\"Etab A1\",\"description\":\"Etab public\",\"otherAttributes\":{\"ENTStructureSiteWeb\":[\"etab01aze.com\"],\"ESCOStructureLogo\":[\"image0.png\"]},\"structCustomDisplayName\":null,\"structLogo\":null,\"structSiteWeb\":null}";
 
-        multipartReq = MockMvcRequestBuilders.multipart("/parametab/fileUpload/"+ struct.getId());
+        multipartReq = MockMvcRequestBuilders.multipart("/parametab/fileUpload/" + struct.getId());
     }
 
-
     /**
-     * Test : updateForm -> DisplayName et SiteWeb 
+     * Test : updateForm -> DisplayName et SiteWeb
      * TO DO :
-     * S'inspirer sur le project changeEtablissement pour mocker : StructureRestV2ControllerTest
+     * S'inspirer sur le project changeEtablissement pour mocker :
+     * StructureRestV2ControllerTest
      */
     @Test
     public void testUpdateForm() throws Exception {
         log.info("*** Test update form ***");
         System.out.println("struct id: " + struct.getId());
-
 
         DTOStructure updateForm = new DTOStructure();
         updateForm.setId(struct.getId());
@@ -164,34 +165,35 @@ public class ParametabControllerTest {
         updateForm.setStructCustomDisplayName("EX etab A1");
         updateForm.setStructSiteWeb("etab.com");
 
+        // Mockito.when(structureDao.findOneStructureById(dtoStructure.getId())).thenReturn(dtoStructure);
 
-        //Mockito.when(structureDao.findOneStructureById(dtoStructure.getId())).thenReturn(dtoStructure);
-  
         when(structureService.retrieveStructureById(struct.getId())).thenReturn(struct);
         when(structure2dtoStructure.toDTO(struct)).thenReturn(updateForm);
-        
-        doNothing().when(structureService).updateStructure(updateForm, updateForm.getStructCustomDisplayName(), updateForm.getStructSiteWeb(), null, updateForm.getId());
+
+        doNothing().when(structureService).updateStructure(updateForm, updateForm.getStructCustomDisplayName(),
+                updateForm.getStructSiteWeb(), null, updateForm.getId());
 
         doNothing().when(structureService).invalidateStructureById(updateForm.getId());
 
-        MockHttpServletRequestBuilder mockReq = MockMvcRequestBuilders.put("/parametab/updateV2/" + struct.getId())
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .characterEncoding("UTF-8")
-            .content(mapper.writeValueAsString(updateForm));
-    
-        String uri = "/parametab/updateV2/" + struct.getId();
+        MockHttpServletRequestBuilder mockReq = MockMvcRequestBuilders.put("/test/api/updateV2/" + struct.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content(mapper.writeValueAsString(updateForm));
+
+        String uri = "/test/api/updateV2/" + struct.getId();
         String cxt = mapper.writeValueAsString(updateForm);
         System.out.println("out uri : " + uri);
-        System.out.println("cxt : " +cxt);
+        System.out.println("cxt : " + cxt);
 
         log.info("mockReq : ", mockReq);
 
         mvc.perform(mockReq)
-        .andDo(print())
-        .andExpect(status().isOk()); 
+                .andDo(print())
+                .andExpect(status().isOk());
 
-        verify(structureService).updateStructure(updateForm, updateForm.getStructCustomDisplayName(), updateForm.getStructSiteWeb(), null, updateForm.getId());
+        verify(structureService).updateStructure(updateForm, updateForm.getStructCustomDisplayName(),
+                updateForm.getStructSiteWeb(), null, updateForm.getId());
 
     }
 
@@ -203,7 +205,7 @@ public class ParametabControllerTest {
     public void testGetInfoEtab() throws Exception {
 
         when(structureService.retrieveStructureById(struct.getId())).thenReturn(struct);
-        MockHttpServletRequestBuilder mockReq = MockMvcRequestBuilders.get("/parametab/" + struct.getId())
+        MockHttpServletRequestBuilder mockReq = MockMvcRequestBuilders.get("/test/api/" + struct.getId())
         .contentType(MediaType.APPLICATION_JSON)
         .accept(MediaType.APPLICATION_JSON)
         .characterEncoding("UTF-8")
@@ -220,24 +222,26 @@ public class ParametabControllerTest {
         ParametabController spyParam = spy(parametabController);
 
         IImageUrlPath newURL = mock(IImageUrlPath.class);
-        // doReturn(newURL).when(spyParam).calculNewImageUrlPath(any(DTOStructure.class), any(IImageUrlPath.class));
+        // doReturn(newURL).when(spyParam).calculNewImageUrlPath(any(DTOStructure.class),
+        // any(IImageUrlPath.class));
 
-        // Perform the file upload request 
+        // Perform the file upload request
         multipartReq.part(new MockPart("details", detailsJson.getBytes()));
 
-        MvcResult res = mvc.perform(multipartReq.file(file)).andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
+        MvcResult res = mvc.perform(multipartReq.file(file)).andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
 
-        // Assert the response 
+        // Assert the response
         Assertions.assertEquals(HttpStatus.OK.value(), res.getResponse().getStatus());
     }
 
     @Test
     public void testUploadFile_MissingDetailsJson() throws Exception {
 
-        // Mock the required dependencies and set up the test environnement 
+        // Mock the required dependencies and set up the test environnement
         MvcResult res = mvc.perform(multipartReq.file(file))
-                        .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                        .andReturn();
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
 
         // Assert the response
         Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), res.getResponse().getStatus());
@@ -250,12 +254,12 @@ public class ParametabControllerTest {
         // Perform the file upload request
         multipartReq.part(new MockPart("details", detailsJson.getBytes()));
 
-        // Mock the required dependencies and set up the test environnement 
+        // Mock the required dependencies and set up the test environnement
         MvcResult res = mvc.perform(multipartReq.file(file))
-                        .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                        .andReturn();
-        
-        // Assert the response 
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andReturn();
+
+        // Assert the response
         Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), res.getResponse().getStatus());
 
     }
@@ -264,7 +268,7 @@ public class ParametabControllerTest {
     public void testChangeEtab() throws Exception {
 
         log.info("*** Test changing the current etab ***");
-        String userID = null; 
+        String userID = null;
 
         when(iUserInfoService.getUserID()).thenReturn(userID);
         when(structureService.retrieveStructureById(struct.getId())).thenReturn(struct);
@@ -273,16 +277,16 @@ public class ParametabControllerTest {
         log.info("person : " + person.getUid());
 
         MockHttpServletRequestBuilder mockReq = MockMvcRequestBuilders.put("/rest/change/" + struct.getId())
-        .contentType(MediaType.APPLICATION_JSON)
-        .accept(MediaType.APPLICATION_JSON)
-        .characterEncoding("UTF-8")
-        .content(mapper.writeValueAsString(struct));
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+                .content(mapper.writeValueAsString(struct));
 
         mvc = MockMvcBuilders.standaloneSetup(changeStructureRestController).build();
 
         mvc.perform(mockReq)
-            .andExpect(status().isOk())
-            .andDo(print());
+                .andExpect(status().isOk())
+                .andDo(print());
 
     }
 

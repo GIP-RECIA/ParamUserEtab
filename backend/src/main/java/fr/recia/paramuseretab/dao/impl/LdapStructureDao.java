@@ -54,17 +54,13 @@ import fr.recia.paramuseretab.dao.bean.IStructureFormatter;
 import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.web.DTOStructure;
 
-/**
- * @author GIP RECIA 2013 - Maxime BOSSARD.
- *
- */
 //@Repository
 @Data
 @Slf4j
 @NoArgsConstructor
 @Component
 @ConfigurationProperties(prefix = "ldap")
-public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
+public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
 
 	@NonNull
 	private String allStructFilter;
@@ -88,7 +84,7 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 	private String ldapUrl;
 	private String managerDn;
 	private String managerPassword;
-	
+
 	@NonNull
 	private String structIdTemplate = "%siren";
 
@@ -127,7 +123,6 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 		return allStructs;
 	}
 
-
 	@Override
 	@SuppressWarnings("unchecked")
 	public Structure findOneStructureById(final String id) {
@@ -156,34 +151,34 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 		return theStruct;
 	}
 
-
 	@Override
 	public void saveStructure(DTOStructure dto, String customName, String siteWeb, String logo, String id) {
 
 		// Validate input
-	   if ( id == null || id.isEmpty()) {
-		   throw new IllegalArgumentException("Structure ID cannot be null or empty !");
-	   }
-		   
-	   // Update displayName, logo, and siteWeb into Ldap 
-	   final Name dn = buildDn(id);
-	   List<ModificationItem> mods = new ArrayList<>();
-   
-	   if (customName != null || siteWeb != null) {
-		   updateForm(dto, customName, siteWeb, id, mods);
-	   }
-   
-	   if (logo != null) {
-		   //updateLogo(dto, logo, id, mods);
-	   }
-   
-	   //this.ldapTemplate.modifyAttributes(dn, mods.toArray(new ModificationItem[mods.size()]));
-	   System.out.println("mods : " + mods.toString());
-	   log.info("Structure with ID {} updated in LDAP. Display name: {}. Logo: {}. Site web: {}.",
-		   id, customName, logo, siteWeb);
-   
-   }
-	
+		if (id == null || id.isEmpty()) {
+			throw new IllegalArgumentException("Structure ID cannot be null or empty !");
+		}
+
+		// Update displayName, logo, and siteWeb into Ldap
+		final Name dn = buildDn(id);
+		List<ModificationItem> mods = new ArrayList<>();
+
+		if (customName != null || siteWeb != null) {
+			updateForm(dto, customName, siteWeb, id, mods);
+		}
+
+		if (logo != null) {
+			// updateLogo(dto, logo, id, mods);
+		}
+
+		// this.ldapTemplate.modifyAttributes(dn, mods.toArray(new
+		// ModificationItem[mods.size()]));
+		System.out.println("mods : " + mods.toString());
+		log.info("Structure with ID {} updated in LDAP. Display name: {}. Logo: {}. Site web: {}.",
+				id, customName, logo, siteWeb);
+
+	}
+
 	private Name buildDn(String idStruct) {
 		try {
 			if (idStruct != null) {
@@ -198,14 +193,14 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 	@SuppressWarnings("unused")
 	private void updateForm1(String customName, String siteWeb, List<ModificationItem> mods) {
 
-		// update in database : sarapis 
+		// update in database : sarapis
 
-		if ( customName != null ) {
+		if (customName != null) {
 			Attribute updCustomName = new BasicAttribute(this.structDisplayNameLdapAttr, customName);
 			mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, updCustomName));
 		}
 
-		if ( siteWeb != null ) {
+		if (siteWeb != null) {
 			for (String attr : otherAttributes) {
 
 				if (attr.equals("ENTStructureSiteWeb")) {
@@ -218,14 +213,14 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 
 	@SuppressWarnings("unused")
 	private void updateLogo(DTOStructure dto, String logo, String id, List<ModificationItem> mods) {
-		// save in database 
+		// save in database
 		updateDataInDatabase(dto, null, null, logo, id);
 
 		// save in ldap
 		List<String> listValue = checkValue(dto);
 		String structLogo = listValue.get(2); // Third element in the list
 
-		if ( logo != null && !logo.equals(structLogo)) {
+		if (logo != null && !logo.equals(structLogo)) {
 			for (String attr : otherAttributes) {
 
 				if (attr.equals("ESCOStructureLogo")) {
@@ -236,10 +231,9 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 		}
 	}
 
-
-	//@SuppressWarnings("unused")
-	private void updateForm(DTOStructure dto, String customName, String siteWeb, String id, List<ModificationItem> mods) {
-		// save in database 
+	private void updateForm(DTOStructure dto, String customName, String siteWeb, String id,
+			List<ModificationItem> mods) {
+		// save in database
 		updateDataInDatabase(dto, customName, siteWeb, null, id);
 
 		// save in ldap
@@ -247,12 +241,12 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 		String displayName = listValue.get(0); // First element in the list
 		String structSiteWeb = listValue.get(1); // Second element in the list
 
-		if ( customName != null && !customName.equals(displayName) ) {
+		if (customName != null && !customName.equals(displayName)) {
 			Attribute updCustomName = new BasicAttribute(this.structDisplayNameLdapAttr, customName);
 			mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, updCustomName));
 		}
 
-		if ( siteWeb != null && !siteWeb.equals(structSiteWeb)) {
+		if (siteWeb != null && !siteWeb.equals(structSiteWeb)) {
 			for (String attr : otherAttributes) {
 
 				if (attr.equals("ENTStructureSiteWeb")) {
@@ -266,7 +260,6 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 	private void updateDataInDatabase(DTOStructure dto, String customName, String siteWeb, String logo, String id) {
 		String updateQuery = "UPDATE astructure SET ";
 		List<Object> params = new ArrayList<>();
-	
 
 		List<String> listValue = checkValue(dto);
 		String displayName = listValue.get(0); // First element in the list
@@ -276,25 +269,25 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 		boolean checkCustomName = customName != null && !customName.equals(displayName);
 		boolean checkSiteWeb = siteWeb != null && !siteWeb.equals(structSiteWeb);
 		boolean checkLogo = logo != null && !logo.equals(structLogo);
-	
+
 		if (checkCustomName) {
 			updateQuery += "astructure.nomCourt = ?, ";
 			params.add(customName);
 		}
-	
+
 		if (checkSiteWeb) {
 			updateQuery += "astructure.siteWeb = ?, ";
 			params.add(siteWeb);
 		}
-	
+
 		if (checkLogo) {
 			updateQuery += "astructure.logo = ?, ";
 			params.add(logo);
 		}
-	
+
 		// Remove the trailing comma and space from the updateQuery
 		updateQuery = updateQuery.substring(0, updateQuery.length() - 2);
-		
+
 		// Add the WHERE condition to the updateQuery
 		updateQuery += " WHERE id = ?";
 		params.add(id);
@@ -303,9 +296,8 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 			System.out.println("updateQuery : " + updateQuery);
 			System.out.println("params : " + params.toString());
 			log.debug("updated : ", updateQuery, params.toString());
-			//jdbcTemplate.update(updateQuery, params.toArray());
-		}
-		else {
+			// jdbcTemplate.update(updateQuery, params.toArray());
+		} else {
 			System.out.println("nothing updating : " + updateQuery);
 			System.out.println("else params : " + params.toString());
 		}
@@ -317,26 +309,26 @@ public class LdapStructureDao implements IStructureDao/*, InitializingBean*/{
 		String displayName = dto.getDisplayName();
 		Map<String, List<String>> otherAttr = dto.getOtherAttributes();
 		List<String> getValues = new ArrayList<>();
-	
+
 		getValues.add(displayName);
 		String testSiteWeb = null;
 		String testLogo = null;
 		for (Map.Entry<String, List<String>> entry : otherAttr.entrySet()) {
 			String key = entry.getKey();
 			List<String> valueList = entry.getValue();
-	
-			if (key.equals("ENTStructureSiteWeb") && valueList != null && !valueList.isEmpty() ) {
-				testSiteWeb = valueList.get(0);				
+
+			if (key.equals("ENTStructureSiteWeb") && valueList != null && !valueList.isEmpty()) {
+				testSiteWeb = valueList.get(0);
 			}
-	
-			if (key.equals("ESCOStructureLogo") && valueList != null && !valueList.isEmpty() ) {
-				testLogo =  valueList.get(0);				
-			}	
+
+			if (key.equals("ESCOStructureLogo") && valueList != null && !valueList.isEmpty()) {
+				testLogo = valueList.get(0);
+			}
 		}
 		getValues.add(testSiteWeb);
 		getValues.add(testLogo);
 		System.out.println("getValues = " + getValues.toString());
-	
+
 		return getValues;
 	}
 }

@@ -29,11 +29,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
-/**
- * @author GIP RECIA 2013 - Maxime BOSSARD.
- * @author GIP RECIA - Julien Gribonvald
- *
- */
 @Getter
 @Setter
 @AllArgsConstructor
@@ -47,17 +42,18 @@ public class UniteAdministrativeImmatriculee extends Structure {
 	private String code;
 
 	/**
-	 * @param id Identifier
-	 * @param code Code
-	 * @param name Complete Name
-	 * @param displayName Display Name
-	 * @param description Description
+	 * @param id              Identifier
+	 * @param code            Code
+	 * @param name            Complete Name
+	 * @param displayName     Display Name
+	 * @param description     Description
 	 * @param otherAttributes All other attributes
 	 */
-	public UniteAdministrativeImmatriculee(@NonNull String id, @NonNull String code, @NonNull String name, @NonNull String displayName,
+	public UniteAdministrativeImmatriculee(@NonNull String id, @NonNull String code, @NonNull String name,
+			@NonNull String displayName,
 			String description, Map<String, List<String>> otherAttributes) {
 		super(id, name, displayName, description, otherAttributes);
-		
+
 		this.code = code;
 	}
 

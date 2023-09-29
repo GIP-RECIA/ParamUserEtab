@@ -17,7 +17,6 @@ package fr.recia.paramuseretab.dao.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -52,7 +51,6 @@ public class PersonAttributesMapper implements AttributesMapper<Person> {
 
         List<String> listEtabs = new ArrayList<>();
         List<String> listIdsEtab = new ArrayList<>();
-        // for (String attrName : groupAttributes) {
         final Attribute dirAttr = attributes.get(groupAttributes);
         if (dirAttr != null) {
             NamingEnumeration<String> ae = (NamingEnumeration<String>) dirAttr.getAll();
@@ -60,7 +58,6 @@ public class PersonAttributesMapper implements AttributesMapper<Person> {
                 listEtabs.add(ae.next());
             }
         }
-        // }
 
         final Attribute attrStruct = attributes.get(structIdsInfoKey);
         if (attrStruct != null) {

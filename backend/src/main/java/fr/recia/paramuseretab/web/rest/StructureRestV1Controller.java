@@ -22,7 +22,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,15 +30,11 @@ import org.springframework.web.bind.annotation.*;
 import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
 import fr.recia.paramuseretab.service.IUniteAdministrativeImmatriculeService;
 
-/**
- * Created by jgribonvald on 27/07/16.
- */
-
 @RestController
 @RequestMapping(value = "/rest/v1/structures")
 public class StructureRestV1Controller {
 
-	//@Autowired
+	// @Autowired
 	private IUniteAdministrativeImmatriculeService structureService;
 
 	/*

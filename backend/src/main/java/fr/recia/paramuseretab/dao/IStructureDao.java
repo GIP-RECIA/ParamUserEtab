@@ -23,10 +23,6 @@ import java.util.Collection;
 import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.web.DTOStructure;
 
-/**
- * @author GIP RECIA - Julien Gribonvald.
- *
- */
 public interface IStructureDao {
 
 	/**
@@ -36,9 +32,9 @@ public interface IStructureDao {
 	 */
 	Collection<? extends Structure> findAllStructures();
 
-
 	/**
 	 * Find a Structure.
+	 * 
 	 * @param id Id of the structure to find.
 	 * @return the Structure found.
 	 */
