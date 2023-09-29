@@ -46,10 +46,6 @@ import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
 import fr.recia.paramuseretab.service.IUniteAdministrativeImmatriculeService;
 import fr.recia.paramuseretab.web.DTOStructure;
 
-/**
- * @author GIP RECIA 2013 - Maxime BOSSARD.
- *
- */
 @Service
 // @Repository
 @Slf4j
@@ -391,7 +387,7 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
 
 	/**
 	 * For API parametab : Retrieve the idSiren in the Structure that concerns the
-	 * name of isMemberOf
+	 * UAI or the name of isMemberOf
 	 */
 	@Override
 	public String getSiren(String code, String name) {

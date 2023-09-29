@@ -21,10 +21,6 @@ package fr.recia.paramuseretab.dao;
 import fr.recia.paramuseretab.model.Person;
 import fr.recia.paramuseretab.model.Structure;
 
-/**
- * @author GIP RECIA 2013 - Maxime BOSSARD.
- *
- */
 public interface IUserDao {
 
 	void saveCurrentStructure(String userId, Structure struct);

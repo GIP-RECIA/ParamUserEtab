@@ -41,10 +41,6 @@ import fr.recia.paramuseretab.dao.bean.IStructureFormatter;
 import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
 
-/**
- * @author GIP RECIA 2013 - Maxime BOSSARD.
- *
- */
 @Data
 @AllArgsConstructor
 public class StructureAttributesMapper implements AttributesMapper {
@@ -129,7 +125,11 @@ public class StructureAttributesMapper implements AttributesMapper {
 		Assert.hasText(struct.getName(), "No Name attribute found in LDAP for UniteAdministrativeImmatriculee !");
 		Assert.hasText(struct.getDisplayName(),
 				"No DisplayName attribute found in LDAP for UniteAdministrativeImmatriculee !");
-		/*Assert.hasText(etab.getDescription(), "No Description attribute found in LDAP for UniteAdministrativeImmatriculee !");*/
+		/*
+		 * Assert.hasText(etab.getDescription(),
+		 * "No Description attribute found in LDAP for UniteAdministrativeImmatriculee !"
+		 * );
+		 */
 
 		return struct;
 	}

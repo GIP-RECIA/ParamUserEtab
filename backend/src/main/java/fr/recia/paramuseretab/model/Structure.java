@@ -24,9 +24,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-/**
- * Created by jgribonvald on 27/03/17.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -44,7 +41,5 @@ public class Structure implements Serializable {
 	protected String description;
 
 	private Map<String, List<String>> otherAttributes;
-
-	
 
 }

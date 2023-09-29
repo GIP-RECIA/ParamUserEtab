@@ -22,7 +22,6 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
 import com.unboundid.ldap.sdk.schema.Schema;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -41,7 +40,8 @@ public class LdapServerRule implements BeforeAllCallback, AfterAllCallback {
 	private InMemoryDirectoryServer server;
 	private int listenPort;
 
-	public LdapServerRule(String baseDn, String lDiffPath, int listenPort, boolean validateSchema, String schemaFilePath) {
+	public LdapServerRule(String baseDn, String lDiffPath, int listenPort, boolean validateSchema,
+			String schemaFilePath) {
 		this.lDiffPath = lDiffPath;
 		this.baseDn = baseDn;
 		this.dn = DefaultDn;
@@ -121,10 +121,11 @@ public class LdapServerRule implements BeforeAllCallback, AfterAllCallback {
 	}
 
 	/*
-	@Override
-	public String toString() {
-		return com.google.common.base.Objects.toStringHelper(this).add("baseDn", baseDn).add("listenPort", listenPort)
-				.toString();
-	}
-	*/
+	 * @Override
+	 * public String toString() {
+	 * return com.google.common.base.Objects.toStringHelper(this).add("baseDn",
+	 * baseDn).add("listenPort", listenPort)
+	 * .toString();
+	 * }
+	 */
 }

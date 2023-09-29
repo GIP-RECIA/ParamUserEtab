@@ -31,9 +31,6 @@ import org.springframework.util.Assert;
 
 import fr.recia.paramuseretab.model.Structure;
 
-/**
- * Created by jgribonvald on 28/07/16.
- */
 @Slf4j
 @NoArgsConstructor
 @Component
@@ -41,12 +38,12 @@ import fr.recia.paramuseretab.model.Structure;
 public class LdapStructureDisplayNameFormater implements IStructureFormatter, InitializingBean {
 
 	@Getter
-	//@Value("${ldapformatter.groupsregex}")
+	// @Value("${ldapformatter.groupsregex}")
 	private String groupsRegex;
 	private Pattern groupsRegexPattern;
 	@Setter
 	@Getter
-	//@Value("#{${ldapformatter.indexlistreplacement}}")
+	// @Value("#{${ldapformatter.indexlistreplacement}}")
 	private Map<Integer, String> indexListReplacement;
 
 	public void setGroupsRegex(final String groupsRegex) {
@@ -94,7 +91,6 @@ public class LdapStructureDisplayNameFormater implements IStructureFormatter, In
 			Matcher group = this.groupsRegexPattern.matcher(input);
 			if (group.find()) {
 				String stringToBeReplaced = " ";
-				StringBuilder builder = new StringBuilder();
 				return group.replaceAll(stringToBeReplaced);
 			}
 
@@ -102,7 +98,8 @@ public class LdapStructureDisplayNameFormater implements IStructureFormatter, In
 		return input;
 	}
 
-	public String replaceGroup(String regex, String source, int groupToReplace, int groupOccurrence, String replacement) {
+	public String replaceGroup(String regex, String source, int groupToReplace, int groupOccurrence,
+			String replacement) {
 		Matcher m = Pattern.compile(regex).matcher(source);
 		for (int i = 0; i < groupOccurrence; i++)
 			if (!m.find())
@@ -118,6 +115,5 @@ public class LdapStructureDisplayNameFormater implements IStructureFormatter, In
 		Assert.isTrue(!this.indexListReplacement.isEmpty(),
 				"Attribut indexListToKeep wasn't initialized, you should list all regexp group where you want to make replacemnt");
 	}
-
 
 }

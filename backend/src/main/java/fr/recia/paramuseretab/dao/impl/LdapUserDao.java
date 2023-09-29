@@ -48,10 +48,6 @@ import fr.recia.paramuseretab.model.Person;
 import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
 
-/**
- * @author GIP RECIA 2013 - Maxime BOSSARD.
- *
- */
 // @Repository
 @Component
 @Data

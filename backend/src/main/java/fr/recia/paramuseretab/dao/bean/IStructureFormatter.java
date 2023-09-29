@@ -17,16 +17,15 @@ package fr.recia.paramuseretab.dao.bean;
 
 import fr.recia.paramuseretab.model.Structure;
 
-/**
- * Created by jgribonvald on 28/07/16.
- */
 public interface IStructureFormatter {
 
-    /** Formatter used in visitor pattern
+    /**
+     * Formatter used in visitor pattern
+     * 
      * @param input UniteAdministrativeImmatriculee to format
      * @return The UniteAdministrativeImmatriculee object formatted
      */
-    Structure format (Structure input);
+    Structure format(Structure input);
 
     Structure formatName(Structure input);
 }
