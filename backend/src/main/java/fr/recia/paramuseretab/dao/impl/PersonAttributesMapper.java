@@ -49,13 +49,13 @@ public class PersonAttributesMapper implements AttributesMapper<Person> {
         person.setUid((String) attributes.get(uid).get());
         person.setCurrentStruct((String) attributes.get(currentStruct).get());
 
-        List<String> listEtabs = new ArrayList<>();
-        List<String> listIdsEtab = new ArrayList<>();
+        List<String> listIsMemberOf = new ArrayList<>();
+        List<String> listSiren = new ArrayList<>();
         final Attribute dirAttr = attributes.get(groupAttributes);
         if (dirAttr != null) {
             NamingEnumeration<String> ae = (NamingEnumeration<String>) dirAttr.getAll();
             while (ae.hasMore()) {
-                listEtabs.add(ae.next());
+                listIsMemberOf.add(ae.next());
             }
         }
 
@@ -63,12 +63,12 @@ public class PersonAttributesMapper implements AttributesMapper<Person> {
         if (attrStruct != null) {
             NamingEnumeration<String> ae = (NamingEnumeration<String>) attrStruct.getAll();
             while (ae.hasMore()) {
-                listIdsEtab.add(ae.next());
+                listSiren.add(ae.next());
             }
         }
 
-        person.setSiren(listIdsEtab);
-        person.setIsMemberOf(listEtabs);
+        person.setSiren(listSiren);
+        person.setIsMemberOf(listIsMemberOf);
 
         try {
             person = etabFormatter.formatPerson(person);

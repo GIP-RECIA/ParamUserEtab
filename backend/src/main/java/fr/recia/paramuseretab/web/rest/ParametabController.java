@@ -120,7 +120,7 @@ public class ParametabController {
 	public ResponseEntity<DTOPerson> toDTOChangeEtab() {
 
 		try {
-			Person person = userInfoService.getAllEtablissement();
+			Person person = userInfoService.getPersonDetails();
 
 			DTOPerson dto = person2dtoPersonImpl.toDTOChangeEtab(person);
 			return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -133,7 +133,7 @@ public class ParametabController {
 	public ResponseEntity<DTOPerson> toDTOParametab() {
 
 		try {
-			Person person = userInfoService.getAllEtablissement();
+			Person person = userInfoService.getPersonDetails();
 
 			DTOPerson dto = person2dtoPersonImpl.toDTOParamEtab(person);
 			return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -148,7 +148,7 @@ public class ParametabController {
 
 	@GetMapping("/")
 	public ResponseEntity<Person> getEtabs() {
-		return new ResponseEntity<>(userInfoService.getAllEtablissement(), HttpStatus.OK);
+		return new ResponseEntity<>(userInfoService.getPersonDetails(), HttpStatus.OK);
 	}
 
 	/**

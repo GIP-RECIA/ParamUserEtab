@@ -18,6 +18,8 @@
  */
 package fr.recia.paramuseretab.dao.impl;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -258,8 +260,12 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
 	}
 
 	private void updateDataInDatabase(DTOStructure dto, String customName, String siteWeb, String logo, String id) {
-		String updateQuery = "UPDATE astructure SET ";
+		String updateQuery = "UPDATE astructure SET astructure.dateModification = ?, ";
 		List<Object> params = new ArrayList<>();
+
+		final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		params.add(sdf.format(timestamp));
 
 		List<String> listValue = checkValue(dto);
 		String displayName = listValue.get(0); // First element in the list
@@ -289,7 +295,7 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
 		updateQuery = updateQuery.substring(0, updateQuery.length() - 2);
 
 		// Add the WHERE condition to the updateQuery
-		updateQuery += " WHERE id = ?";
+		updateQuery += " WHERE siren = ?";
 		params.add(id);
 
 		if (checkCustomName || checkSiteWeb || checkLogo) {
