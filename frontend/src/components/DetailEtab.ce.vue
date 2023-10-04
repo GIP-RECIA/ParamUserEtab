@@ -33,7 +33,7 @@ watchEffect((): void => {
 async function fetchDetailData(id: string) {
   if (id != '') {
     try {
-      const response = await axios.get(`/parametab/${id}`);
+      const response = await axios.get(`/test/api/${id}`);
       details.value = response.data;
       getDetailsAsString.value = JSON.stringify(details.value);
     } catch (error) {
@@ -49,17 +49,17 @@ const handleUpdated = async ({ urlEtab }) => {
 
 async function updateInfo() {
   console.warn(details.value);
-  const dataJson = `/parametab/updateV2/${props.detail}`;
+  const dataJson = `/test/api/updateV2/${props.detail}`;
 
   axios
     .put(dataJson, details.value)
-    .then(async (response) => {
+    .then(async () => {
       Swal.fire({
         title: 'Sauvegardé',
         icon: 'success',
       });
     })
-    .catch(function (error) {
+    .catch(function () {
       Swal.fire({
         icon: 'error',
         title: 'Oops...',

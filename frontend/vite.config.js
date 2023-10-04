@@ -23,7 +23,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/parametab": {
+      "/test/api": {
         target: "http://localhost:8080",
         changeOrigin: true,
         //rewrite: (path) => path.replace(/^\/parametab/, '') // mettre en commentaire pour afficher /parametab/$id

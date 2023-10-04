@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { StructureDetail } from '@/types/structureType';
 import axios from 'axios';
 import Cropper from 'cropperjs';
 import { onMounted, onUnmounted, ref, watch, watchEffect } from 'vue';
@@ -33,8 +32,6 @@ const fileChanged = (e) => {
     selectedFile.value = files[0];
   }
 };
-
-const emit = defineEmits(['updated']);
 
 onMounted(() => {
   if (img.value) {
@@ -114,7 +111,7 @@ const cropImage = () => {
 
     axios
       .post(url, formData)
-      .then((response) => {})
+      .then(() => {})
       .catch(function (error) {
         console.error('error: ', error);
       });
