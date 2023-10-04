@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { type HTMLAttributes, computed, onBeforeUnmount, onBeforeUpdate, onMounted, onUpdated, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, onUpdated, ref } from 'vue';
 
 const parametab = ref<any>([]);
 const etabJson = ref<string>('');
@@ -11,12 +11,10 @@ const nameEtabSelected = ref<string>('');
 const findEtab = ref<any[]>([]);
 
 onMounted(async () => {
-  const res = await axios.get('/parametab/');
-  parametab.value = res.data; // ajouté pour testé API
-  // Access the list of "isMemberOf"
-
-  // ajouté pour testé API
-  etabJson.value = JSON.stringify(parametab.value.isMemberOf);
+  const res = await axios.get('/test/api/parametab/');
+  parametab.value = res.data;
+  // List of etablissement
+  etabJson.value = JSON.stringify(parametab.value.listEtab);
   currentEtab.value = parametab.value.currentStruct;
   findEtab.value = JSON.parse(etabJson.value);
   window.addEventListener('resize', handleResize);
@@ -69,16 +67,15 @@ function filteredName() {
   return name.etabName;
 }
 
-function select(payload: CustomEvent) {
+function select(payload: CustomEvent, isBoolean: boolean) {
   let getID = payload.detail[0].idSiren;
   let getName = payload.detail[0].etabName;
-  let isSelected = payload.detail[1];
 
   if (getID !== currentEtab.value) {
     currentEtab.value = getID;
   }
 
-  if (isSelected) {
+  if (isBoolean) {
     isVisible.value = false;
     nameEtabSelected.value = getName;
     currentEtab.value = getID;
@@ -95,7 +92,7 @@ function select(payload: CustomEvent) {
         class-div="list-etab"
         v-bind:data-json="etabJson"
         :data-current="currentEtab"
-        @selectEtab="select"
+        @selectEtab="select($event, false)"
       ></list-etab-ce>
     </div>
     <div v-else class="dropdown-wrapper">
@@ -109,7 +106,7 @@ function select(payload: CustomEvent) {
           class-div="options"
           v-bind:data-json="etabJson"
           :data-current="currentEtab"
-          @selectEtab="select"
+          @selectEtab="select($event, true)"
         ></list-etab-ce>
       </div>
     </div>

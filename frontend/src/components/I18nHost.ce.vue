@@ -8,5 +8,5 @@ provide(I18nInjectionKey, i18n);
 </script>
 
 <template>
-  <etab-ce id="app"></etab-ce>
+  <param-etab-ce id="app"></param-etab-ce>
 </template>
