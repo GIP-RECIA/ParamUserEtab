@@ -22,7 +22,7 @@ import fr.recia.paramuseretab.model.Person;
 
 public interface IUserInfoService {
 
-	Person getAllEtablissement();
+	Person getPersonDetails();
 
 	String getUserID();
 

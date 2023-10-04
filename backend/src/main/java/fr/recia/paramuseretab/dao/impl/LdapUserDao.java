@@ -123,7 +123,7 @@ public class LdapUserDao implements IUserDao, InitializingBean {
 	}
 
 	@Override
-	public Person getAllUsersInfo() {
+	public Person retrievePersonFromLdap() {
 		List<Person> allInfos;
 		try {
 			allInfos = this.ldapTemplate.search(this.userDn, this.personFiltre,

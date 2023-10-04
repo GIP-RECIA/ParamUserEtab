@@ -99,8 +99,8 @@ public class BasicUserInfoService implements IUserInfoService, InitializingBean 
 	}
 
 	@Override
-	public Person getAllEtablissement() {
-		Person allInfo = this.userDao.getAllUsersInfo();
+	public Person getPersonDetails() {
+		Person allInfo = this.userDao.retrievePersonFromLdap();
 		System.out.println("ok");
 		return allInfo;
 	}
@@ -110,7 +110,7 @@ public class BasicUserInfoService implements IUserInfoService, InitializingBean 
 
 		String id = null;
 
-		Person infoPerson = this.getAllEtablissement();
+		Person infoPerson = this.getPersonDetails();
 		id = infoPerson.getUid();
 
 		return id;
