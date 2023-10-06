@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { StructureDetail } from '../types/structureType';
+import { getDetailEtab } from '@/services/serviceParametab';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { computed, ref, watchEffect } from 'vue';
@@ -22,6 +23,8 @@ const details = ref<StructureDetail>({
 
 const props = defineProps<{
   detail: string;
+  baseApiUrl: string;
+  paramEtabApi: string;
 }>();
 
 watchEffect((): void => {
@@ -33,7 +36,8 @@ watchEffect((): void => {
 async function fetchDetailData(id: string) {
   if (id != '') {
     try {
-      const response = await axios.get(`/test/api/${id}`);
+      //const response = await axios.get(`/test/api/${id}`);
+      const response = await getDetailEtab(props.baseApiUrl + props.paramEtabApi + id);
       details.value = response.data;
       getDetailsAsString.value = JSON.stringify(details.value);
     } catch (error) {

@@ -6,6 +6,7 @@ import vueI18n from "@intlify/unplugin-vue-i18n/vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base:"/indah/ui",
   plugins: [
     vue({
       template: {
@@ -21,13 +22,14 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-  server: {
-    proxy: {
-      "/test/api": {
-        target: "http://localhost:8080",
-        changeOrigin: true,
-        //rewrite: (path) => path.replace(/^\/parametab/, '') // mettre en commentaire pour afficher /parametab/$id
-      },
-    },
-  },
+  // server: {
+  //   proxy: {
+  //     "/indah/test/api": {
+  //       target: "http://10.209.28.15:8090",
+  //       changeOrigin: true,
+  //       ws: true
+  //       //rewrite: (path) => path.replace(/^\/parametab/, '') // mettre en commentaire pour afficher /parametab/$id
+  //     },
+  //   },
+  // },
 });
