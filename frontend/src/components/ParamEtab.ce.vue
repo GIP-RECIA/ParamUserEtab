@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getParametab } from '@/services/serviceParametab';
 import axios from 'axios';
 import { computed, onBeforeUnmount, onMounted, onUpdated, ref } from 'vue';
 
@@ -10,8 +11,16 @@ const isVisible = ref<boolean>(false);
 const nameEtabSelected = ref<string>('');
 const findEtab = ref<any[]>([]);
 
+const props = defineProps<{
+  baseApiUrl: string;
+  paramEtabApi: string;
+  userInfoApiUrl: string;
+}>();
+
 onMounted(async () => {
-  const res = await axios.get('/test/api/parametab/');
+  //const res = await axios.get("/test/api/parametab/");
+  const res = await getParametab(props.baseApiUrl + props.paramEtabApi, props.userInfoApiUrl);
+  console.log('res: ', res);
   parametab.value = res.data;
   // List of etablissement
   etabJson.value = JSON.stringify(parametab.value.listEtab);
@@ -111,7 +120,7 @@ function select(payload: CustomEvent, isBoolean: boolean) {
       </div>
     </div>
     <div class="detail">
-      <detail-etab-ce :detail="currentEtab"></detail-etab-ce>
+      <detail-etab-ce :detail="currentEtab" :base-api-url="baseApiUrl" :param-etab-api="paramEtabApi"></detail-etab-ce>
     </div>
   </div>
 </template>

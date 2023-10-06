@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "concurrently --kill-others \"npm run dev\" \"npm run json\"",
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
     "json": "json-server --watch ./src/data/api.json",
@@ -15,8 +15,10 @@
   },
   "dependencies": {
     "@fortawesome/vue-fontawesome": "^3.0.3",
+    "@uportal/open-id-connect": "^1.40.2",
     "axios": "^1.5.0",
     "cropperjs": "^1.6.1",
+    "regenerator-runtime": "^0.14.0",
     "vue": "^3.3.4",
     "vue-advanced-cropper": "^2.8.8",
     "vue-cropperjs": "^5.0.0",
