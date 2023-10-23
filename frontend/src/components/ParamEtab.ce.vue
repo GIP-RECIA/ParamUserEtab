@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { getParametab } from '@/services/serviceParametab';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import { computed, onBeforeUnmount, onMounted, onUpdated, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
+const m = (key: string): string => t(`error.${key}`);
 const parametab = ref<any>([]);
 const etabJson = ref<string>('');
 const currentEtab = ref<string>('');
@@ -19,13 +23,18 @@ const props = defineProps<{
 
 onMounted(async () => {
   //const res = await axios.get("/test/api/parametab/");
-  const res = await getParametab(props.baseApiUrl + props.paramEtabApi, props.userInfoApiUrl);
-  console.log('res: ', res);
-  parametab.value = res.data;
-  // List of etablissement
-  etabJson.value = JSON.stringify(parametab.value.listEtab);
-  currentEtab.value = parametab.value.currentStruct;
-  findEtab.value = JSON.parse(etabJson.value);
+  try {
+    const res = await getParametab(props.baseApiUrl + props.paramEtabApi, props.userInfoApiUrl);
+    console.log('res: ', res);
+    parametab.value = res.data;
+    // List of etablissement
+    etabJson.value = JSON.stringify(parametab.value.listEtab);
+    currentEtab.value = parametab.value.currentStruct;
+    findEtab.value = JSON.parse(etabJson.value);
+  } catch (error) {
+    console.log('error : ', error.response.data);
+    showError(error.response.data);
+  }
   window.addEventListener('resize', handleResize);
 });
 
@@ -65,6 +74,16 @@ const isMobile = computed(() => {
 
 const handleResize = () => {
   windowWidth.value = window.innerWidth;
+};
+
+const showError = (errorMsgKey: string) => {
+  const errorMessage = t(`error.${errorMsgKey}`);
+  Swal.fire({
+    icon: 'error',
+    text: errorMessage,
+    allowOutsideClick: false,
+    confirmButtonText: t(`error.fermer`),
+  });
 };
 
 function filteredName() {
@@ -120,7 +139,12 @@ function select(payload: CustomEvent, isBoolean: boolean) {
       </div>
     </div>
     <div class="detail">
-      <detail-etab-ce :detail="currentEtab" :base-api-url="baseApiUrl" :param-etab-api="paramEtabApi"></detail-etab-ce>
+      <detail-etab-ce
+        :detail="currentEtab"
+        :base-api-url="baseApiUrl"
+        :param-etab-api="paramEtabApi"
+        :user-info-api-url="userInfoApiUrl"
+      ></detail-etab-ce>
     </div>
   </div>
 </template>

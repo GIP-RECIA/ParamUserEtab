@@ -18,5 +18,10 @@
     "selectionner-image": "Sélectionner une image",
     "appliquer": "Appliquer",
     "fermer": "Fermer"
+  },
+  "error": {
+    "perte-connexion": "Perte de connexion de l'utilisateur.",
+    "permission-refusee": "Permission refusée. Vous n'avez aucun droit.",
+    "fermer": "Fermer"
   }
 }

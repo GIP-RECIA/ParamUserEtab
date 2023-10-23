@@ -79,18 +79,18 @@ public class SecurityConfiguration {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    if (log.isDebugEnabled()) log.debug("configure signatureKey = {}", this.signatureKey);
-    final AbstractPreAuthenticatedProcessingFilter filter =
-      new SoffitApiPreAuthenticatedProcessingFilter(this.signatureKey);
+    if (log.isDebugEnabled())
+      log.debug("configure signatureKey = {}", this.signatureKey);
+    final AbstractPreAuthenticatedProcessingFilter filter = new SoffitApiPreAuthenticatedProcessingFilter(
+        this.signatureKey);
 
     filter.setAuthenticationManager(authenticationManager());
 
     http.addFilter(filter);
     http.authorizeHttpRequests(authz -> authz
-      .antMatchers("/health-check").permitAll()
-      .antMatchers(HttpMethod.GET, "/api/**").authenticated()
-      .anyRequest().denyAll()
-    );
+        .antMatchers("/health-check").permitAll()
+        .antMatchers(HttpMethod.GET, "/api/**").authenticated()
+        .anyRequest().denyAll());
     http.cors().configurationSource(corsConfigurationSource());
     http.sessionManagement().sessionFixation().newSession();
 
@@ -110,8 +110,10 @@ public class SecurityConfiguration {
   @Bean
   public FilterRegistrationBean<Filter> disableSpringBootErrorFilter() {
     /*
-     * The ErrorPageFilter (Spring) makes extra calls to HttpServletResponse.flushBuffer(),
-     * and this behavior produces many warnings in the portal logs during portlet requests.
+     * The ErrorPageFilter (Spring) makes extra calls to
+     * HttpServletResponse.flushBuffer(),
+     * and this behavior produces many warnings in the portal logs during portlet
+     * requests.
      */
     FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
     filterRegistrationBean.setFilter(errorPageFilter());
@@ -125,7 +127,8 @@ public class SecurityConfiguration {
     final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
     if (this.corsEnable) {
-      if (log.isWarnEnabled()) log.warn("CORS ABILITATI! CORS est autorisé");
+      if (log.isWarnEnabled())
+        log.warn("CORS ABILITATI! CORS est autorisé");
 
       final CorsConfiguration configuration = new CorsConfiguration();
 

@@ -37,6 +37,7 @@ import org.springframework.util.Assert;
 import fr.recia.paramuseretab.dao.IUserDao;
 import fr.recia.paramuseretab.dao.bean.IUserFormatter;
 import fr.recia.paramuseretab.model.Person;
+import fr.recia.paramuseretab.security.HandledException;
 import fr.recia.paramuseretab.service.IUserInfoService;
 
 @Data
@@ -99,21 +100,29 @@ public class BasicUserInfoService implements IUserInfoService, InitializingBean 
 	}
 
 	@Override
-	public Person getPersonDetails() {
-		Person allInfo = this.userDao.retrievePersonFromLdap();
-		System.out.println("ok");
+	public Person getPersonDetails(String userId) throws HandledException {
+		Person allInfo = null;
+		try {
+			if (userId != null) {
+				allInfo = this.userDao.retrievePersonFromLdap(userId);
+				System.out.println("ok: " + userId);
+			}
+		} catch (Exception e) {
+			throw new HandledException("perte-connexion");
+		}
+
 		return allInfo;
 	}
 
-	@Override
-	public String getUserID() {
+	// @Override
+	// public String getUserID() {
 
-		String id = null;
+	// String id = null;
 
-		Person infoPerson = this.getPersonDetails();
-		id = infoPerson.getUid();
+	// Person infoPerson = this.getPersonDetails();
+	// id = infoPerson.getUid();
 
-		return id;
-	}
+	// return id;
+	// }
 
 }

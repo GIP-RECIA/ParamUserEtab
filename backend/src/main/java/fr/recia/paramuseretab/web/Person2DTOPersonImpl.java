@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.recia.paramuseretab.model.Person;
+import fr.recia.paramuseretab.security.HandledException;
 import fr.recia.paramuseretab.service.IUniteAdministrativeImmatriculeService;
 
 @Service
@@ -17,43 +18,49 @@ public class Person2DTOPersonImpl {
     @Autowired
     private IUniteAdministrativeImmatriculeService uai;
 
-    public DTOPerson toDTOParamEtab(Person person) {
-
-        List<Map<String, String>> listEtab = new ArrayList<>();
-
-        // TO DO: retrieve the name of etab for getting the idSiren
-        if (!person.getIsMemberOf().isEmpty()) {
-
-            List<String> etabNames = person.getIsMemberOf();
-            for (String value : etabNames) {
-                String name = null;
-                Map<String, String> itemMap = new HashMap<>();
-
-                // find the last occurence of '('
-                int startIndex = value.lastIndexOf('(');
-
-                if (startIndex != -1) {
-                    // extract the substring from startIndex + 1 to the end
-                    String result = value.substring(startIndex + 1, value.length() - 1);
-
-                    name = this.uai.getSiren(result, null);
-                } else {
-                    name = this.uai.getSiren(null, value);
-                }
-
-                itemMap.put("idSiren", name);
-                itemMap.put("etabName", value);
-                listEtab.add(itemMap);
-            }
-
-        }
+    public DTOPerson toDTOParamEtab(Person person) throws HandledException {
 
         final DTOPerson dto = new DTOPerson();
-        dto.setUid(person.getUid());
-        dto.setCurrentStruct(person.getCurrentStruct());
-        dto.setSiren(person.getSiren());
-        dto.setIsMemberOf(person.getIsMemberOf());
-        dto.setListEtab(listEtab);
+
+        try {
+
+            List<Map<String, String>> listEtab = new ArrayList<>();
+
+            // TO DO: retrieve the name of etab for getting the idSiren
+            if (!person.getIsMemberOf().isEmpty()) {
+
+                List<String> etabNames = person.getIsMemberOf();
+                for (String value : etabNames) {
+                    String name = null;
+                    Map<String, String> itemMap = new HashMap<>();
+
+                    // find the last occurence of '('
+                    int startIndex = value.lastIndexOf('(');
+
+                    if (startIndex != -1) {
+                        // extract the substring from startIndex + 1 to the end
+                        String result = value.substring(startIndex + 1, value.length() - 1);
+
+                        name = this.uai.getSiren(result, null);
+                    } else {
+                        name = this.uai.getSiren(null, value);
+                    }
+
+                    itemMap.put("idSiren", name);
+                    itemMap.put("etabName", value);
+                    listEtab.add(itemMap);
+                }
+
+            }
+
+            dto.setUid(person.getUid());
+            dto.setCurrentStruct(person.getCurrentStruct());
+            dto.setSiren(person.getSiren());
+            dto.setIsMemberOf(person.getIsMemberOf());
+            dto.setListEtab(listEtab);
+        } catch (Exception e) {
+            throw new HandledException("permission-refusee");
+        }
 
         return dto;
     }
