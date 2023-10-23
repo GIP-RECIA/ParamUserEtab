@@ -16,16 +16,20 @@
 package fr.recia.paramuseretab.web.rest;
 
 import java.io.File;
+import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -35,6 +39,7 @@ import org.springframework.web.multipart.MultipartFile;
 import fr.recia.paramuseretab.dao.IStructureDao;
 import fr.recia.paramuseretab.model.Person;
 import fr.recia.paramuseretab.model.Structure;
+import fr.recia.paramuseretab.security.HandledException;
 import fr.recia.paramuseretab.service.IImageUrlPath;
 import fr.recia.paramuseretab.service.ILogoStorageService;
 import fr.recia.paramuseretab.service.IStructureService;
@@ -44,6 +49,12 @@ import fr.recia.paramuseretab.web.DTOPerson;
 import fr.recia.paramuseretab.web.DTOStructure;
 import fr.recia.paramuseretab.web.Person2DTOPersonImpl;
 import fr.recia.paramuseretab.web.Structure2DTOStructureImpl;
+
+import io.jsonwebtoken.io.IOException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 import lombok.extern.slf4j.Slf4j;
@@ -79,6 +90,12 @@ public class ParametabController {
 
 	private IImageUrlPath oldUrl;
 	private IImageUrlPath newUrl;
+
+	@ExceptionHandler(HandledException.class)
+	// @ResponseStatus(HttpStatus.NOT_FOUND)
+	public ResponseEntity<String> handleHandledException(HandledException ex) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+	}
 
 	private IImageUrlPath calculOldImageUrlPath(DTOStructure str) {
 		IImageUrlPath url = null;
@@ -116,11 +133,38 @@ public class ParametabController {
 		return url;
 	}
 
+	public String decodeJwt(String jwt) throws JsonProcessingException {
+		if (jwt == null || jwt.isEmpty()) {
+			throw new IllegalArgumentException("Authorization Header is missing.");
+		}
+		String token = jwt.substring(7);
+		String[] chunks = token.split("\\.");
+
+		Base64.Decoder decoder = Base64.getUrlDecoder();
+		String payload = new String(decoder.decode(chunks[1]));
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			Map<String, Object> claims = objectMapper.readValue(payload, new TypeReference<Map<String, Object>>() {
+			});
+			String sub = (String) claims.get("sub");
+			System.out.println("The 'sub' claim: " + sub);
+			return sub;
+		} catch (IOException e) {
+			// Handle the exception, e.g., token parsing error
+			e.printStackTrace();
+			return null; // or throw an exception
+		}
+	}
+
 	@GetMapping("/changeetab/")
-	public ResponseEntity<DTOPerson> toDTOChangeEtab() {
+	public ResponseEntity<DTOPerson> toDTOChangeEtab(
+			@RequestHeader(name = "Authorization", required = true) String authorizationHeader) {
 
 		try {
-			Person person = userInfoService.getPersonDetails();
+			String userId = decodeJwt(authorizationHeader);
+
+			Person person = userInfoService.getPersonDetails(userId);
 
 			DTOPerson dto = person2dtoPersonImpl.toDTOChangeEtab(person);
 			return new ResponseEntity<>(dto, HttpStatus.OK);
@@ -130,13 +174,17 @@ public class ParametabController {
 	}
 
 	@GetMapping("/parametab/")
-	public ResponseEntity<DTOPerson> toDTOParametab() {
+	public ResponseEntity<?> toDTOParametab(
+			@RequestHeader(name = "Authorization", required = false) String authorizationHeader) {
 
 		try {
-			Person person = userInfoService.getPersonDetails();
+			String userId = decodeJwt(authorizationHeader);
 
+			Person person = userInfoService.getPersonDetails(userId);
 			DTOPerson dto = person2dtoPersonImpl.toDTOParamEtab(person);
 			return new ResponseEntity<>(dto, HttpStatus.OK);
+		} catch (HandledException ex) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -147,14 +195,28 @@ public class ParametabController {
 	 */
 
 	@GetMapping("/")
-	public ResponseEntity<Person> getEtabs() {
-		return new ResponseEntity<>(userInfoService.getPersonDetails(), HttpStatus.OK);
+	public ResponseEntity<Person> getEtabs(
+			@RequestHeader(name = "Authorization", required = true) String authorizationHeader) {
+		try {
+			String userId = null;
+			if (authorizationHeader != null) {
+
+				userId = decodeJwt(authorizationHeader);
+
+				System.out.println("Received Authorization Header: " + authorizationHeader);
+			} else {
+				System.out.println("Authorization Header is missing.");
+			}
+			return new ResponseEntity<>(userInfoService.getPersonDetails(userId), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
 	 * Get info of an etablissement
 	 */
-	@GetMapping("/{id}")
+	@GetMapping("/parametab/{id}")
 	public ResponseEntity<DTOStructure> convertToDTO(@PathVariable("id") final String id) {
 
 		try {
@@ -198,11 +260,16 @@ public class ParametabController {
 	 */
 
 	@PutMapping("/updateV2/{id}")
-	public ResponseEntity<DTOStructure> updateV2(@PathVariable("id") final String id,
+	public ResponseEntity<?> updateV2(
+			@RequestHeader(name = "Authorization", required = true) String authorizationHeader,
+			@PathVariable("id") final String id,
 			@RequestBody DTOStructure structDto) {
 
 		try {
-			if (id != null) {
+			String userId = decodeJwt(authorizationHeader);
+			Person person = userInfoService.getPersonDetails(userId);
+
+			if (id != null && person != null) {
 				Structure structure = structureService.retrieveStructureById(id);
 				if (structure == null) {
 
@@ -217,8 +284,12 @@ public class ParametabController {
 						dtoStructure.getStructSiteWeb(), null, dtoStructure.getId());
 				structureService.invalidateStructureById(id); // refresh cache
 				return new ResponseEntity<>(dtoStructure, HttpStatus.OK);
+			} else {
+				throw new HandledException("perte-connexion");
 			}
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} catch (HandledException ex) {
+			log.error("Verification failed: ", ex);
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			e.getMessage();
 			log.info("error update : ", e);

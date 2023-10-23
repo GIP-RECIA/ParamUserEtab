@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { StructureDetail } from '../types/structureType';
-import { getDetailEtab } from '@/services/serviceParametab';
+import { getDetailEtab, updateEtab } from '@/services/serviceParametab';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { computed, ref, watchEffect } from 'vue';
@@ -25,6 +25,7 @@ const props = defineProps<{
   detail: string;
   baseApiUrl: string;
   paramEtabApi: string;
+  userInfoApiUrl: string;
 }>();
 
 watchEffect((): void => {
@@ -51,25 +52,50 @@ const handleUpdated = async ({ urlEtab }) => {
   details.value = res.data;
 };
 
+const showError = (errorMsgKey: string) => {
+  const errorMessage = t(`error.${errorMsgKey}`);
+  Swal.fire({
+    icon: 'error',
+    text: errorMessage,
+    allowOutsideClick: false,
+    confirmButtonText: t(`error.fermer`),
+  }).then((res) => {
+    if (res.isConfirmed) {
+      // Handle the error, e.g., log it, and close the current page
+      console.error('An error occurred:', res);
+      window.location.href = 'https://test-lycee.giprecia.net/portail/f/welcome/normal/render.uP';
+    }
+  });
+};
+
 async function updateInfo() {
   console.warn(details.value);
   const dataJson = `/test/api/updateV2/${props.detail}`;
-
-  axios
-    .put(dataJson, details.value)
-    .then(async () => {
-      Swal.fire({
-        title: 'Sauvegardé',
-        icon: 'success',
-      });
-    })
-    .catch(function () {
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Something went wrong!',
-      });
+  try {
+    await updateEtab(props.baseApiUrl + dataJson, details.value, props.userInfoApiUrl);
+    Swal.fire({
+      title: 'Sauvegardé',
+      icon: 'success',
     });
+  } catch (error) {
+    showError(error.response.data);
+  }
+
+  // axios
+  //   .put(dataJson, details.value)
+  //   .then(async () => {
+  //     Swal.fire({
+  //       title: 'Sauvegardé',
+  //       icon: 'success',
+  //     });
+  //   })
+  //   .catch(function () {
+  //     Swal.fire({
+  //       icon: 'error',
+  //       title: 'Oops...',
+  //       text: 'Something went wrong!',
+  //     });
+  //   });
 }
 
 const isButtonDisabled = computed(() => {

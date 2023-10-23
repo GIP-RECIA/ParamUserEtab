@@ -25,6 +25,6 @@ public interface IUserDao {
 
 	void saveCurrentStructure(String userId, Structure struct);
 
-	Person retrievePersonFromLdap();
+	Person retrievePersonFromLdap(String userId);
 
 }

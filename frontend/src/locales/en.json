@@ -18,5 +18,10 @@
     "selectionner-image": "Select image",
     "appliquer": "Apply",
     "fermer": "Close"
+  },
+  "error": {
+    "perte-connexion": "User connection lost.",
+    "permission-refusee": "Permission denied.",
+    "fermer": "Close"
   }
 }

@@ -123,10 +123,10 @@ public class LdapUserDao implements IUserDao, InitializingBean {
 	}
 
 	@Override
-	public Person retrievePersonFromLdap() {
+	public Person retrievePersonFromLdap(String userId) {
 		List<Person> allInfos;
 		try {
-			allInfos = this.ldapTemplate.search(this.userDn, this.personFiltre,
+			allInfos = this.ldapTemplate.search(this.userDn.replace(this.userIdTemplate, userId), this.personFiltre,
 					new PersonAttributesMapper(uid, currentStructIdLdapKey, structIdsInfoKey, groupAttributes,
 							userFormatter));
 		} catch (Exception e) {

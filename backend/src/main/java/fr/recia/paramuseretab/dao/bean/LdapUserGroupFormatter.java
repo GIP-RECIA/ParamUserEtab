@@ -91,6 +91,6 @@ public class LdapUserGroupFormatter implements IUserFormatter, InitializingBean 
             }
         }
 
-        return formattedList.isEmpty() ? inputs : formattedList;
+        return formattedList.isEmpty() ? null : formattedList;
     }
 }

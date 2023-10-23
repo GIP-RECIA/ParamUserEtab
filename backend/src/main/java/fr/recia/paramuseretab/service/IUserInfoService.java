@@ -19,11 +19,12 @@
 package fr.recia.paramuseretab.service;
 
 import fr.recia.paramuseretab.model.Person;
+import fr.recia.paramuseretab.security.HandledException;
 
 public interface IUserInfoService {
 
-	Person getPersonDetails();
+	Person getPersonDetails(String userId) throws HandledException;
 
-	String getUserID();
+	// String getUserID();
 
 }
