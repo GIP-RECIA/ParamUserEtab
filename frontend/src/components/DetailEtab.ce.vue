@@ -63,7 +63,10 @@ const showError = (errorMsgKey: string) => {
     if (res.isConfirmed) {
       // Handle the error, e.g., log it, and close the current page
       console.error('An error occurred:', res);
-      window.location.href = 'https://test-lycee.giprecia.net/portail/f/welcome/normal/render.uP';
+      let hostname = window.location.hostname;
+      console.log(hostname);
+      window.location.replace('https://' + hostname + '/portail/f/welcome/normal/render.uP');
+      // window.location.href = hostname + "/portail/f/welcome/normal/render.uP";
     }
   });
 };
@@ -117,6 +120,8 @@ const isButtonDisabled = computed(() => {
       :detail-etab="getDetailsAsString"
       :image-url="details.structLogo"
       :id-etab="details.id"
+      :base-api-url="baseApiUrl"
+      :user-info-api-url="userInfoApiUrl"
       @updated="handleUpdated"
     >
       <teleport to="body"></teleport

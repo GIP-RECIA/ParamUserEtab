@@ -139,6 +139,7 @@ public class ParametabController {
 		}
 		String token = jwt.substring(7);
 		String[] chunks = token.split("\\.");
+		System.out.println("token: " + token);
 
 		Base64.Decoder decoder = Base64.getUrlDecoder();
 		String payload = new String(decoder.decode(chunks[1]));
@@ -322,38 +323,50 @@ public class ParametabController {
 
 	// upload logo to disk, database, and ldap
 	@PostMapping("/fileUpload/{id}")
-	public ResponseEntity<?> uploadFile(@RequestPart(name = "file", required = false) MultipartFile file,
+	public ResponseEntity<?> uploadFile(
+			@RequestHeader(name = "Authorization", required = true) String authorizationHeader,
+			@RequestPart(name = "file", required = false) MultipartFile file,
 			@RequestPart(name = "details") String detailsJson, @PathVariable("id") final String id) {
 
 		try {
+			String userId = decodeJwt(authorizationHeader);
+			Person person = userInfoService.getPersonDetails(userId);
 
-			if (detailsJson != null) {
-				// Parse the detailsJson string back to DTO
-				DTOStructure dto = new Gson().fromJson(detailsJson, DTOStructure.class);
+			if (person != null) {
+				if (detailsJson != null) {
+					// Parse the detailsJson string back to DTO
+					DTOStructure dto = new Gson().fromJson(detailsJson, DTOStructure.class);
 
-				newUrl = calculNewImageUrlPath(dto, oldUrl);
-				String pathName = newUrl.getPathName();
-				String getNewURL = newUrl.getUrl();
-				if (newUrl != null) {
-					log.info("newUrl : ", pathName);
-					// save the logo to disk
-					// logoStorage.saving(pathName, file, id);
-				} else {
-					log.info("newUrl is null");
-					return new ResponseEntity<>("erreur : impossible de sauvegarder l'image !", HttpStatus.BAD_REQUEST);
+					newUrl = calculNewImageUrlPath(dto, oldUrl);
+					String pathName = newUrl.getPathName();
+					String getNewURL = newUrl.getUrl();
+					if (newUrl != null) {
+						log.info("newUrl : ", pathName);
+						System.out.println("newURL logo : " + pathName);
+						// save the logo to disk
+						// logoStorage.saving(pathName, file, id);
+					} else {
+						log.info("newUrl is null");
+						return new ResponseEntity<>("erreur : impossible de sauvegarder l'image !",
+								HttpStatus.BAD_REQUEST);
+					}
+
+					dto.setStructLogo(getNewURL);
+
+					oldUrl = newUrl;
+					structureService.updateStructure(dto, null, null, dto.getStructLogo(), id);
+					return new ResponseEntity<>(HttpStatus.OK);
 				}
-
-				dto.setStructLogo(getNewURL);
-
-				oldUrl = newUrl;
-				structureService.updateStructure(dto, null, null, dto.getStructLogo(), id);
-				return new ResponseEntity<>(HttpStatus.OK);
+				return new ResponseEntity<>("Erreur : l'établissement n'est pas défini !", HttpStatus.BAD_REQUEST);
+			} else {
+				throw new HandledException("perte-connexion");
 			}
-			return new ResponseEntity<>("Erreur : l'établissement n'est pas défini !", HttpStatus.BAD_REQUEST);
-
+		} catch (HandledException ex) {
+			log.error("Verification failed: ", ex);
+			return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			e.getMessage();
-			log.info("error upload file : ", e);
+			log.info("Error upload file : ", e);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}

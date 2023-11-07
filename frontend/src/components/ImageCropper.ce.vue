@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import axios from 'axios';
+import { uploadLogo } from '@/services/serviceParametab';
 import Cropper from 'cropperjs';
+import Swal from 'sweetalert2';
 import { onMounted, onUnmounted, ref, watch, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -11,6 +12,8 @@ const props = defineProps<{
   imageUrl: string | null;
   idEtab: string | undefined;
   detailEtab: string;
+  baseApiUrl: string;
+  userInfoApiUrl: string;
 }>();
 
 const imageInput = ref<any>(null);
@@ -95,8 +98,26 @@ const closeModal = () => {
   }
 };
 
+const showError = (errorMsgKey: string) => {
+  const errorMessage = t(`error.${errorMsgKey}`);
+  Swal.fire({
+    icon: 'error',
+    text: errorMessage,
+    allowOutsideClick: false,
+    confirmButtonText: t(`error.fermer`),
+  }).then((res) => {
+    if (res.isConfirmed) {
+      // Handle the error, e.g., log it, and close the current page
+      console.error('An error occurred:', res);
+      let hostname = window.location.hostname;
+      console.log(hostname);
+      window.location.replace('https://' + hostname + '/portail/f/welcome/normal/render.uP');
+    }
+  });
+};
+
 const cropImage = () => {
-  cropper.getCroppedCanvas().toBlob((blob) => {
+  cropper.getCroppedCanvas().toBlob(async (blob) => {
     const formData = new FormData();
 
     // append DTO as JSON string
@@ -107,14 +128,19 @@ const cropImage = () => {
 
     // append image file
     formData.append('file', blob, 'logo.' + blob.type.split('/')[1]);
-    const url = `/parametab/fileUpload/${props.idEtab}`;
+    const url = `/test/api/fileUpload/${props.idEtab}`;
 
-    axios
-      .post(url, formData)
-      .then(() => {})
-      .catch(function (error) {
-        console.error('error: ', error);
+    try {
+      await uploadLogo(props.baseApiUrl + url, formData, props.userInfoApiUrl);
+      closeModal();
+      Swal.fire({
+        title: 'Sauvegardé',
+        icon: 'success',
       });
+    } catch (error) {
+      closeModal();
+      showError(error.response.data);
+    }
   }, 'image/jpeg');
 };
 </script>
