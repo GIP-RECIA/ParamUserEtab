@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { getParametab } from '@/services/serviceParametab';
-import axios from 'axios';
 import Swal from 'sweetalert2';
 import { computed, onBeforeUnmount, onMounted, onUpdated, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-const m = (key: string): string => t(`error.${key}`);
 const parametab = ref<any>([]);
 const etabJson = ref<string>('');
 const currentEtab = ref<string>('');

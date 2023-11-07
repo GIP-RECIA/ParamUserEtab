@@ -1,7 +1,6 @@
 import type { StructureDetail } from '@/types/structureType';
 import oidc from '@uportal/open-id-connect';
 import axios from 'axios';
-import Swal from 'sweetalert2';
 
 const getToken = async (userInfoApiUrl: string): Promise<string | undefined> => {
   try {
@@ -16,8 +15,6 @@ const getToken = async (userInfoApiUrl: string): Promise<string | undefined> => 
 };
 
 const getParametab = async (url: string, userInfoApiUrl: string) => {
-  console.log('userinfo: ', userInfoApiUrl);
-  console.log('url : ', url);
   return await axios.get(`${url}`, {
     headers: {
       Authorization: `Bearer ${await getToken(userInfoApiUrl)}`,
@@ -41,4 +38,12 @@ const updateEtab = async (url: string, details: StructureDetail, userInfoApiUrl:
   });
 };
 
-export { getParametab, getDetailEtab, updateEtab };
+const uploadLogo = async (url: string, formData: FormData, userInfoApiUrl: string) => {
+  return await axios.post(`${url}`, formData, {
+    headers: {
+      Authorization: `Bearer ${await getToken(userInfoApiUrl)}`,
+    },
+  });
+};
+
+export { getParametab, getDetailEtab, updateEtab, uploadLogo };
