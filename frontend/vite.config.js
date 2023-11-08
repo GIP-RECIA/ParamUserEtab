@@ -3,6 +3,7 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueI18n from "@intlify/unplugin-vue-i18n/vite";
+import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,20 +17,11 @@ export default defineConfig({
       },
     }),
     vueI18n({}),
+    cssInjectedByJsPlugin()
   ],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-  // server: {
-  //   proxy: {
-  //     "/indah/test/api": {
-  //       target: "http://10.209.28.15:8090",
-  //       changeOrigin: true,
-  //       ws: true
-  //       //rewrite: (path) => path.replace(/^\/parametab/, '') // mettre en commentaire pour afficher /parametab/$id
-  //     },
-  //   },
-  // },
 });
