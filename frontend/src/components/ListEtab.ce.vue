@@ -56,57 +56,8 @@ const filteredData = computed(() => filteredList());
   </div>
 </template>
 
-<!--
-  <input
-        class="search-etab"
-        type="text"
-        v-model="input"
-        placeholder="Recherche etab..."
-      />
-      <div class="options">
-        <ul>
-          <li
-            class="opt-list"
-            v-for="etab in filteredList()"
-            :key="etab"
-            :id="etab.id"
-            @click="select($event, true)"
-          >
-            {{ etab.name }}
-          </li>
-        </ul>
-      </div> 
-
-  <input
-  class="input-search"
-  type="text"
-  placeholder="Recherche etab..."
-  v-model="input"
-/>
-</div>
-<div class="list-etab">
-<li
-  class="item etab"
-  v-for="etab in filteredData"
-  :key="etab"
-  :id="etab.id"
-  @click="selected"
->
-  {{ etab.name }}
-</li>
-
-
--->
 <style scoped>
 @import '../assets/base.css';
-
-.container {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  margin-bottom: 25px;
-  flex-wrap: wrap;
-}
 
 .list {
   flex: 1 30%;
@@ -119,11 +70,6 @@ const filteredData = computed(() => filteredList());
 
 .text {
   text-align: center;
-}
-
-.item {
-  cursor: pointer;
-  line-height: 1.5;
 }
 
 .bold {
@@ -146,6 +92,8 @@ const filteredData = computed(() => filteredList());
 }
 
 .item {
+  cursor: pointer;
+  line-height: 1.5;
   margin: 0 auto 5px auto;
   padding: 10px 20px;
   color: black;
@@ -187,6 +135,11 @@ ul .etab:hover {
   position: sticky;
   top: 0;
   z-index: 1;
+  display: flex;
+}
+
+.search-bar .input-search {
+  width: fit-content;
 }
 
 @media (max-width: 1023px) {
@@ -230,6 +183,10 @@ ul .etab:hover {
 .options {
   width: 100%;
 }
+
+.list-etab {
+  width: 100%;
+}
 .options ul {
   list-style: none;
   text-align: left;
@@ -239,6 +196,16 @@ ul .etab:hover {
   overflow-x: hidden;
   top: 10px;
 }
+
+.list-etab ul {
+  max-height: 100vh;
+  list-style: none;
+  text-align: left;
+  padding-left: 0px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
 .options ul .opt-list {
   width: 100%;
   border-bottom: 1px solid lightgray;
