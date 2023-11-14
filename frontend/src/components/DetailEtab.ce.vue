@@ -66,7 +66,6 @@ const showError = (errorMsgKey: string) => {
       let hostname = window.location.hostname;
       console.log(hostname);
       window.location.replace('https://' + hostname + '/portail/f/welcome/normal/render.uP');
-      // window.location.href = hostname + "/portail/f/welcome/normal/render.uP";
     }
   });
 };
@@ -83,22 +82,6 @@ async function updateInfo() {
   } catch (error) {
     showError(error.response.data);
   }
-
-  // axios
-  //   .put(dataJson, details.value)
-  //   .then(async () => {
-  //     Swal.fire({
-  //       title: 'Sauvegardé',
-  //       icon: 'success',
-  //     });
-  //   })
-  //   .catch(function () {
-  //     Swal.fire({
-  //       icon: 'error',
-  //       title: 'Oops...',
-  //       text: 'Something went wrong!',
-  //     });
-  //   });
 }
 
 const isButtonDisabled = computed(() => {
@@ -153,7 +136,7 @@ const isButtonDisabled = computed(() => {
     </div>
   </div>
 </template>
-<style scoped>
+<style>
 @import '../assets/detailList.css';
-@import '../assets/list.css';
+/* @import '../assets/list.css'; */
 </style>

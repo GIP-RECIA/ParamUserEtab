@@ -46,8 +46,8 @@
 }
 
 .avatar-upload {
-  /* position: relative;
-  max-width: 205px;
+  position: relative;
+  /* max-width: 205px;
   margin: 50px auto; */
   flex: 1 20%;
   text-align: center;
@@ -164,11 +164,12 @@
 
 .btn-valider {
   padding: 5px;
-  width: 30%;
+  width: 20%;
   border-radius: 10px;
   background-color: cadetblue;
   color: white;
   cursor: pointer;
+  margin-bottom: 20px;
 }
 
 .btn-valider:disabled {

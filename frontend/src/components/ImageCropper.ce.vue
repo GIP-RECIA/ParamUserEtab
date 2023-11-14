@@ -227,20 +227,6 @@ const cropImage = () => {
   border-radius: 4px;
 }
 
-/* .modal {
-  position: fixed;
-  float: left;
-  left: 50%;
-  top: 25%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.5);
-  box-shadow: 0 4px 16px #00000026;
-  padding: 30px;
-  border-radius: 8px;
-  width: 450px;
-  z-index: 999;
-} */
-
 .modal {
   position: fixed;
   float: left;
@@ -313,8 +299,8 @@ button.close {
 }
 
 .avatar-upload {
-  /* position: relative;
-  max-width: 205px;
+  position: relative;
+  /* max-width: 205px;
   margin: 50px auto; */
   flex: 1 20%;
   text-align: center;
