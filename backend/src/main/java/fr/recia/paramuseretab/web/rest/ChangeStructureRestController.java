@@ -49,7 +49,6 @@ public class ChangeStructureRestController {
             Map<String, Object> claims = objectMapper.readValue(payload, new TypeReference<Map<String, Object>>() {
             });
             String sub = (String) claims.get("sub");
-            System.out.println("The 'sub' claim: " + sub);
             return sub;
         } catch (IOException e) {
             // Handle the exception, e.g., token parsing error

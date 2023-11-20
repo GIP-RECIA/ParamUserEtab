@@ -29,9 +29,9 @@ public class Structure2DTOStructureImpl {
     public DTOStructure toDTO(Structure struct) {
 
         String structCustomDisplayName = null;
-        if ( !struct.getName().equals(struct.getDisplayName()) ) {
+        if (!struct.getName().equals(struct.getDisplayName())) {
             structCustomDisplayName = struct.getDisplayName();
-        } 
+        }
 
         Map<String, List<String>> otherAttributes = struct.getOtherAttributes();
         String structSiteWeb = null;
@@ -40,15 +40,15 @@ public class Structure2DTOStructureImpl {
             String key = entry.getKey();
             List<String> valueList = entry.getValue();
 
-            if (key.equals("ESCOStructureLogo") && valueList != null && !valueList.isEmpty() ) {
-                structLogo =  valueList.get(0);
+            if (key.equals("ESCOStructureLogo") && valueList != null && !valueList.isEmpty()) {
+                structLogo = valueList.get(0);
             }
-            if (key.equals("ENTStructureSiteWeb") && valueList != null && !valueList.isEmpty() ) {
+            if (key.equals("ENTStructureSiteWeb") && valueList != null && !valueList.isEmpty()) {
                 structSiteWeb = valueList.get(0);
             }
         }
 
-        log.debug(structLogo, structCustomDisplayName, structSiteWeb);
+        // log.debug(structLogo, structCustomDisplayName, structSiteWeb);
 
         final DTOStructure dto = new DTOStructure();
         dto.setId(struct.getId());
@@ -59,8 +59,7 @@ public class Structure2DTOStructureImpl {
         dto.setStructCustomDisplayName(structCustomDisplayName);
         dto.setStructLogo(structLogo);
         dto.setStructSiteWeb(structSiteWeb);
-        
-        
+
         return dto;
 
     }

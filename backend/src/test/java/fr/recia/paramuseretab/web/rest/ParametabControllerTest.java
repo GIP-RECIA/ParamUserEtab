@@ -165,7 +165,7 @@ public class ParametabControllerTest {
         @Test
         public void testUpdateForm() throws Exception {
                 log.info("*** Test update form ***");
-                System.out.println("struct id: " + struct.getId());
+                log.debug("struct id: ", struct.getId());
 
                 DTOStructure updateForm = new DTOStructure();
                 updateForm.setId(struct.getId());
@@ -177,7 +177,6 @@ public class ParametabControllerTest {
                 updateForm.setStructSiteWeb("etab.com");
 
                 // Mockito.when(structureDao.findOneStructureById(dtoStructure.getId())).thenReturn(dtoStructure);
-                System.out.println("token: " + token);
 
                 String someDecodedToken = "admin123";
                 Mockito.when(parametabController.decodeJwt(token)).thenReturn(someDecodedToken);
@@ -199,11 +198,6 @@ public class ParametabControllerTest {
                                 .characterEncoding("UTF-8")
                                 .content(mapper.writeValueAsString(updateForm))
                                 .header("Authorization", "Bearer " + token);
-
-                String uri = "/test/api/updateV2/" + struct.getId();
-                String cxt = mapper.writeValueAsString(updateForm);
-                System.out.println("out uri : " + uri);
-                System.out.println("cxt : " + cxt);
 
                 log.info("mockReq : ", mockReq);
 
