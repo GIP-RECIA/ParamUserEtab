@@ -31,6 +31,7 @@ import javax.naming.directory.ModificationItem;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,7 @@ import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
 @Component
 @Data
 @NoArgsConstructor
+@Slf4j
 @ConfigurationProperties(prefix = "userdao")
 public class LdapUserDao implements IUserDao, InitializingBean {
 
@@ -107,7 +109,10 @@ public class LdapUserDao implements IUserDao, InitializingBean {
 		// userId)).build();
 		mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, replaceCurrentStructAttr);
 		// this.ldapTemplate.modifyAttributes(dn, mods);
-		System.out.println("mods changeEtab : " + Arrays.toString(mods));
+
+		if (log.isDebugEnabled()) {
+			log.debug("mods changeEtab : {}", Arrays.toString(mods));
+		}
 
 	}
 

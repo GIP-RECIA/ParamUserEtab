@@ -299,13 +299,12 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
 		params.add(id);
 
 		if (checkCustomName || checkSiteWeb || checkLogo) {
-			System.out.println("updateQuery : " + updateQuery);
-			System.out.println("params : " + params.toString());
-			log.debug("updated : ", updateQuery, params.toString());
+			if (log.isDebugEnabled()) {
+				log.debug("updated : ", updateQuery, params.toString());
+			}
 			// jdbcTemplate.update(updateQuery, params.toArray());
 		} else {
-			System.out.println("nothing updating : " + updateQuery);
-			System.out.println("else params : " + params.toString());
+			log.info("update nothing.");
 		}
 
 	}
@@ -333,7 +332,6 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
 		}
 		getValues.add(testSiteWeb);
 		getValues.add(testLogo);
-		System.out.println("getValues = " + getValues.toString());
 
 		return getValues;
 	}

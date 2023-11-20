@@ -1,5 +1,11 @@
 #spring.main.allow-bean-definition-overriding : true
+server:
+  port: 8090
+  servlet:
+    context-path: /
 
+logging:
+  config: "classpath:logback.xml"
 
 ## Regex configuration ## 
 #ldapformatter.groups-regex=^CLG(\\$).*(\\$.*)

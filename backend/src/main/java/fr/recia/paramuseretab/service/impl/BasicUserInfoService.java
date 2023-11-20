@@ -105,7 +105,9 @@ public class BasicUserInfoService implements IUserInfoService, InitializingBean 
 		try {
 			if (userId != null) {
 				allInfo = this.userDao.retrievePersonFromLdap(userId);
-				System.out.println("ok: " + userId);
+				if (log.isDebugEnabled()) {
+					log.debug("uid : {}", userId);
+				}
 			}
 		} catch (Exception e) {
 			throw new HandledException("perte-connexion");

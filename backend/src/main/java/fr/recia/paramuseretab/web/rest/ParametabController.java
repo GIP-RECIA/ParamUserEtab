@@ -139,7 +139,6 @@ public class ParametabController {
 		}
 		String token = jwt.substring(7);
 		String[] chunks = token.split("\\.");
-		System.out.println("token: " + token);
 
 		Base64.Decoder decoder = Base64.getUrlDecoder();
 		String payload = new String(decoder.decode(chunks[1]));
@@ -149,7 +148,6 @@ public class ParametabController {
 			Map<String, Object> claims = objectMapper.readValue(payload, new TypeReference<Map<String, Object>>() {
 			});
 			String sub = (String) claims.get("sub");
-			System.out.println("The 'sub' claim: " + sub);
 			return sub;
 		} catch (IOException e) {
 			// Handle the exception, e.g., token parsing error
@@ -199,15 +197,7 @@ public class ParametabController {
 	public ResponseEntity<Person> getEtabs(
 			@RequestHeader(name = "Authorization", required = true) String authorizationHeader) {
 		try {
-			String userId = null;
-			if (authorizationHeader != null) {
-
-				userId = decodeJwt(authorizationHeader);
-
-				System.out.println("Received Authorization Header: " + authorizationHeader);
-			} else {
-				System.out.println("Authorization Header is missing.");
-			}
+			String userId = decodeJwt(authorizationHeader);
 			return new ResponseEntity<>(userInfoService.getPersonDetails(userId), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -341,8 +331,7 @@ public class ParametabController {
 					String pathName = newUrl.getPathName();
 					String getNewURL = newUrl.getUrl();
 					if (newUrl != null) {
-						log.info("newUrl : ", pathName);
-						System.out.println("newURL logo : " + pathName);
+						log.info("newUrl : {}", pathName);
 						// save the logo to disk
 						// logoStorage.saving(pathName, file, id);
 					} else {
