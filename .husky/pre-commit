@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+error=false
+
+cd ./backend
+
+if mvn notice:check; then
+  echo "Notice OK"
+else
+  error=true
+  echo "Fix notice"
+  mvn notice:generate
+fi
+if mvn license:check; then
+  echo "License OK"
+else
+  error=true
+  echo "Fix license"
+  mvn license:format
+fi
+
+cd ../frontend
+
+npx lint-staged
+if $error; then
+  exit 1;
+fi

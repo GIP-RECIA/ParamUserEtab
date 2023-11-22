@@ -31,10 +31,10 @@ This project includes:
   ClassMate under Apache License, Version 2.0
   Commons Logging under The Apache Software License, Version 2.0
   ehcache under The Apache Software License, Version 2.0
-  Gson under Apache 2.0
+  Gson under Apache-2.0
   Hamcrest under BSD License 3
-  Hamcrest Core under BSD License 3
   Hibernate Validator Engine under Apache License 2.0
+  HikariCP under The Apache Software License, Version 2.0
   Jackson datatype: jdk8 under The Apache Software License, Version 2.0
   Jackson datatype: JSR310 under The Apache Software License, Version 2.0
   Jackson-annotations under The Apache Software License, Version 2.0
@@ -56,8 +56,8 @@ This project includes:
   JSON library from Android SDK under Apache License 2.0
   JSON Small and Fast Parser under The Apache Software License, Version 2.0
   JSONassert under The Apache Software License, Version 2.0
+  JSR107 API and SPI under Apache License, Version 2.0
   JUL to SLF4J bridge under MIT License
-  JUnit under Eclipse Public License 1.0
   JUnit Jupiter (Aggregator) under Eclipse Public License v2.0
   JUnit Jupiter API under Eclipse Public License v2.0
   JUnit Jupiter Engine under Eclipse Public License v2.0
@@ -66,13 +66,14 @@ This project includes:
   JUnit Platform Engine API under Eclipse Public License v2.0
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
+  mariadb-java-client under LGPL-2.1
   mockito-core under The MIT License
   mockito-junit-jupiter under The MIT License
   Objenesis under Apache License, Version 2.0
   org.apiguardian:apiguardian-api under The Apache License, Version 2.0
   org.opentest4j:opentest4j under The Apache License, Version 2.0
   org.xmlunit:xmlunit-core under The Apache Software License, Version 2.0
-  parametab-project under Apache License, Version 2.0
+  parametab-user-project under Apache License, Version 2.0
   project ':json-path' under The Apache Software License, Version 2.0
   Project Lombok under The MIT License
   SLF4J API Module under MIT License
@@ -86,6 +87,7 @@ This project includes:
   Spring Data Core under Apache License, Version 2.0
   Spring Data LDAP under Apache License, Version 2.0
   Spring Expression Language (SpEL) under Apache License, Version 2.0
+  Spring JDBC under Apache License, Version 2.0
   Spring TestContext Framework under Apache License, Version 2.0
   Spring Transaction under Apache License, Version 2.0
   Spring Web under Apache License, Version 2.0
@@ -96,6 +98,7 @@ This project includes:
   spring-boot-starter under Apache License, Version 2.0
   spring-boot-starter-cache under Apache License, Version 2.0
   spring-boot-starter-data-ldap under Apache License, Version 2.0
+  spring-boot-starter-jdbc under Apache License, Version 2.0
   spring-boot-starter-json under Apache License, Version 2.0
   spring-boot-starter-logging under Apache License, Version 2.0
   spring-boot-starter-security under Apache License, Version 2.0
