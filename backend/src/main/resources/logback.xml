@@ -17,19 +17,5 @@
 
 -->
 <configuration scan="true">
-  <property name="LOG_FILE" value="application-dev.log"/>
-  <include resource="org/springframework/boot/logging/logback/base.xml"/>
-
-
-  <logger name="org.springframework.web" level="DEBUG"/>
-  <logger name="org.springframework.security" level="DEBUG"/>
-  <logger name="org.springframework.security.web" level="DEBUG"/>
-  <logger name="fr.recia.paramuseretab" level="DEBUG"/>
-
-
-  <root level="INFO">
-    <appender-ref ref="CONSOLE"/>
-  </root>
-
-
+  <property name="LOG_FILE" value="application-prod.log"/>
 </configuration>

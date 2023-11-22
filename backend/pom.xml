@@ -11,6 +11,7 @@
 	<groupId>fr.recia</groupId>
 	<artifactId>paramuseretab</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<name>parametab-user-project</name>
 	<description>API to expose structure and users, possibility to modify some structure properties and user current structure</description>
 	<properties>
