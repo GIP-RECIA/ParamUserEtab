@@ -5,19 +5,19 @@ error=false
 
 cd ./backend
 
-if mvn notice:check; then
+if ./mvnw notice:check; then
   echo "Notice OK"
 else
   error=true
   echo "Fix notice"
-  mvn notice:generate
+  ./mvnw notice:generate
 fi
-if mvn license:check; then
+if ./mvnw license:check; then
   echo "License OK"
 else
   error=true
   echo "Fix license"
-  mvn license:format
+  ./mvnw license:format
 fi
 
 cd ../frontend
