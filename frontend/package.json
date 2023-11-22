@@ -16,7 +16,7 @@
   "dependencies": {
     "@fortawesome/vue-fontawesome": "^3.0.3",
     "@uportal/open-id-connect": "^1.40.2",
-    "axios": "^1.5.0",
+    "axios": "^1.6.0",
     "cropperjs": "^1.6.1",
     "regenerator-runtime": "^0.14.0",
     "vite-plugin-css-injected-by-js": "^3.3.0",
