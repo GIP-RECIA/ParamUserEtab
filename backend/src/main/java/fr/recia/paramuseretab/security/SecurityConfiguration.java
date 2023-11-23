@@ -103,26 +103,6 @@ public class SecurityConfiguration {
   }
 
   @Bean
-  public ErrorPageFilter errorPageFilter() {
-    return new ErrorPageFilter();
-  }
-
-  @Bean
-  public FilterRegistrationBean<Filter> disableSpringBootErrorFilter() {
-    /*
-     * The ErrorPageFilter (Spring) makes extra calls to
-     * HttpServletResponse.flushBuffer(),
-     * and this behavior produces many warnings in the portal logs during portlet
-     * requests.
-     */
-    FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
-    filterRegistrationBean.setFilter(errorPageFilter());
-    filterRegistrationBean.setEnabled(false);
-
-    return filterRegistrationBean;
-  }
-
-  @Bean
   CorsConfigurationSource corsConfigurationSource() {
     final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
