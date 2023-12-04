@@ -81,7 +81,7 @@ const filteredData = computed(() => filteredList());
   width: 350px;
   margin: 20px auto;
   padding: 10px 45px;
-  background: white url('../assets/search-icon.svg') no-repeat 15px center;
+  background: white;
   background-size: 15px 15px;
   font-size: 16px;
   border: none;
@@ -89,6 +89,15 @@ const filteredData = computed(() => filteredList());
   box-shadow:
     rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+.search-bar::after {
+  content: '\f002';
+  color: #757575;
+  font-family: 'FontAwesome', sans-serif;
+  position: absolute;
+  left: 80px; /* Adjust this value based on your preference */
+  top: 27px;
 }
 
 .item {
@@ -153,21 +162,15 @@ ul .etab:hover {
     margin: 10px;
     overflow-y: scroll;
   }
-}
 
-.selected-etab {
-  background: white url('chevron-down.svg') no-repeat right;
-  background-position-x: right 15px;
-  background-size: 15px 15px;
-  border: 2px solid lightgray;
-  border-radius: 5px;
-  padding: 5px 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
+  .search-bar::after {
+    content: '\f002';
+    color: #757575;
+    font-family: 'FontAwesome', sans-serif;
+    position: absolute;
+    left: 20px; /* Adjust this value based on your preference */
+    top: 3px;
+  }
 }
 
 .search-etab {
@@ -176,7 +179,6 @@ ul .etab:hover {
   border: 2px solid lightgray;
   font-size: 16px;
   padding: 10px 45px;
-  background: white url('../assets/search-icon.svg') no-repeat 15px center;
   background-size: 15px 15px;
   border-radius: 5px;
 }
@@ -214,7 +216,6 @@ ul .etab:hover {
 }
 .options ul .opt-list:hover {
   background: #d4d4d4;
-  /* color: #fff; */
   font-weight: bold;
 }
 </style>

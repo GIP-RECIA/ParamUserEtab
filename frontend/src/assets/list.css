@@ -109,7 +109,7 @@ ul .etab:hover {
   overflow-y: scroll;
 }
 .dropdown-wrapper .selected-etab {
-  background: white url('chevron-down.svg') no-repeat right;
+  background: white;
   background-position-x: right 15px;
   background-size: 15px 15px;
   border: 2px solid lightgray;
@@ -122,6 +122,15 @@ ul .etab:hover {
   font-weight: 600;
   cursor: pointer;
 }
+
+.dropdown-wrapper .selected-etab::after {
+  content: '\f078';
+  font-family: 'FontAwesome', sans-serif;
+  color: #757575;
+  left: 0;
+  right: 0;
+}
+
 .dropdown-wrapper .dropdown-popover {
   position: relative;
   border: 2px solid lightgray;
