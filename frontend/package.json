@@ -31,7 +31,7 @@
     "vuejs-clipper": "^4.1.0"
   },
   "devDependencies": {
-    "@intlify/unplugin-vue-i18n": "^1.2.0",
+    "@intlify/unplugin-vue-i18n": "^1.5.0",
     "@rushstack/eslint-patch": "^1.6.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@tsconfig/node18": "^18.2.2",
