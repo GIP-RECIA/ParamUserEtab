@@ -48,7 +48,7 @@
     "json-server": "^0.17.4",
     "lint-staged": "^15.2.0",
     "prettier": "3.1.0",
-    "typescript": "^5.2.2",
+    "typescript": "^5.3.2",
     "vite": "^4.4.9",
     "vue-tsc": "^1.8.24"
   }
