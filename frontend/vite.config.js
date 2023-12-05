@@ -23,4 +23,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    lib: {
+      entry: './src/main.ts',
+      name: '@gip-recia/paramuseretab',
+      fileName: 'index'
+    }
+  }
 });
