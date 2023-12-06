@@ -1,7 +1,36 @@
 {
-  "name": "vue-project",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@gip-recia/paramuseretab",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "UI de paramétrage établissement en VueJS.",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "gip-recia",
+    "paramuseretab"
+  ],
+  "homepage": "https://github.com/GIP-RECIA/ParamUserEtab/#README.md",
+  "bugs": {
+    "url": "https://github.com/GIP-RECIA/ParamUserEtab/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Indah Juliani <indah.juliani@recia.fr>",
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.cjs"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GIP-RECIA/ParamUserEtab.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "concurrently --kill-others \"npm run dev\" \"npm run json\"",
     "dev": "vite --host",
