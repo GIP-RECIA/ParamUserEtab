@@ -7,7 +7,6 @@ const getToken = async (userInfoApiUrl: string): Promise<string | undefined> => 
     const { encoded, decoded } = await oidc({
       userInfoApiUrl: userInfoApiUrl,
     });
-    console.log(decoded);
     return encoded;
   } catch (error) {
     console.error('error: ', error);
@@ -28,8 +27,6 @@ const getDetailEtab = async (url: string) => {
 };
 
 const updateEtab = async (url: string, details: StructureDetail, userInfoApiUrl: string) => {
-  console.log('url : ', url);
-  console.log('details : ', JSON.stringify(details));
   return await axios.put(`${url}`, `${JSON.stringify(details)}`, {
     headers: {
       Authorization: `Bearer ${await getToken(userInfoApiUrl)}`,

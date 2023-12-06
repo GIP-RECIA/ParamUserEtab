@@ -11,8 +11,6 @@ const props = defineProps<{
   paramEtabApi: string;
   userInfoApiUrl: string;
 }>();
-
-console.log('paramEtabApi: ', props.paramEtabApi);
 </script>
 
 <template>

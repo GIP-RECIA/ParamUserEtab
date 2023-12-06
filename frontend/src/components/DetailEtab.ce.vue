@@ -64,7 +64,6 @@ const showError = (errorMsgKey: string) => {
       // Handle the error, e.g., log it, and close the current page
       console.error('An error occurred:', res);
       let hostname = window.location.hostname;
-      console.log(hostname);
       window.location.replace('https://' + hostname + '/portail/f/welcome/normal/render.uP');
     }
   });

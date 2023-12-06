@@ -23,14 +23,13 @@ onMounted(async () => {
   //const res = await axios.get("/test/api/parametab/");
   try {
     const res = await getParametab(props.baseApiUrl + props.paramEtabApi, props.userInfoApiUrl);
-    console.log('res: ', res);
     parametab.value = res.data;
     // List of etablissement
     etabJson.value = JSON.stringify(parametab.value.listEtab);
     currentEtab.value = parametab.value.currentStruct;
     findEtab.value = JSON.parse(etabJson.value);
   } catch (error) {
-    console.log('error : ', error.response.data);
+    console.error('error : ', error.response.data);
     showError(error.response.data);
   }
   window.addEventListener('resize', handleResize);
