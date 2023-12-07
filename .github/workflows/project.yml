@@ -35,21 +35,21 @@ jobs:
           ./mvnw -B notice:check
       # Setup Node
       - name: Use Node.js ${{ matrix.node }}
-      	uses: actions/setup-node@v3
-      	with:
-      	  node-version: '${{ matrix.node }}'
+        uses: actions/setup-node@v3
+        with:
+          node-version: '${{ matrix.node }}'
           cache: 'npm'
       - run: |
           cd frontend
           npm install --immutable
       
       - name: Build frontend
-      	run : |
+        run : |
           cd frontend
           npm run build
-      	
+
       - name: Build backend
-      	run: |
+        run: |
           cd backend
           ./mvnw -B package --file pom.xml
 
