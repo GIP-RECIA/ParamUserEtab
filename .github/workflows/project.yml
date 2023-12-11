@@ -14,6 +14,8 @@ jobs:
       matrix: 
         java: ['11']
         node: ['20']
+
+    name: Java ${{ matrix.java }} & Node ${{ matrix.node }}
     
     steps:
       - uses: actions/checkout@v3
@@ -30,7 +32,9 @@ jobs:
           cd backend
           ./mvnw license:check
       - name: Check NOTICE
-        run: ./mvnw -B notice:check
+        run: |
+          cd backend
+          ./mvnw -B notice:check
       # Setup Node
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v3
@@ -42,7 +46,9 @@ jobs:
           npm install --immutable
       
       - name: Build frontend
-        run: npm run build
+        run: |
+          cd frontend
+          npm run build
 
       - name: Build backend
         run: |
