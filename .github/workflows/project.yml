@@ -52,5 +52,3 @@ jobs:
         run: |
           cd ../backend
           ./mvnw -B package --file pom.xml
-
-      	
