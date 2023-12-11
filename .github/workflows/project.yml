@@ -50,7 +50,7 @@ jobs:
 
       - name: Build backend
         run: |
-          cd backend
+          cd ../backend
           ./mvnw -B package --file pom.xml
 
       	
