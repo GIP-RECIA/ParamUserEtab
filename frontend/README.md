@@ -1,29 +1,46 @@
-# vue-project
+# Documentation 
+- [Documentation](#documentation)
+  - [Installation](#installation)
+  - [Paramètres](#paramètres)
 
-This template should help get you started developing with Vue 3 in Vite.
 
-## Recommended IDE Setup
+UI de paramétrage d'établissement en Vue.js
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
-## Customize configuration
+## Installation
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
+1. Installation via npm :
 
 ```sh
-npm install
+npm install @gip-recia/paramuseretab
 ```
 
-### Compile and Hot-Reload for Development
+2. Importation du composant :
 
-```sh
-npm run dev
+Dans un module JavaScript :
+
+```js
+import '@gip-recia/paramuseretab';
 ```
 
-### Compile and Minify for Production
+Dans une page HTML :
 
-```sh
-npm run build
+```html
+<script src="./dist/index.js"></script>
+```
+
+## Paramètres
+| Nom                                   |   Type   | Obligatoire | Default | Description                                             |
+| ------------------------------------- | :------: | :---------: | :-----: | ------------------------------------------------------- |
+| `base-api-url`                        | `string` |    `oui`    |         | URL de l'API REST de param etab                         |
+| `param-etab-api`                      | `string` |    `oui`    |         | URI de la route GET de param etab                       |
+| `user-info-api-url`                   | `string` |    `oui`    |         | URL de l'API des informations utilisateurs              |
+
+
+``` html
+<param-etab
+    base-api-url=""
+    param-etab-api=""
+    user-info-api-url=""
+/>
 ```
