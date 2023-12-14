@@ -98,7 +98,7 @@ const isButtonDisabled = computed(() => {
   </span>
   <div class="title-info">{{ m('info') }}</div>
   <div class="container">
-    <image-cropper-ce
+    <image-cropper
       :detail-etab="getDetailsAsString"
       :image-url="details.structLogo"
       :id-etab="details.id"
@@ -107,7 +107,7 @@ const isButtonDisabled = computed(() => {
       @updated="handleUpdated"
     >
       <teleport to="body"></teleport
-    ></image-cropper-ce>
+    ></image-cropper>
 
     <div class="infos">
       <label class="label">

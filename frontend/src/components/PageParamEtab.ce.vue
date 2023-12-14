@@ -111,37 +111,37 @@ function select(payload: CustomEvent, isBoolean: boolean) {
 <template>
   <div v-bind="$attrs">
     <div v-if="!isMobile" class="list">
-      <list-etab-ce
+      <list-etab
         class-input="input-search"
         class-li="item etab"
         class-div="list-etab"
         v-bind:data-json="etabJson"
         :data-current="currentEtab"
         @selectEtab="select($event, false)"
-      ></list-etab-ce>
+      ></list-etab>
     </div>
     <div v-else class="dropdown-wrapper">
       <div class="selected-etab" @click="isVisible = !isVisible">
         <span>{{ nameEtabSelected }}</span>
       </div>
       <div v-if="isVisible" class="dropdown-popover">
-        <list-etab-ce
+        <list-etab
           class-input="search-etab"
           class-li="opt-list"
           class-div="options"
           v-bind:data-json="etabJson"
           :data-current="currentEtab"
           @selectEtab="select($event, true)"
-        ></list-etab-ce>
+        ></list-etab>
       </div>
     </div>
     <div class="detail">
-      <detail-etab-ce
+      <detail-etab
         :detail="currentEtab"
         :base-api-url="baseApiUrl"
         :param-etab-api="paramEtabApi"
         :user-info-api-url="userInfoApiUrl"
-      ></detail-etab-ce>
+      ></detail-etab>
     </div>
   </div>
 </template>

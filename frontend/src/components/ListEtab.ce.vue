@@ -56,7 +56,7 @@ const filteredData = computed(() => filteredList());
   </div>
 </template>
 
-<style scoped>
+<style>
 @import '../assets/base.css';
 
 .list {
