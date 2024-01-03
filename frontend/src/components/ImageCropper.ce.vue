@@ -154,7 +154,7 @@ const cropImage = () => {
         :style="{ display: 'none' }"
         @change="fileChanged"
       />
-      <label @click="open = true"></label>
+      <button class="edit-logo" @click="open = true"></button>
     </div>
     <div class="avatar-preview">
       <img class="imagePreview" :src="imageUrl" alt="" width="270" height="120" />
@@ -316,7 +316,7 @@ button.close {
   display: none;
 }
 
-.avatar-upload .avatar-edit input + label {
+.avatar-upload .avatar-edit input + .edit-logo {
   display: inline-block;
   width: 34px;
   height: 34px;
@@ -330,17 +330,17 @@ button.close {
   transition: all 0.2s ease-in-out;
 }
 
-.avatar-upload .avatar-edit input + label:hover {
+.avatar-upload .avatar-edit input + .edit-logo:hover {
   background: #f1f1f1;
   border-color: #d6d6d6;
 }
 
-.avatar-upload .avatar-edit input + label:after {
+.avatar-upload .avatar-edit input + .edit-logo:after {
   content: '\f040';
   font-family: 'FontAwesome';
   color: #757575;
   position: absolute;
-  top: 6px;
+  top: 10px;
   left: 0;
   right: 0;
   text-align: center;

@@ -39,14 +39,10 @@ const filteredData = computed(() => filteredList());
   </div>
   <div :class="classDiv">
     <ul class="content">
-      <li
-        v-for="etab in filteredData"
-        :id="etab.idSiren"
-        :key="etab"
-        :class="[classLi, etab.idSiren == dataCurrent ? 'active' : '']"
-        @click="selected(etab)"
-      >
-        {{ etab.etabName }}
+      <li v-for="etab in filteredData" :id="etab.idSiren" :key="etab">
+        <button :class="[classLi, etab.idSiren == dataCurrent ? 'active' : '']" @click="selected(etab)">
+          {{ etab.etabName }}
+        </button>
       </li>
     </ul>
   </div>
@@ -110,6 +106,9 @@ const filteredData = computed(() => filteredList());
   box-shadow:
     rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
     rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+  width: 100%;
+  border: none;
+  text-align: start;
 }
 
 .etab {
