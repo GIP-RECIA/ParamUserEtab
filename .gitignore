@@ -45,7 +45,8 @@ dist
 dist-ssr
 coverage
 *.local
-frontend/src/data 
+frontend/src/data
+*.bak
 
 ### Tests ###
 playwright-report
