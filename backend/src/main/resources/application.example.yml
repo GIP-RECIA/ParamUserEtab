@@ -9,42 +9,42 @@ logging:
 
 ## Regex configuration ## 
 #ldapformatter.groups-regex=^CLG(\\$).*(\\$.*)
-ldapformatter : 
-    groups-regex : "(\\$)"
-    index-list-replacement:1 : ""
-    index-list-replacement.2 : ""
+ldapformatter:
+  groups-regex: "(\\$)"
+  index-list-replacement:1: ""
+  index-list-replacement.2: ""
 
 
-userformatter : 
-    user-groups-regex : "[^:]+:admin:local:admin_(?:([^_]+)_)?([^:]+)$"
+userformatter:
+  user-groups-regex: "[^:]+:admin:local:admin_(?:([^_]+)_)?([^:]+)$"
 
 
 ## User Info cofiguration ## 
 # server.error.whitelabel.enabled:false
-userinfo :
-    current-etab-code-info-key : ESCOUAICourant
-    etab-codes-info-key: ESCOUAI
-    current-struct-id-info-key: ESCOSIRENCourant
-    struct-ids-info-key: ESCOSIREN 
+userinfo:
+  current-etab-code-info-key: ESCOUAICourant
+  etab-codes-info-key: ESCOUAI
+  current-struct-id-info-key: ESCOSIRENCourant
+  struct-ids-info-key: ESCOSIREN
 
 ## Structure cache ##
 structureservice:
-    caching-duration: 3600000
+  caching-duration: 3600000
 spring:
-    config:
-        activate:
-            on-profile: "default"
-    datasource:
-        url: jdbc:mariadb://127.0.0.1:3306/sarapis_test?useUnicode=true&characterEncoding=UTF-8&autoreconnect=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Paris
-        username: root
-        password: root 
-    cache:
-        cache-names: structuresCache,etabsCodeIdCache
-        type: ehcache
-    ldap : 
-        urls: 
-        username: 
-        password: 
+  config:
+    activate:
+      on-profile: "default"
+  datasource:
+    url: jdbc:mariadb://127.0.0.1:3306/sarapis_test?useUnicode=true&characterEncoding=UTF-8&autoreconnect=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Paris
+    username: root
+    password: root
+  cache:
+    cache-names: structuresCache,etabsCodeIdCache
+    type: ehcache
+  ldap:
+    urls:
+    username:
+    password:
 
 ## Security config ## 
 security-configuration:
@@ -76,22 +76,22 @@ security-configuration:
 
 ## LDAP Configuration ##
 
-ldap : 
-    ldap-url: 
-    manager-dn: 
-    manager-password: 
-    structure-base: 
-    all-struct-filter: (|(ObjectClass=ENTEtablissement)(ObjectClass=ENTServAc)(ObjectClass=ENTCollLoc))
-    struct-id-ldap-attr: ENTStructureSIREN
-    struct-name-ldap-attr: ENTStructureNomCourant
-    etabcode-ldap-attr: ENTStructureUAI
-    struct-display-name-ldap-attr: ESCOStructureNomCourt
-    struct-description-ldap-attr: ENTStructureTypeStruct
-    class-value-struct-u-a-i: ENTEtablissement, ENTServAc
-    other-attributes: ENTStructureJointure, ESCOStructureLogo, ENTStructureSiteWeb
+ldap:
+  ldap-url:
+  manager-dn:
+  manager-password:
+  structure-base:
+  all-struct-filter: (|(ObjectClass=ENTEtablissement)(ObjectClass=ENTServAc)(ObjectClass=ENTCollLoc))
+  struct-id-ldap-attr: ENTStructureSIREN
+  struct-name-ldap-attr: ENTStructureNomCourant
+  etabcode-ldap-attr: ENTStructureUAI
+  struct-display-name-ldap-attr: ESCOStructureNomCourt
+  struct-description-ldap-attr: ENTStructureTypeStruct
+  class-value-struct-u-a-i: ENTEtablissement, ENTServAc
+  other-attributes: ENTStructureJointure, ESCOStructureLogo, ENTStructureSiteWeb
 
-    struct-id-template: "%siren"
-    struct-dn: 
+  struct-id-template: "%siren"
+  struct-dn:
 
 # ldap.write.attribute.StructureLogo=
 # ldap.write.attribute.StructureSiteWeb=
@@ -99,21 +99,21 @@ ldap :
 
 
 
-userdao : 
-    user-dn: 
-    current-etab-code-ldap-key: ESCOUAICourant
-    current-struct-id-ldap-key: ESCOSIRENCourant
-    person-filtre: (ObjectClass=ENTPerson)
-    group-attributes: isMemberOf
-    user-id-template: 
-    uid: uid
+userdao:
+  user-dn:
+  current-etab-code-ldap-key: ESCOUAICourant
+  current-struct-id-ldap-key: ESCOSIRENCourant
+  person-filtre: (ObjectClass=ENTPerson)
+  group-attributes: isMemberOf
+  user-id-template:
+  uid: uid
 
 ## File upload 
-logostorage : 
-    default-image-link: /images/logoPortal.png
-    prefix-image-link: /annuaires_images/logos
-    prefix-local-url: parametab/image
-# .prefix-image-path:/mnt/vol_ent/annuaire_images/logos
-    prefix-image-path: ./upload/logos
-    prefix-image-name: logoportail
-    format-image: jpg
+logostorage:
+  default-image-link: /images/logoPortal.png
+  prefix-image-link: /annuaires_images/logos
+  prefix-local-url: parametab/image
+  # .prefix-image-path:/mnt/vol_ent/annuaire_images/logos
+  prefix-image-path: ./upload/logos
+  prefix-image-name: logoportail
+  format-image: jpg
