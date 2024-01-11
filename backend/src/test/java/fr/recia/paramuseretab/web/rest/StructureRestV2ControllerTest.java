@@ -31,7 +31,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-import fr.recia.paramuseretab.ParametabProjectApplication;
+import fr.recia.paramuseretab.ParametabApplication;
 import lombok.extern.slf4j.Slf4j;
 import fr.recia.paramuseretab.dao.IStructureDao;
 import fr.recia.paramuseretab.model.Structure;
@@ -58,7 +58,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 
-@SpringBootTest(classes = ParametabProjectApplication.class, properties = "spring.config.name=application-test")
+@SpringBootTest(classes = ParametabApplication.class, properties = "spring.config.name=application-test")
 @WebAppConfiguration
 @Slf4j
 public class StructureRestV2ControllerTest {

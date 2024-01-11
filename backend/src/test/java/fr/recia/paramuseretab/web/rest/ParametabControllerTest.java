@@ -16,14 +16,11 @@
 package fr.recia.paramuseretab.web.rest;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -54,7 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fr.recia.paramuseretab.ParametabProjectApplication;
+import fr.recia.paramuseretab.ParametabApplication;
 import fr.recia.paramuseretab.model.Person;
 import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.service.IImageUrlPath;
@@ -75,7 +72,7 @@ import javax.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 
 @Slf4j
-@SpringBootTest(classes = ParametabProjectApplication.class, properties = "spring.config.name=application-test")
+@SpringBootTest(classes = ParametabApplication.class, properties = "spring.config.name=application-test")
 @WebAppConfiguration
 public class ParametabControllerTest {
 

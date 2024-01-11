@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import fr.recia.paramuseretab.ParametabProjectApplication;
+import fr.recia.paramuseretab.ParametabApplication;
 import lombok.extern.slf4j.Slf4j;
 
 import fr.recia.paramuseretab.dao.IStructureDao;
@@ -49,7 +49,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.Cache;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
 /**
@@ -57,7 +56,7 @@ import org.springframework.test.util.ReflectionTestUtils;
  *
  */
 @Slf4j
-@SpringBootTest(classes = ParametabProjectApplication.class, properties = "spring.config.name=application-test")
+@SpringBootTest(classes = ParametabApplication.class, properties = "spring.config.name=application-test")
 @AutoConfigurationPackage(basePackages = {"fr.recia.paramuseretab.dao.impl", "fr.recia.paramuseretab.service.impl"})
 public class CachingStructureServiceTest {
 

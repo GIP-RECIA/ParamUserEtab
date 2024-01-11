@@ -15,19 +15,41 @@
  */
 package fr.recia.paramuseretab;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+@Slf4j
 @SpringBootApplication(exclude = ThymeleafAutoConfiguration.class)
 @ComponentScan(basePackages = "fr.recia.paramuseretab.*")
 @EnableConfigurationProperties
-public class ParametabProjectApplication {
+public class ParametabApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ParametabProjectApplication.class, args);
-	}
+    public static void main(String[] args) throws UnknownHostException {
+        SpringApplication app = new SpringApplication(ParametabApplication.class);
+        app.setBannerMode(Banner.Mode.OFF);
+
+        Environment env = app.run(args).getEnvironment();
+        log.info(
+                "Access URLs:" +
+                        "\n----------------------------------------------------------" +
+                        "\n\tLocal: \t\thttp://127.0.0.1:{}" +
+                        "\n\tExternal: \thttp://{}:{}" +
+                        "\n\tProfiles: \t{}" +
+                        "\n----------------------------------------------------------",
+                env.getProperty("server.port"),
+                InetAddress.getLocalHost().getHostAddress(),
+                env.getProperty("server.port"),
+                env.getProperty("spring.profiles.active")
+        );
+    }
 
 }

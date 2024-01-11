@@ -23,24 +23,16 @@ import java.util.Collection;
 import lombok.extern.slf4j.Slf4j;
 
 import fr.recia.paramuseretab.dao.IStructureDao;
-import fr.recia.paramuseretab.ParametabProjectApplication;
+import fr.recia.paramuseretab.ParametabApplication;
 import fr.recia.paramuseretab.model.Structure;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.event.annotation.BeforeTestExecution;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 /**
  * FIXME: Unable to load the Apache Directory for the test !
@@ -49,7 +41,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
  *
  */
 @Slf4j
-@SpringBootTest(classes = ParametabProjectApplication.class, properties = "spring.config.name=application-test")
+@SpringBootTest(classes = ParametabApplication.class, properties = "spring.config.name=application-test")
 @AutoConfigurationPackage(basePackages = "fr.recia.paramuseretab.dao.impl")
 public class LdapStructureDaoTest {
 
