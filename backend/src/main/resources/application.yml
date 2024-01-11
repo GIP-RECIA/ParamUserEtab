@@ -1,0 +1,58 @@
+spring:
+  config:
+    activate:
+      on-profile: 'default-config'
+
+---
+
+server:
+  port: 8090
+  servlet:
+    context-path: /spring-api
+
+logging:
+  config: 'classpath:logback.xml'
+
+spring:
+  application:
+    name: ParamUserEtab
+
+    datasource:
+      url: jdbc:mariadb://127.0.0.1:3306/sarapis_test?useUnicode=true&characterEncoding=UTF-8&autoreconnect=true&useLegacyDatetimeCode=false&serverTimezone=Europe/Paris
+      username: root
+      password: root
+    cache:
+      cache-names: structuresCache,etabsCodeIdCache
+      type: ehcache
+    ldap:
+      urls:
+      username:
+      password:
+
+app:
+  cors:
+    enable: true
+    allow-credentials: true
+    allowed-origins:
+      - http://localhost:5173
+      - https://*.giprecia.net
+    exposed-headers:
+      - x-auth-token
+      - x-requested-with
+      - x-xsrf-token
+    allowed-headers:
+      - content-type
+      - authorization
+      - x-com-persist
+      - X-Auth-Token
+      - x-auth-token
+      - x-requested-with
+      - x-xsrf-token
+    allowed-methods:
+      - GET
+      - PUT
+      - POST
+      - DELETE
+
+  soffit:
+    jwt-signature-key: ''
