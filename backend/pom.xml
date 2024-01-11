@@ -18,7 +18,7 @@
     <description>API to expose structure and users, possibility to modify some structure properties and user current structure</description>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com:GIP-RECIA/ParamUserEtab.git</connection>
+        <connection>scm:git:ssh://git@github.com/GIP-RECIA/ParamUserEtab.git</connection>
         <developerConnection>scm:git:ssh://git@github.com:GIP-RECIA/ParamUserEtab.git</developerConnection>
         <tag>HEAD</tag>
         <url>https://github.com/GIP-RECIA/ParamUserEtab.git</url>
