@@ -44,8 +44,8 @@
     "off". The default is "autodetect". This setting does not perform any function
     when used with JMX monitors. -->
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
-    updateCheck="true" monitoring="autodetect" dynamicConfig="true">
+         xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
+         updateCheck="true" monitoring="autodetect" dynamicConfig="true">
     <!-- DiskStore configuration ======================= The diskStore element
         is optional. To turn off disk store path creation, comment out the diskStore
         element below. Configure it if you have overflowToDisk or diskPersistent
@@ -61,7 +61,7 @@
         - A system property you would normally specify on the command line e.g. java
         -Dehcache.disk.store.dir=/u01/myapp/diskdir ... Subdirectories can be specified
         below the property e.g. java.io.tmpdir/one -->
-    <diskStore path="java.io.tmpdir" />
+    <diskStore path="java.io.tmpdir"/>
 
     <!-- Default Cache configuration. These settings will be applied to caches
         created programmatically using CacheManager.add(String cacheName). This element
@@ -69,21 +69,21 @@
         will throw CacheException The defaultCache has an implicit name "default"
         which is a reserved cache name. -->
     <defaultCache maxElementsInMemory="10000" eternal="false"
-        timeToIdleSeconds="3600" timeToLiveSeconds="3600" overflowToDisk="false"
-        diskSpoolBufferSizeMB="30" maxElementsOnDisk="10000000"
-        diskPersistent="false" diskExpiryThreadIntervalSeconds="120"
-        memoryStoreEvictionPolicy="LRU" clearOnFlush="false" />
+                  timeToIdleSeconds="3600" timeToLiveSeconds="3600" overflowToDisk="false"
+                  diskSpoolBufferSizeMB="30" maxElementsOnDisk="10000000"
+                  diskPersistent="false" diskExpiryThreadIntervalSeconds="120"
+                  memoryStoreEvictionPolicy="LRU" clearOnFlush="false"/>
 
     <cache name="structuresCache" maxElementsInMemory="10000" eternal="false"
-        timeToIdleSeconds="86400" timeToLiveSeconds="86400" overflowToDisk="false"
-        diskSpoolBufferSizeMB="30" maxElementsOnDisk="10000000"
-        diskPersistent="false" diskExpiryThreadIntervalSeconds="120"
-        memoryStoreEvictionPolicy="LRU" clearOnFlush="false" />
+           timeToIdleSeconds="86400" timeToLiveSeconds="86400" overflowToDisk="false"
+           diskSpoolBufferSizeMB="30" maxElementsOnDisk="10000000"
+           diskPersistent="false" diskExpiryThreadIntervalSeconds="120"
+           memoryStoreEvictionPolicy="LRU" clearOnFlush="false"/>
 
     <cache name="etabsCodeIdCache" maxElementsInMemory="10000" eternal="false"
-        timeToIdleSeconds="86400" timeToLiveSeconds="86400" overflowToDisk="false"
-        diskSpoolBufferSizeMB="30" maxElementsOnDisk="10000000"
-        diskPersistent="false" diskExpiryThreadIntervalSeconds="120"
-        memoryStoreEvictionPolicy="LRU" clearOnFlush="false" />
+           timeToIdleSeconds="86400" timeToLiveSeconds="86400" overflowToDisk="false"
+           diskSpoolBufferSizeMB="30" maxElementsOnDisk="10000000"
+           diskPersistent="false" diskExpiryThreadIntervalSeconds="120"
+           memoryStoreEvictionPolicy="LRU" clearOnFlush="false"/>
 
 </ehcache>

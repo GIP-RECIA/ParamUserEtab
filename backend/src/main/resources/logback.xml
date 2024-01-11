@@ -17,5 +17,5 @@
 
 -->
 <configuration scan="true">
-  <property name="LOG_FILE" value="application-prod.log"/>
+    <property name="LOG_FILE" value="application-prod.log"/>
 </configuration>

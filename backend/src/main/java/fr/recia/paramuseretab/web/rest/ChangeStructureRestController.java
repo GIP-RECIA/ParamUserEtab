@@ -15,9 +15,15 @@
  */
 package fr.recia.paramuseretab.web.rest;
 
-import java.util.Base64;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.recia.paramuseretab.model.Structure;
+import fr.recia.paramuseretab.service.IStructureService;
+import fr.recia.paramuseretab.service.IUserInfoService;
+import fr.recia.paramuseretab.service.IUserService;
+import io.jsonwebtoken.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,16 +33,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import fr.recia.paramuseretab.model.Structure;
-import fr.recia.paramuseretab.service.IStructureService;
-import fr.recia.paramuseretab.service.IUserInfoService;
-import fr.recia.paramuseretab.service.IUserService;
-import io.jsonwebtoken.io.IOException;
-import lombok.extern.slf4j.Slf4j;
+import java.util.Base64;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -74,8 +72,8 @@ public class ChangeStructureRestController {
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<Void> changeEtab(
-            @RequestHeader(name = "Authorization", required = true) String authorizationHeader,
-            @PathVariable("id") final String id) {
+        @RequestHeader(name = "Authorization", required = true) String authorizationHeader,
+        @PathVariable("id") final String id) {
         try {
             // String userID = userInfoService.getUserID();
             String userID = null;

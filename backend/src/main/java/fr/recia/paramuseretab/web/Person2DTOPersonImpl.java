@@ -15,17 +15,16 @@
  */
 package fr.recia.paramuseretab.web;
 
+import fr.recia.paramuseretab.model.Person;
+import fr.recia.paramuseretab.security.HandledException;
+import fr.recia.paramuseretab.service.IUniteAdministrativeImmatriculeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import fr.recia.paramuseretab.model.Person;
-import fr.recia.paramuseretab.security.HandledException;
-import fr.recia.paramuseretab.service.IUniteAdministrativeImmatriculeService;
 
 @Service
 public class Person2DTOPersonImpl {

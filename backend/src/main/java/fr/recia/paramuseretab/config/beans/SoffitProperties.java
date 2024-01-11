@@ -20,13 +20,13 @@ import lombok.Data;
 @Data
 public class SoffitProperties {
 
-  private String jwtSignatureKey;
+    private String jwtSignatureKey;
 
-  @Override
-  public String toString() {
-    return "\"SoffitProperties\": {" +
-      "\n\t\"jwtSignatureKey\": \"" + jwtSignatureKey + "\"" +
-      "\n}";
-  }
+    @Override
+    public String toString() {
+        return "\"SoffitProperties\": {" +
+            "\n\t\"jwtSignatureKey\": \"" + jwtSignatureKey + "\"" +
+            "\n}";
+    }
 
 }

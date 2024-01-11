@@ -15,6 +15,8 @@
  */
 package fr.recia.paramuseretab.web.controller;
 
+import fr.recia.paramuseretab.dao.IStructureDao;
+import fr.recia.paramuseretab.dao.impl.LdapStructureDao;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,43 +24,40 @@ import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import fr.recia.paramuseretab.dao.IStructureDao;
-import fr.recia.paramuseretab.dao.impl.LdapStructureDao;
-
 @Configuration
 public class WebAppConfiguration implements WebMvcConfigurer {
 
-	@Bean
-	public IStructureDao structureDao() {
-		return new LdapStructureDao();
-	}
+    @Bean
+    public IStructureDao structureDao() {
+        return new LdapStructureDao();
+    }
 
-	@Value("${ldap.ldap-url}")
-	private String ldapUrl;
+    @Value("${ldap.ldap-url}")
+    private String ldapUrl;
 
-	@Value("${ldap.manager-dn}")
-	private String ldapManagerDn;
+    @Value("${ldap.manager-dn}")
+    private String ldapManagerDn;
 
-	@Value("${ldap.manager-password}")
-	private String ldapManagerPassword;
+    @Value("${ldap.manager-password}")
+    private String ldapManagerPassword;
 
-	@Bean
-	public LdapTemplate ldapTemplate() throws Exception {
-		LdapContextSource contextSource = new LdapContextSource();
-		contextSource.setUrl(ldapUrl);
+    @Bean
+    public LdapTemplate ldapTemplate() throws Exception {
+        LdapContextSource contextSource = new LdapContextSource();
+        contextSource.setUrl(ldapUrl);
 
-		contextSource.setUserDn(ldapManagerDn); // comment later, if using ldif
-		contextSource.setPassword(ldapManagerPassword); // comment later, if using ldif
-		contextSource.afterPropertiesSet();
+        contextSource.setUserDn(ldapManagerDn); // comment later, if using ldif
+        contextSource.setPassword(ldapManagerPassword); // comment later, if using ldif
+        contextSource.afterPropertiesSet();
 
-		LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
-		ldapTemplate.setIgnorePartialResultException(true);
-		ldapTemplate.setContextSource(contextSource);
-		ldapTemplate.afterPropertiesSet();
+        LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
+        ldapTemplate.setIgnorePartialResultException(true);
+        ldapTemplate.setContextSource(contextSource);
+        ldapTemplate.afterPropertiesSet();
 
-		// Load the LDIF file from the classpath
+        // Load the LDIF file from the classpath
 
-		return ldapTemplate;
-	}
+        return ldapTemplate;
+    }
 
 }

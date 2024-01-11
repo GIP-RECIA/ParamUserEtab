@@ -21,7 +21,7 @@ public interface IStructureFormatter {
 
     /**
      * Formatter used in visitor pattern
-     * 
+     *
      * @param input UniteAdministrativeImmatriculee to format
      * @return The UniteAdministrativeImmatriculee object formatted
      */

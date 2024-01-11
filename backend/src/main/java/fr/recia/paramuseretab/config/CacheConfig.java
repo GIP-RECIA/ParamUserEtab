@@ -28,7 +28,7 @@ import org.springframework.core.io.ClassPathResource;
 @Configuration
 @EnableCaching
 public class CacheConfig {
-    
+
 
     @Bean
     public CacheManager cacheManager() {

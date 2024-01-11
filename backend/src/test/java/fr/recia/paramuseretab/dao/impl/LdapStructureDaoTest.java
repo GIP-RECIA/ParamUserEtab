@@ -18,13 +18,10 @@
  */
 package fr.recia.paramuseretab.dao.impl;
 
-import java.util.Collection;
-
-import lombok.extern.slf4j.Slf4j;
-
-import fr.recia.paramuseretab.dao.IStructureDao;
 import fr.recia.paramuseretab.ParametabApplication;
+import fr.recia.paramuseretab.dao.IStructureDao;
 import fr.recia.paramuseretab.model.Structure;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -34,29 +31,30 @@ import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.ldap.core.LdapTemplate;
 
+import java.util.Collection;
+
 /**
  * FIXME: Unable to load the Apache Directory for the test !
  *
  * @author GIP RECIA 2013 - Maxime BOSSARD.
- *
  */
 @Slf4j
 @SpringBootTest(classes = ParametabApplication.class, properties = "spring.config.name=application-test")
 @AutoConfigurationPackage(basePackages = "fr.recia.paramuseretab.dao.impl")
 public class LdapStructureDaoTest {
 
-	private static int port = 42539;
-	private static String defaultPartitionSuffix = "dc=esco-centre,dc=fr";
-	private static String defaultPartitionName = "root";
-	private static String principal = "uid=admin,ou=system";
-	private static String credentials = "secret";
+    private static int port = 42539;
+    private static String defaultPartitionSuffix = "dc=esco-centre,dc=fr";
+    private static String defaultPartitionName = "root";
+    private static String principal = "uid=admin,ou=system";
+    private static String credentials = "secret";
 
-	@Autowired
-	private LdapTemplate ldapTemplate;
+    @Autowired
+    private LdapTemplate ldapTemplate;
 
-	@Autowired
-	@Qualifier("ldapStructureDao")
-	private IStructureDao dao;
+    @Autowired
+    @Qualifier("ldapStructureDao")
+    private IStructureDao dao;
 
 	/*@Value(value = "classpath:esco-structure-schema.ldif")
 	private Resource escoStructuresSchemaLdif;
@@ -64,10 +62,10 @@ public class LdapStructureDaoTest {
 	@Value(value = "classpath:init.ldif")
 	private Resource initLdif;*/
 
-	@RegisterExtension
-	public final static LdapServerRule server = new LdapServerRule(defaultPartitionSuffix, ClassLoader.getSystemResource(
-			"init.ldif").getPath(), LdapStructureDaoTest.port, true, ClassLoader.getSystemResource(
-			"esco-structure-schema.ldif").getPath());
+    @RegisterExtension
+    public final static LdapServerRule server = new LdapServerRule(defaultPartitionSuffix, ClassLoader.getSystemResource(
+        "init.ldif").getPath(), LdapStructureDaoTest.port, true, ClassLoader.getSystemResource(
+        "esco-structure-schema.ldif").getPath());
 
 	/*@Before
 	public void initLdap() throws Exception {
@@ -79,31 +77,31 @@ public class LdapStructureDaoTest {
 	    //LdapTestUtils.cleanAndSetup(this.ldapTemplate.getContextSource(), structuresDn, this.initLdif);
 	}*/
 
-	@Test
-	public void testFindAllStructures() throws Exception {
-		final Collection<? extends Structure> structs = this.dao.findAllStructures();
+    @Test
+    public void testFindAllStructures() throws Exception {
+        final Collection<? extends Structure> structs = this.dao.findAllStructures();
 
-		Assertions.assertNotNull(structs, "Structs list shoud be empty not null !");
+        Assertions.assertNotNull(structs, "Structs list shoud be empty not null !");
 
-		Assertions.assertTrue(structs.size() > 0, "Structs list shoud not be empty !");
+        Assertions.assertTrue(structs.size() > 0, "Structs list shoud not be empty !");
 
-		for (Structure struct : structs) {
-			log.debug("returned struct : {}", struct);
-		}
-	}
+        for (Structure struct : structs) {
+            log.debug("returned struct : {}", struct);
+        }
+    }
 
-	@Test
-	public void testFindOneStructures() throws Exception {
-		final Collection<? extends Structure> structs = this.dao.findAllStructures();
+    @Test
+    public void testFindOneStructures() throws Exception {
+        final Collection<? extends Structure> structs = this.dao.findAllStructures();
 
-		Assertions.assertNotNull(structs, "Structs list shoud be empty not null !");
+        Assertions.assertNotNull(structs, "Structs list shoud be empty not null !");
 
-		Assertions.assertTrue(structs.size() > 0, "Structs list shoud not be empty !");
+        Assertions.assertTrue(structs.size() > 0, "Structs list shoud not be empty !");
 
-		final Structure structComparison = structs.iterator().next();
+        final Structure structComparison = structs.iterator().next();
 
-		final Structure structToCompare = this.dao.findOneStructureById(structComparison.getId());
+        final Structure structToCompare = this.dao.findOneStructureById(structComparison.getId());
 
-		Assertions.assertTrue(structToCompare.equals(structComparison), "Struct comparison should be equal");
-	}
+        Assertions.assertTrue(structToCompare.equals(structComparison), "Struct comparison should be equal");
+    }
 }

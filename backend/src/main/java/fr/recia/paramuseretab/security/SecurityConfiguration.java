@@ -59,15 +59,15 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         final AbstractPreAuthenticatedProcessingFilter filter = new SoffitApiPreAuthenticatedProcessingFilter(
-                parametabProperties.getSoffit().getJwtSignatureKey()
+            parametabProperties.getSoffit().getJwtSignatureKey()
         );
         filter.setAuthenticationManager(authenticationManager());
         http.addFilter(filter);
 
         http.authorizeHttpRequests(authz -> authz
-                .antMatchers("/health-check").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/**").authenticated()
-                .anyRequest().denyAll()
+            .antMatchers("/health-check").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/**").authenticated()
+            .anyRequest().denyAll()
         );
 
         http.sessionManagement().sessionFixation().newSession();

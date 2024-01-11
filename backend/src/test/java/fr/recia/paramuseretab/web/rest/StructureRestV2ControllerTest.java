@@ -15,29 +15,12 @@
  */
 package fr.recia.paramuseretab.web.rest;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import fr.recia.paramuseretab.ParametabApplication;
-import lombok.extern.slf4j.Slf4j;
 import fr.recia.paramuseretab.dao.IStructureDao;
 import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.service.IStructureService;
 import fr.recia.paramuseretab.service.impl.CachingStructureService;
-
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.Duration;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -56,6 +39,21 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @SpringBootTest(classes = ParametabApplication.class, properties = "spring.config.name=application-test")
@@ -79,12 +77,12 @@ public class StructureRestV2ControllerTest {
     private Structure structure2;
     private Structure structure3;
 
-    private String SIREN_1= "SIREN_1";
-    private String SIREN_2= "SIREN_3";
-    private String SIREN_3= "SIREN_3";
+    private String SIREN_1 = "SIREN_1";
+    private String SIREN_2 = "SIREN_3";
+    private String SIREN_3 = "SIREN_3";
 
     private Map<String, List<String>> otherAttrs = new HashMap<>();
-    
+
 
     @Autowired
     @Qualifier("structuresCache")
@@ -148,30 +146,30 @@ public class StructureRestV2ControllerTest {
     public void testRefresh() throws Exception {
         mvc.perform(
                 post("/rest/v2/structures/refresh/" + SIREN_1).contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk());
+            .andExpect(status().isOk());
     }
 
     @Test
     public void testretrieveStructFromId() throws Exception {
         mvc.perform(
                 get("/rest/v2/structures/struct/" + SIREN_1).contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.id").value(SIREN_1))
-                .andExpect(jsonPath("$.name").exists())
-                .andExpect(jsonPath("$.name").value(structure1.getName()))
-                .andExpect(jsonPath("$.displayName").exists())
-                .andExpect(jsonPath("$.displayName").value(structure1.getDisplayName()))
-                .andExpect(jsonPath("$.description").exists())
-                .andExpect(jsonPath("$.description").value(structure1.getDescription()))
-                .andExpect(jsonPath("$.otherAttributes").exists())
-                .andExpect(jsonPath("$.otherAttributes.street").exists())
-                .andExpect(jsonPath("$.otherAttributes.street").isArray())
-                .andExpect(jsonPath("$.otherAttributes.street[0]").value(otherAttrs.get("street").get(0)))
-                .andExpect(jsonPath("$.otherAttributes.phone").exists())
-                .andExpect(jsonPath("$.otherAttributes.phone").isArray())
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.id").exists())
+            .andExpect(jsonPath("$.id").value(SIREN_1))
+            .andExpect(jsonPath("$.name").exists())
+            .andExpect(jsonPath("$.name").value(structure1.getName()))
+            .andExpect(jsonPath("$.displayName").exists())
+            .andExpect(jsonPath("$.displayName").value(structure1.getDisplayName()))
+            .andExpect(jsonPath("$.description").exists())
+            .andExpect(jsonPath("$.description").value(structure1.getDescription()))
+            .andExpect(jsonPath("$.otherAttributes").exists())
+            .andExpect(jsonPath("$.otherAttributes.street").exists())
+            .andExpect(jsonPath("$.otherAttributes.street").isArray())
+            .andExpect(jsonPath("$.otherAttributes.street[0]").value(otherAttrs.get("street").get(0)))
+            .andExpect(jsonPath("$.otherAttributes.phone").exists())
+            .andExpect(jsonPath("$.otherAttributes.phone").isArray())
         ;
     }
 

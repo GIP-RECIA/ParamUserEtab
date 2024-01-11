@@ -15,21 +15,19 @@
  */
 package fr.recia.paramuseretab.dao.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-
-import org.springframework.ldap.core.AttributesMapper;
-
 import fr.recia.paramuseretab.dao.bean.IUserFormatter;
 import fr.recia.paramuseretab.model.Person;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ldap.core.AttributesMapper;
+
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor

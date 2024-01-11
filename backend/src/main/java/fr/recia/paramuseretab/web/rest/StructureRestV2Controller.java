@@ -15,77 +15,79 @@
  */
 package fr.recia.paramuseretab.web.rest;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import fr.recia.paramuseretab.dao.IStructureDao;
 import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.service.IStructureService;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/rest/v2/structures")
 public class StructureRestV2Controller {
 
-	@Autowired
-	private IStructureService structureService;
+    @Autowired
+    private IStructureService structureService;
 
-	@Autowired
-	private IStructureDao structureDao;
+    @Autowired
+    private IStructureDao structureDao;
 
-	/*
-	 * Return always Json data (Accept Http Header value has no impact)
-	 * example of call : /CONTEXT-PATH/rest/v2/structures/struct/SIREN
-	 */
-	@GetMapping(value = "/struct/{id}", produces = "application/json")
-	public ResponseEntity<? extends Structure> retrieveStructbInJson(@PathVariable("id") final String id,
-			HttpServletRequest request) {
-		if (id != null)
-			return new ResponseEntity<>(structureService.retrieveStructureById(id), HttpStatus.OK);
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-	}
+    /*
+     * Return always Json data (Accept Http Header value has no impact)
+     * example of call : /CONTEXT-PATH/rest/v2/structures/struct/SIREN
+     */
+    @GetMapping(value = "/struct/{id}", produces = "application/json")
+    public ResponseEntity<? extends Structure> retrieveStructbInJson(@PathVariable("id") final String id,
+                                                                     HttpServletRequest request) {
+        if (id != null)
+            return new ResponseEntity<>(structureService.retrieveStructureById(id), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 
-	/*
-	 * Return always Json data (Accept Http Header value has no impact)
-	 * example of call : /CONTEXT-PATH/rest/v2/structures/structs/?ids=SIREN1,SIREN2
-	 */
-	@GetMapping(value = "/structs/", produces = "application/json")
-	public ResponseEntity<Map<String, ? extends Structure>> retrieveStructsInJson(
-			@RequestParam("ids") final List<String> ids, HttpServletRequest request) {
-		if (ids != null && !ids.isEmpty()) {
-			return new ResponseEntity<>(structureService.retrieveStructuresByIds(ids),
-					HttpStatus.OK);
-		}
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-	}
+    /*
+     * Return always Json data (Accept Http Header value has no impact)
+     * example of call : /CONTEXT-PATH/rest/v2/structures/structs/?ids=SIREN1,SIREN2
+     */
+    @GetMapping(value = "/structs/", produces = "application/json")
+    public ResponseEntity<Map<String, ? extends Structure>> retrieveStructsInJson(
+        @RequestParam("ids") final List<String> ids, HttpServletRequest request) {
+        if (ids != null && !ids.isEmpty()) {
+            return new ResponseEntity<>(structureService.retrieveStructuresByIds(ids),
+                HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 
-	/*
-	 * Return always Json data (Accept Http Header value has no impact)
-	 * example of call : /CONTEXT-PATH/rest/v2/structures/refresh/SIREN
-	 */
+    /*
+     * Return always Json data (Accept Http Header value has no impact)
+     * example of call : /CONTEXT-PATH/rest/v2/structures/refresh/SIREN
+     */
 
-	@PostMapping(value = "/refresh/{id}", produces = "application/json")
-	public ResponseEntity<Void> refresh(@PathVariable("id") final String id, HttpServletRequest request) {
-		if (id != null) {
-			structureService.invalidateStructureById(id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		}
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-	}
+    @PostMapping(value = "/refresh/{id}", produces = "application/json")
+    public ResponseEntity<Void> refresh(@PathVariable("id") final String id, HttpServletRequest request) {
+        if (id != null) {
+            structureService.invalidateStructureById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 
-	@GetMapping("/structures")
-	public ResponseEntity<Collection<? extends Structure>> index() {
+    @GetMapping("/structures")
+    public ResponseEntity<Collection<? extends Structure>> index() {
 
-		return new ResponseEntity<>(structureDao.findAllStructures(), HttpStatus.OK);
-	}
+        return new ResponseEntity<>(structureDao.findAllStructures(), HttpStatus.OK);
+    }
 }

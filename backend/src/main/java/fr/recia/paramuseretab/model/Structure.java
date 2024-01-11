@@ -15,31 +15,39 @@
  */
 package fr.recia.paramuseretab.model;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Structure implements Serializable {
-	/** Bean Id. */
-	@NonNull
-	protected String id;
-	/** Struct name. */
-	@NonNull
-	protected String name;
-	/** Struct displayName. */
-	@NonNull
-	protected String displayName;
-	/** Struct description. */
-	protected String description;
+    /**
+     * Bean Id.
+     */
+    @NonNull
+    protected String id;
+    /**
+     * Struct name.
+     */
+    @NonNull
+    protected String name;
+    /**
+     * Struct displayName.
+     */
+    @NonNull
+    protected String displayName;
+    /**
+     * Struct description.
+     */
+    protected String description;
 
-	private Map<String, List<String>> otherAttributes;
+    private Map<String, List<String>> otherAttributes;
 
 }

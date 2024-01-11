@@ -15,34 +15,32 @@
  */
 package fr.recia.paramuseretab.service.impl;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
+import fr.recia.paramuseretab.service.IImageUrlPath;
+import fr.recia.paramuseretab.service.ILogoStorageService;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import fr.recia.paramuseretab.service.IImageUrlPath;
-import fr.recia.paramuseretab.service.ILogoStorageService;
-
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Data
 @Slf4j
 @Service
 @ConfigurationProperties(prefix = "logostorage")
-public class LogoStorageServiceImpl implements ILogoStorageService  {
+public class LogoStorageServiceImpl implements ILogoStorageService {
 
 
     private String prefixImagePath;
-    private String prefixImageLink; 
+    private String prefixImageLink;
     private String prefixImageName;
-    private String prefixLocalUrl; 
+    private String prefixLocalUrl;
     private String defaultImageLink;
     private String formatImage;
     private final Path root;
@@ -110,25 +108,23 @@ public class LogoStorageServiceImpl implements ILogoStorageService  {
 
     private String getFileExtension(String fileName) {
         if (fileName == null) {
-          return null;
+            return null;
         }
         String[] fileNameParts = fileName.split("\\.");
-    
+
         return fileNameParts[fileNameParts.length - 1];
-      }
+    }
 
     /**
      * TO DO :
-     *  1) ok. il faut définir le chemin du repertoire de stockage de l'image :
-     *      etab.prefix.image.path = /mnt/vol_ent/annuaire_images/logos ( machine pour stocker les logos )
-     *  2) ok. définir aussi le prefix de l'url de l'image sans idSiren : 
-     *      etab.prefix.image.link = /annuaires_images/logos 
-     *  3) créer des méthodes qui permettent de créer l'url path de l'image pour pouvoir le stocker dans db et ldap ???? 
-     *  4)  
-     *
+     * 1) ok. il faut définir le chemin du repertoire de stockage de l'image :
+     *    etab.prefix.image.path = /mnt/vol_ent/annuaire_images/logos ( machine pour stocker les logos )
+     * 2) ok. définir aussi le prefix de l'url de l'image sans idSiren :
+     *    etab.prefix.image.link = /annuaires_images/logos
+     * 3) créer des méthodes qui permettent de créer l'url path de l'image pour pouvoir le stocker dans db et ldap ????
      */
 
-    // save file 
+    // save file
     @Override
     public String save(MultipartFile logo, String id) {
 
@@ -185,7 +181,7 @@ public class LogoStorageServiceImpl implements ILogoStorageService  {
 
     @Override
     public IImageUrlPath makeImageUrlPath(String nom, int version) {
-       
+
         if (nom != null) {
             int length = nom.length();
             if (length >= 2) {
@@ -198,15 +194,15 @@ public class LogoStorageServiceImpl implements ILogoStorageService  {
     private ImageUrlPath makeImageUrlPath(String userDir, String format, int version) {
         int vers = version % 100;
         int parite = vers % 2;
-        return makeImageUrlPath(userDir, 
-                    String.format("%s%d.%s", prefixImageName, parite,  format), 
-                    format, 
-                    String.format("%d", vers)
-                );
+        return makeImageUrlPath(userDir,
+            String.format("%s%d.%s", prefixImageName, parite, format),
+            format,
+            String.format("%d", vers)
+        );
     }
 
-    private  ImageUrlPath makeImageUrlPath (String userDir, String fileName, String format, String version) { 
-        String relativePathName; 
+    private ImageUrlPath makeImageUrlPath(String userDir, String fileName, String format, String version) {
+        String relativePathName;
         ImageUrlPath iup = new ImageUrlPath();
         iup.format = format;
         iup.version = version;
@@ -214,12 +210,12 @@ public class LogoStorageServiceImpl implements ILogoStorageService  {
         iup.pathUser = String.format("%s/%s", prefixImagePath, userDir);
         relativePathName = String.format("/%s/%s", userDir, fileName);
 
-        iup.url = String.format("%s%s?%s", prefixImageLink, relativePathName, version );
+        iup.url = String.format("%s%s?%s", prefixImageLink, relativePathName, version);
 
         iup.pathName = String.format("%s%s", prefixImagePath, relativePathName);
-        iup.localUrl = String.format("%s%s", prefixLocalUrl , relativePathName);
-        System.out.println("iup.url : " +iup.url);
-        System.out.println("iup.pathName : " +iup.pathName);
+        iup.localUrl = String.format("%s%s", prefixLocalUrl, relativePathName);
+        System.out.println("iup.url : " + iup.url);
+        System.out.println("iup.pathName : " + iup.pathName);
         return iup;
     }
 
@@ -229,27 +225,27 @@ public class LogoStorageServiceImpl implements ILogoStorageService  {
         int nbMinElem = 2;
         if (url != null) {
             try {
-            String[] dirs = url.split("/");
-            int taille = dirs.length;
-            if (taille >= nbMinElem) {
-                String[] lastNameVersion  = dirs[taille-1].split("\\?");
-                int formatIdx = lastNameVersion[0].lastIndexOf(".");
-                String format = null;
-                if(formatIdx >0 ) { 
-                    format = lastNameVersion[0].substring(formatIdx+1);
+                String[] dirs = url.split("/");
+                int taille = dirs.length;
+                if (taille >= nbMinElem) {
+                    String[] lastNameVersion = dirs[taille - 1].split("\\?");
+                    int formatIdx = lastNameVersion[0].lastIndexOf(".");
+                    String format = null;
+                    if (formatIdx > 0) {
+                        format = lastNameVersion[0].substring(formatIdx + 1);
+                    }
+                    iup = makeImageUrlPath(
+                        dirs[taille - 2],
+                        lastNameVersion[0],
+                        format,
+                        lastNameVersion[1]
+                    );
+                    // on remet l'url en enrée
+                    iup.url = url;
+                    System.out.println("iup : " + iup);
                 }
-                iup = makeImageUrlPath(
-                            dirs[taille-2], 
-                            lastNameVersion[0], 
-                            format, 
-                            lastNameVersion[1]
-                        );
-                    // on remet l'url en enrée 
-                iup.url = url;
-                System.out.println("iup : " + iup);
-            }
             } catch (Exception e) {
-                
+
                 log.error(e.getMessage());
                 e.printStackTrace();
             }

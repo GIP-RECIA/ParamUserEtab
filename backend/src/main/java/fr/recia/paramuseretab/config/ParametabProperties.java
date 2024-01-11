@@ -29,8 +29,8 @@ import javax.annotation.PostConstruct;
 
 @Configuration
 @ConfigurationProperties(
-        prefix = "app",
-        ignoreUnknownFields = false
+    prefix = "app",
+    ignoreUnknownFields = false
 )
 @Data
 @Validated
@@ -49,10 +49,10 @@ public class ParametabProperties {
     @Override
     public String toString() {
         return "{\n"
-                + cors + ",\n"
-                + security + ",\n"
-                + soffit + "\n"
-                + "\n}";
+            + cors + ",\n"
+            + security + ",\n"
+            + soffit + "\n"
+            + "\n}";
     }
 
 }

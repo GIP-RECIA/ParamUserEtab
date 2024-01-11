@@ -26,30 +26,30 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Slf4j
 public class CorsConfiguration {
 
-  private final CorsProperties corsProperties;
+    private final CorsProperties corsProperties;
 
-  public CorsConfiguration(ParametabProperties parametabProperties) {
-    this.corsProperties = parametabProperties.getCors();
-  }
-
-  @Bean
-  CorsConfigurationSource corsConfigurationSource() {
-    final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-    if (log.isWarnEnabled()) log.warn("CORS: {}", corsProperties.isEnable());
-    if (corsProperties.isEnable()) {
-      org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
-
-      configuration.setAllowCredentials(corsProperties.isAllowCredentials());
-      configuration.setAllowedOrigins(corsProperties.getAllowedOrigins());
-      configuration.setExposedHeaders(corsProperties.getExposedHeaders());
-      configuration.setAllowedHeaders(corsProperties.getAllowedHeaders());
-      configuration.setAllowedMethods(corsProperties.getAllowedMethods());
-
-      source.registerCorsConfiguration("/**", configuration);
+    public CorsConfiguration(ParametabProperties parametabProperties) {
+        this.corsProperties = parametabProperties.getCors();
     }
 
-    return source;
-  }
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        if (log.isWarnEnabled()) log.warn("CORS: {}", corsProperties.isEnable());
+        if (corsProperties.isEnable()) {
+            org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
+
+            configuration.setAllowCredentials(corsProperties.isAllowCredentials());
+            configuration.setAllowedOrigins(corsProperties.getAllowedOrigins());
+            configuration.setExposedHeaders(corsProperties.getExposedHeaders());
+            configuration.setAllowedHeaders(corsProperties.getAllowedHeaders());
+            configuration.setAllowedMethods(corsProperties.getAllowedMethods());
+
+            source.registerCorsConfiguration("/**", configuration);
+        }
+
+        return source;
+    }
 
 }

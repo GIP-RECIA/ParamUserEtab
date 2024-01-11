@@ -16,7 +16,7 @@
 package fr.recia.paramuseretab.service;
 
 public interface IImageUrlPath {
-    
+
     String getLocalUrl();
 
     String getVersion();

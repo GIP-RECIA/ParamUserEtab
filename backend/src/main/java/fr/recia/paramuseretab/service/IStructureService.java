@@ -15,39 +15,39 @@
  */
 package fr.recia.paramuseretab.service;
 
-import java.util.Collection;
-import java.util.Map;
-
 import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.web.DTOStructure;
 
+import java.util.Collection;
+import java.util.Map;
+
 public interface IStructureService {
 
-	/**
-	 * Return a Collection of Structure matching the supplied codes.
-	 *
-	 * @param ids List of ids of structures to retrive
-	 * @return a never null Map of Id, only Structure wich may be empty
-	 */
-	Map<String, Structure> retrieveStructuresByIds(final Collection<String> ids);
+    /**
+     * Return a Collection of Structure matching the supplied codes.
+     *
+     * @param ids List of ids of structures to retrive
+     * @return a never null Map of Id, only Structure wich may be empty
+     */
+    Map<String, Structure> retrieveStructuresByIds(final Collection<String> ids);
 
-	/**
-	 * Return a Structure matching the supplied code.
-	 *
-	 * @param id Id of a Structure to retrieve
-	 * @return Struct or null
-	 */
-	Structure retrieveStructureById(final String id);
+    /**
+     * Return a Structure matching the supplied code.
+     *
+     * @param id Id of a Structure to retrieve
+     * @return Struct or null
+     */
+    Structure retrieveStructureById(final String id);
 
-	/**
-	 * Invalidate a Structure to consider modifications to force reload on.
-	 *
-	 * @param id Id of a Structure
-	 */
-	void invalidateStructureById(final String id);
+    /**
+     * Invalidate a Structure to consider modifications to force reload on.
+     *
+     * @param id Id of a Structure
+     */
+    void invalidateStructureById(final String id);
 
-	// essayer d'ajouter cette function, puis l'appliquer la function saveStructure dans cette methode 
-	// on pourra donc faire le test unitaire avec ce service ??  
-	void updateStructure(DTOStructure dto, String customName, String siteWeb, String logo, String id);
+    // essayer d'ajouter cette function, puis l'appliquer la function saveStructure dans cette methode
+    // on pourra donc faire le test unitaire avec ce service ??
+    void updateStructure(DTOStructure dto, String customName, String siteWeb, String logo, String id);
 
 }

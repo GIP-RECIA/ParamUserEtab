@@ -18,10 +18,10 @@
  */
 package fr.recia.paramuseretab.service;
 
+import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
+
 import java.util.Collection;
 import java.util.Map;
-
-import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
 
 /**
  * @deprecated
@@ -29,29 +29,29 @@ import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
 @Deprecated
 public interface IUniteAdministrativeImmatriculeService extends IStructureService {
 
-	/**
-	 * Return a Collection of UniteAdministrativeImmatriculee matching the supplied
-	 * codes.
-	 *
-	 * @param codes List of ids of etablissements to retrive
-	 * @return a never null Map of Id, only Etab wich may be empty
-	 * @deprecated
-	 */
-	@Deprecated
-	Map<String, UniteAdministrativeImmatriculee> retrieveEtablissementsByCodes(Collection<String> codes);
+    /**
+     * Return a Collection of UniteAdministrativeImmatriculee matching the supplied
+     * codes.
+     *
+     * @param codes List of ids of etablissements to retrive
+     * @return a never null Map of Id, only Etab wich may be empty
+     * @deprecated
+     */
+    @Deprecated
+    Map<String, UniteAdministrativeImmatriculee> retrieveEtablissementsByCodes(Collection<String> codes);
 
-	/**
-	 * Return an UniteAdministrativeImmatriculee matching the supplied code.
-	 *
-	 * @param code Id of an UniteAdministrativeImmatriculee to retrieve
-	 * @return Etab or null
-	 * @deprecated
-	 */
-	@Deprecated
-	UniteAdministrativeImmatriculee retrieveEtablissementByCode(String code);
+    /**
+     * Return an UniteAdministrativeImmatriculee matching the supplied code.
+     *
+     * @param code Id of an UniteAdministrativeImmatriculee to retrieve
+     * @return Etab or null
+     * @deprecated
+     */
+    @Deprecated
+    UniteAdministrativeImmatriculee retrieveEtablissementByCode(String code);
 
-	String getSiren(String code, String name);
+    String getSiren(String code, String name);
 
-	String getEtabName(String id);
+    String getEtabName(String id);
 
 }

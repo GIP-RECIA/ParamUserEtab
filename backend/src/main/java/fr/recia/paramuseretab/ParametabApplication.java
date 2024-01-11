@@ -39,16 +39,16 @@ public class ParametabApplication {
 
         Environment env = app.run(args).getEnvironment();
         log.info(
-                "Access URLs:" +
-                        "\n----------------------------------------------------------" +
-                        "\n\tLocal: \t\thttp://127.0.0.1:{}" +
-                        "\n\tExternal: \thttp://{}:{}" +
-                        "\n\tProfiles: \t{}" +
-                        "\n----------------------------------------------------------",
-                env.getProperty("server.port"),
-                InetAddress.getLocalHost().getHostAddress(),
-                env.getProperty("server.port"),
-                env.getProperty("spring.profiles.active")
+            "Access URLs:" +
+                "\n----------------------------------------------------------" +
+                "\n\tLocal: \t\thttp://127.0.0.1:{}" +
+                "\n\tExternal: \thttp://{}:{}" +
+                "\n\tProfiles: \t{}" +
+                "\n----------------------------------------------------------",
+            env.getProperty("server.port"),
+            InetAddress.getLocalHost().getHostAddress(),
+            env.getProperty("server.port"),
+            env.getProperty("spring.profiles.active")
         );
     }
 

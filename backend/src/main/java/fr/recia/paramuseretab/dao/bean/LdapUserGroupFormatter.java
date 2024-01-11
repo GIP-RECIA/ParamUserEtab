@@ -15,21 +15,19 @@
  */
 package fr.recia.paramuseretab.dao.bean;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import fr.recia.paramuseretab.model.Person;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import fr.recia.paramuseretab.model.Person;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @NoArgsConstructor
@@ -49,7 +47,7 @@ public class LdapUserGroupFormatter implements IUserFormatter, InitializingBean 
     @Override
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.userGroupsRegexPattern,
-                "Attribut groupsRegex wasn't initialized, a regular expression with groups should be passed");
+            "Attribut groupsRegex wasn't initialized, a regular expression with groups should be passed");
     }
 
     @Override
@@ -64,7 +62,7 @@ public class LdapUserGroupFormatter implements IUserFormatter, InitializingBean 
     /*
      * Use regex to format the 'isMemberOf' values in order to extract the name of
      * the 'etablissement' and the UAI.
-     * 
+     *
      */
     private List<String> format(List<String> inputs) {
 

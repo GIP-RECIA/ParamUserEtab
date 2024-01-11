@@ -23,8 +23,8 @@ import fr.recia.paramuseretab.model.Structure;
 
 public interface IUserDao {
 
-	void saveCurrentStructure(String userId, Structure struct);
+    void saveCurrentStructure(String userId, Structure struct);
 
-	Person retrievePersonFromLdap(String userId);
+    Person retrievePersonFromLdap(String userId);
 
 }

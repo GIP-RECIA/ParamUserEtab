@@ -18,9 +18,6 @@
  */
 package fr.recia.paramuseretab.model;
 
-import java.util.List;
-import java.util.Map;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,6 +25,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -37,24 +37,26 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class UniteAdministrativeImmatriculee extends Structure {
 
-	/** Etab code. */
-	@NonNull
-	private String code;
+    /**
+     * Etab code.
+     */
+    @NonNull
+    private String code;
 
-	/**
-	 * @param id              Identifier
-	 * @param code            Code
-	 * @param name            Complete Name
-	 * @param displayName     Display Name
-	 * @param description     Description
-	 * @param otherAttributes All other attributes
-	 */
-	public UniteAdministrativeImmatriculee(@NonNull String id, @NonNull String code, @NonNull String name,
-			@NonNull String displayName,
-			String description, Map<String, List<String>> otherAttributes) {
-		super(id, name, displayName, description, otherAttributes);
+    /**
+     * @param id              Identifier
+     * @param code            Code
+     * @param name            Complete Name
+     * @param displayName     Display Name
+     * @param description     Description
+     * @param otherAttributes All other attributes
+     */
+    public UniteAdministrativeImmatriculee(@NonNull String id, @NonNull String code, @NonNull String name,
+                                           @NonNull String displayName,
+                                           String description, Map<String, List<String>> otherAttributes) {
+        super(id, name, displayName, description, otherAttributes);
 
-		this.code = code;
-	}
+        this.code = code;
+    }
 
 }

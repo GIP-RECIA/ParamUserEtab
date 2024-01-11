@@ -27,9 +27,9 @@ public class ServletInitializer extends SpringBootServletInitializer {
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application
-                .profiles(addDefaultProfile())
-                .bannerMode(Banner.Mode.OFF)
-                .sources(ParametabApplication.class);
+            .profiles(addDefaultProfile())
+            .bannerMode(Banner.Mode.OFF)
+            .sources(ParametabApplication.class);
     }
 
     private String addDefaultProfile() {

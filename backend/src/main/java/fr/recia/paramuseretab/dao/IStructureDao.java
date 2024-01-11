@@ -18,28 +18,28 @@
  */
 package fr.recia.paramuseretab.dao;
 
-import java.util.Collection;
-
 import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.web.DTOStructure;
 
+import java.util.Collection;
+
 public interface IStructureDao {
 
-	/**
-	 * Find all structure.
-	 *
-	 * @return a never null Collection which may be empty
-	 */
-	Collection<? extends Structure> findAllStructures();
+    /**
+     * Find all structure.
+     *
+     * @return a never null Collection which may be empty
+     */
+    Collection<? extends Structure> findAllStructures();
 
-	/**
-	 * Find a Structure.
-	 * 
-	 * @param id Id of the structure to find.
-	 * @return the Structure found.
-	 */
-	Structure findOneStructureById(final String id);
+    /**
+     * Find a Structure.
+     *
+     * @param id Id of the structure to find.
+     * @return the Structure found.
+     */
+    Structure findOneStructureById(final String id);
 
-	void saveStructure(DTOStructure dto, String customName, String siteWeb, String logo, String id);
+    void saveStructure(DTOStructure dto, String customName, String siteWeb, String logo, String id);
 
 }

@@ -23,8 +23,8 @@ import fr.recia.paramuseretab.security.HandledException;
 
 public interface IUserInfoService {
 
-	Person getPersonDetails(String userId) throws HandledException;
+    Person getPersonDetails(String userId) throws HandledException;
 
-	// String getUserID();
+    // String getUserID();
 
 }
