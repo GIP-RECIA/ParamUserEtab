@@ -13,14 +13,12 @@ jobs:
     strategy:
       matrix: 
         java: ['11']
-        node: ['20']
 
-    name: Java ${{ matrix.java }} & Node ${{ matrix.node }}
-    
+    name: Java ${{ matrix.java }}
+
     steps:
       - uses: actions/checkout@v3
 
-      # Setup Java
       - name: Set up JDK ${{ matrix.java }}
         uses: actions/setup-java@v3
         with:
@@ -28,30 +26,10 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Check license hearders
-        run: |
-          cd backend
-          ./mvnw license:check
+        run: ./mvnw license:check
+
       - name: Check NOTICE
-        run: |
-          cd backend
-          ./mvnw -B notice:check
-      # Setup Node
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: '${{ matrix.node }}'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-      - run: |
-          cd frontend
-          npm install --immutable
-      
-      - name: Build frontend
-        run: |
-          cd frontend
-          npm run build
+        run: ./mvnw -B notice:check
 
       - name: Build backend
-        run: |
-          cd backend
-          ./mvnw -B package --file pom.xml
+        run: ./mvnw -B package --file pom.xml
