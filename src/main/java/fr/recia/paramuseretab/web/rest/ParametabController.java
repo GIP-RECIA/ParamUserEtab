@@ -121,9 +121,9 @@ public class ParametabController {
             }
             log.info("old is null");
             url = logoStorageService.makeImageUrlPath(str.getId(), version + 1);
-            // if (! mkdir(url.getPathUser())) {
-            // url = null;
-            // }
+            if (!mkdir(url.getPathUser())) {
+                url = null;
+            }
         }
         return url;
     }
@@ -153,7 +153,7 @@ public class ParametabController {
 
     @GetMapping("/changeetab/")
     public ResponseEntity<DTOPerson> toDTOChangeEtab(
-        @RequestHeader(name = "Authorization", required = true) String authorizationHeader) {
+            @RequestHeader(name = "Authorization", required = true) String authorizationHeader) {
 
         try {
             String userId = decodeJwt(authorizationHeader);
@@ -169,7 +169,7 @@ public class ParametabController {
 
     @GetMapping("/parametab/")
     public ResponseEntity<?> toDTOParametab(
-        @RequestHeader(name = "Authorization", required = false) String authorizationHeader) {
+            @RequestHeader(name = "Authorization", required = false) String authorizationHeader) {
 
         try {
             String userId = decodeJwt(authorizationHeader);
@@ -180,6 +180,7 @@ public class ParametabController {
         } catch (HandledException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         } catch (Exception e) {
+            log.error("error: ", e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -190,7 +191,7 @@ public class ParametabController {
 
     @GetMapping("/")
     public ResponseEntity<Person> getEtabs(
-        @RequestHeader(name = "Authorization", required = true) String authorizationHeader) {
+            @RequestHeader(name = "Authorization", required = true) String authorizationHeader) {
         try {
             String userId = decodeJwt(authorizationHeader);
             return new ResponseEntity<>(userInfoService.getPersonDetails(userId), HttpStatus.OK);
@@ -247,9 +248,9 @@ public class ParametabController {
 
     @PutMapping("/updateV2/{id}")
     public ResponseEntity<?> updateV2(
-        @RequestHeader(name = "Authorization", required = true) String authorizationHeader,
-        @PathVariable("id") final String id,
-        @RequestBody DTOStructure structDto) {
+            @RequestHeader(name = "Authorization", required = true) String authorizationHeader,
+            @PathVariable("id") final String id,
+            @RequestBody DTOStructure structDto) {
 
         try {
             String userId = decodeJwt(authorizationHeader);
@@ -267,7 +268,7 @@ public class ParametabController {
                 dtoStructure.setStructCustomDisplayName(structDto.getStructCustomDisplayName());
                 dtoStructure.setStructSiteWeb(structDto.getStructSiteWeb());
                 structureService.updateStructure(dtoStructure, dtoStructure.getStructCustomDisplayName(),
-                    dtoStructure.getStructSiteWeb(), null, dtoStructure.getId());
+                        dtoStructure.getStructSiteWeb(), null, dtoStructure.getId());
                 structureService.invalidateStructureById(id); // refresh cache
                 return new ResponseEntity<>(dtoStructure, HttpStatus.OK);
             } else {
@@ -286,7 +287,7 @@ public class ParametabController {
 
     @PutMapping("/updateLogo")
     public ResponseEntity<Void> updateLogo(@RequestParam("photo") MultipartFile photo,
-                                           @RequestBody DTOStructure structDto) {
+            @RequestBody DTOStructure structDto) {
 
         try {
             if (structDto != null) {
@@ -309,9 +310,9 @@ public class ParametabController {
     // upload logo to disk, database, and ldap
     @PostMapping("/fileUpload/{id}")
     public ResponseEntity<?> uploadFile(
-        @RequestHeader(name = "Authorization", required = true) String authorizationHeader,
-        @RequestPart(name = "file", required = false) MultipartFile file,
-        @RequestPart(name = "details") String detailsJson, @PathVariable("id") final String id) {
+            @RequestHeader(name = "Authorization", required = true) String authorizationHeader,
+            @RequestPart(name = "file", required = false) MultipartFile file,
+            @RequestPart(name = "details") String detailsJson, @PathVariable("id") final String id) {
 
         try {
             String userId = decodeJwt(authorizationHeader);
@@ -328,11 +329,11 @@ public class ParametabController {
                     if (newUrl != null) {
                         log.info("newUrl : {}", pathName);
                         // save the logo to disk
-                        // logoStorage.saving(pathName, file, id);
+                        logoStorage.saving(pathName, file, id);
                     } else {
                         log.info("newUrl is null");
                         return new ResponseEntity<>("erreur : impossible de sauvegarder l'image !",
-                            HttpStatus.BAD_REQUEST);
+                                HttpStatus.BAD_REQUEST);
                     }
 
                     dto.setStructLogo(getNewURL);

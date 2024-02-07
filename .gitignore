@@ -35,17 +35,6 @@ build/
 !.vscode/launch.json
 !.vscode/extensions.json
 
-### Yarn ###
-.yarn/
-!.yarn/releases/
-
-node_modules
-.DS_Store
-dist
-dist-ssr
-coverage
-*.local
-frontend/src/data
 *.bak
 
 ### Tests ###
@@ -64,4 +53,4 @@ pnpm-debug.log*
 lerna-debug.log*
 
 ### application.yml
-backend/src/main/resources/config
+src/main/resources/config

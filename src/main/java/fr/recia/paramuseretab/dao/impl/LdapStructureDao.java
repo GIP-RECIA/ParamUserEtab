@@ -110,9 +110,9 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
         List<Structure> allStructs;
         try {
             allStructs = this.ldapTemplate.search(this.structureBase, this.allStructFilter,
-                new StructureAttributesMapper(this.structIdLdapAttr, this.etabcodeLdapAttr,
-                    this.structNameLdapAttr, this.structDisplayNameLdapAttr, this.structDescriptionLdapAttr,
-                    this.otherAttributes, this.classValueStructUAI, this.structureFormatters));
+                    new StructureAttributesMapper(this.structIdLdapAttr, this.etabcodeLdapAttr,
+                            this.structNameLdapAttr, this.structDisplayNameLdapAttr, this.structDescriptionLdapAttr,
+                            this.otherAttributes, this.classValueStructUAI, this.structureFormatters));
         } catch (final Exception e) {
             // We catch all exceptions, cause we don't want our portlet to block the portal.
             log.error("Error while searching for structures in LDAP !", e);
@@ -135,9 +135,9 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
         Structure theStruct = null;
         try {
             List<Structure> result = this.ldapTemplate.search(this.structureBase, filter.encode(),
-                new StructureAttributesMapper(this.structIdLdapAttr, this.etabcodeLdapAttr,
-                    this.structNameLdapAttr, this.structDisplayNameLdapAttr, this.structDescriptionLdapAttr,
-                    this.otherAttributes, this.classValueStructUAI, this.structureFormatters));
+                    new StructureAttributesMapper(this.structIdLdapAttr, this.etabcodeLdapAttr,
+                            this.structNameLdapAttr, this.structDisplayNameLdapAttr, this.structDescriptionLdapAttr,
+                            this.otherAttributes, this.classValueStructUAI, this.structureFormatters));
             Assert.isTrue(result.size() <= 1, "Looking for one structure and found " + result.size());
             if (result.size() == 1) {
                 theStruct = result.get(0);
@@ -169,14 +169,12 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
         }
 
         if (logo != null) {
-            // updateLogo(dto, logo, id, mods);
+            updateLogo(dto, logo, id, mods);
         }
 
-        // this.ldapTemplate.modifyAttributes(dn, mods.toArray(new
-        // ModificationItem[mods.size()]));
-        System.out.println("mods : " + mods.toString());
+        this.ldapTemplate.modifyAttributes(dn, mods.toArray(new ModificationItem[mods.size()]));
         log.info("Structure with ID {} updated in LDAP. Display name: {}. Logo: {}. Site web: {}.",
-            id, customName, logo, siteWeb);
+                id, customName, logo, siteWeb);
 
     }
 
@@ -233,7 +231,7 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
     }
 
     private void updateForm(DTOStructure dto, String customName, String siteWeb, String id,
-                            List<ModificationItem> mods) {
+            List<ModificationItem> mods) {
         // save in database
         updateDataInDatabase(dto, customName, siteWeb, null, id);
 
@@ -299,9 +297,9 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
 
         if (checkCustomName || checkSiteWeb || checkLogo) {
             if (log.isDebugEnabled()) {
-                log.debug("updated : ", updateQuery, params.toString());
+                log.debug("updated : {} {}", updateQuery, params.toString());
             }
-            // jdbcTemplate.update(updateQuery, params.toArray());
+            jdbcTemplate.update(updateQuery, params.toArray());
         } else {
             log.info("update nothing.");
         }

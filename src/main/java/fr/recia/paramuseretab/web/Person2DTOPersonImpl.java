@@ -18,15 +18,19 @@ package fr.recia.paramuseretab.web;
 import fr.recia.paramuseretab.model.Person;
 import fr.recia.paramuseretab.security.HandledException;
 import fr.recia.paramuseretab.service.IUniteAdministrativeImmatriculeService;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class Person2DTOPersonImpl {
 
     @Autowired
@@ -65,6 +69,9 @@ public class Person2DTOPersonImpl {
                     listEtab.add(itemMap);
                 }
 
+                Collections.sort(listEtab,
+                        (map1, map2) -> map1.get("etabName").compareToIgnoreCase(map2.get("etabName")));
+
             }
 
             dto.setUid(person.getUid());
@@ -73,6 +80,9 @@ public class Person2DTOPersonImpl {
             dto.setIsMemberOf(person.getIsMemberOf());
             dto.setListEtab(listEtab);
         } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug("info person : {}", dto.toString());
+            }
             throw new HandledException("permission-refusee");
         }
 

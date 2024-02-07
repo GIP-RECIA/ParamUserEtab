@@ -36,7 +36,6 @@ import java.nio.file.Paths;
 @ConfigurationProperties(prefix = "logostorage")
 public class LogoStorageServiceImpl implements ILogoStorageService {
 
-
     private String prefixImagePath;
     private String prefixImageLink;
     private String prefixImageName;
@@ -115,15 +114,6 @@ public class LogoStorageServiceImpl implements ILogoStorageService {
         return fileNameParts[fileNameParts.length - 1];
     }
 
-    /**
-     * TO DO :
-     * 1) ok. il faut définir le chemin du repertoire de stockage de l'image :
-     *    etab.prefix.image.path = /mnt/vol_ent/annuaire_images/logos ( machine pour stocker les logos )
-     * 2) ok. définir aussi le prefix de l'url de l'image sans idSiren :
-     *    etab.prefix.image.link = /annuaires_images/logos
-     * 3) créer des méthodes qui permettent de créer l'url path de l'image pour pouvoir le stocker dans db et ldap ????
-     */
-
     // save file
     @Override
     public String save(MultipartFile logo, String id) {
@@ -160,22 +150,18 @@ public class LogoStorageServiceImpl implements ILogoStorageService {
 
         // Save the file to disk
         try {
-            // Ensure the directories exist
-            Path directory = Paths.get("uploads/file/" + id);
-            Files.createDirectories(directory);
-
-            System.out.println("### pathName saving : " + pathName);
+            log.info("pathName saving : {} ", pathName);
 
             // Save the file
             if (pathName != null) {
                 Path destinationPath = Paths.get(pathName);
                 Files.write(destinationPath, logo.getBytes());
-                System.out.println(destinationPath);
+                log.info("destinationPath: {}", destinationPath);
             }
         } catch (IOException e) {
             // Handle the exception appropriately
+            log.error("error create file : {}", e);
             e.printStackTrace();
-            System.out.println("error create file : " + e);
         }
     }
 
@@ -195,10 +181,9 @@ public class LogoStorageServiceImpl implements ILogoStorageService {
         int vers = version % 100;
         int parite = vers % 2;
         return makeImageUrlPath(userDir,
-            String.format("%s%d.%s", prefixImageName, parite, format),
-            format,
-            String.format("%d", vers)
-        );
+                String.format("%s%d.%s", prefixImageName, parite, format),
+                format,
+                String.format("%d", vers));
     }
 
     private ImageUrlPath makeImageUrlPath(String userDir, String fileName, String format, String version) {
@@ -235,11 +220,10 @@ public class LogoStorageServiceImpl implements ILogoStorageService {
                         format = lastNameVersion[0].substring(formatIdx + 1);
                     }
                     iup = makeImageUrlPath(
-                        dirs[taille - 2],
-                        lastNameVersion[0],
-                        format,
-                        lastNameVersion[1]
-                    );
+                            dirs[taille - 2],
+                            lastNameVersion[0],
+                            format,
+                            lastNameVersion[1]);
                     // on remet l'url en enrée
                     iup.url = url;
                     System.out.println("iup : " + iup);
@@ -252,6 +236,5 @@ public class LogoStorageServiceImpl implements ILogoStorageService {
         }
         return iup;
     }
-
 
 }

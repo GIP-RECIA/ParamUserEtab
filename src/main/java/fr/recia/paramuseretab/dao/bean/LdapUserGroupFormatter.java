@@ -47,7 +47,7 @@ public class LdapUserGroupFormatter implements IUserFormatter, InitializingBean 
     @Override
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.userGroupsRegexPattern,
-            "Attribut groupsRegex wasn't initialized, a regular expression with groups should be passed");
+                "Attribut groupsRegex wasn't initialized, a regular expression with groups should be passed");
     }
 
     @Override
