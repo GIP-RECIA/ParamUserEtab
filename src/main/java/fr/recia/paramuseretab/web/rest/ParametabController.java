@@ -340,7 +340,8 @@ public class ParametabController {
 
                     oldUrl = newUrl;
                     structureService.updateStructure(dto, null, null, dto.getStructLogo(), id);
-                    return new ResponseEntity<>(HttpStatus.OK);
+                    structureService.invalidateStructureById(id); // refresh cache
+                    return new ResponseEntity<>(getNewURL, HttpStatus.OK);
                 }
                 return new ResponseEntity<>("Erreur : l'établissement n'est pas défini !", HttpStatus.BAD_REQUEST);
             } else {
