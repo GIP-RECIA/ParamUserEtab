@@ -56,7 +56,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/test/api")
+@RequestMapping("/parametab/api")
 public class ParametabController {
 
     @Autowired
@@ -151,25 +151,9 @@ public class ParametabController {
         }
     }
 
-    @GetMapping("/changeetab/")
-    public ResponseEntity<DTOPerson> toDTOChangeEtab(
-            @RequestHeader(name = "Authorization", required = true) String authorizationHeader) {
-
-        try {
-            String userId = decodeJwt(authorizationHeader);
-
-            Person person = userInfoService.getPersonDetails(userId);
-
-            DTOPerson dto = person2dtoPersonImpl.toDTOChangeEtab(person);
-            return new ResponseEntity<>(dto, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/parametab/")
+    @GetMapping("/")
     public ResponseEntity<?> toDTOParametab(
-            @RequestHeader(name = "Authorization", required = false) String authorizationHeader) {
+            @RequestHeader(name = "Authorization", required = true) String authorizationHeader) {
 
         try {
             String userId = decodeJwt(authorizationHeader);
@@ -189,21 +173,23 @@ public class ParametabController {
      * GET /etablissments -> Get all the etablissement of a person
      */
 
-    @GetMapping("/")
-    public ResponseEntity<Person> getEtabs(
-            @RequestHeader(name = "Authorization", required = true) String authorizationHeader) {
-        try {
-            String userId = decodeJwt(authorizationHeader);
-            return new ResponseEntity<>(userInfoService.getPersonDetails(userId), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+    // @GetMapping("/")
+    // public ResponseEntity<Person> getEtabs(
+    // @RequestHeader(name = "Authorization", required = true) String
+    // authorizationHeader) {
+    // try {
+    // String userId = decodeJwt(authorizationHeader);
+    // return new ResponseEntity<>(userInfoService.getPersonDetails(userId),
+    // HttpStatus.OK);
+    // } catch (Exception e) {
+    // return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
+    // }
 
     /**
      * Get info of an etablissement
      */
-    @GetMapping("/parametab/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<DTOStructure> convertToDTO(@PathVariable("id") final String id) {
 
         try {
@@ -224,29 +210,7 @@ public class ParametabController {
      * Update form etablissement
      */
 
-    @PutMapping("/update")
-    public ResponseEntity<Void> update(@RequestBody DTOStructure structDto) {
-
-        try {
-            if (structDto != null && structDto.getId() != null) {
-                // structureService.updateStructure(structDto);
-                return new ResponseEntity<>(HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            e.getMessage();
-            log.info("error update : ", e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-    }
-
-    /**
-     * Other version : Update form etablissement
-     * define an id of etablissement
-     */
-
-    @PutMapping("/updateV2/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updateV2(
             @RequestHeader(name = "Authorization", required = true) String authorizationHeader,
             @PathVariable("id") final String id,
@@ -285,30 +249,8 @@ public class ParametabController {
 
     }
 
-    @PutMapping("/updateLogo")
-    public ResponseEntity<Void> updateLogo(@RequestParam("photo") MultipartFile photo,
-            @RequestBody DTOStructure structDto) {
-
-        try {
-            if (structDto != null) {
-                log.info("struct id: " + structDto.getId());
-                log.info("struct dn: " + structDto.getStructCustomDisplayName());
-                log.info("struct logo: " + structDto.getStructLogo());
-                // structureService.updateStructure(structDto, null, null,
-                // structDto.getStructLogo(), structDto.getId());
-                return new ResponseEntity<>(HttpStatus.OK);
-            }
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            e.getMessage();
-            log.info("error update : ", e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-    }
-
     // upload logo to disk, database, and ldap
-    @PostMapping("/fileUpload/{id}")
+    @PostMapping("/logoupload/{id}")
     public ResponseEntity<?> uploadFile(
             @RequestHeader(name = "Authorization", required = true) String authorizationHeader,
             @RequestPart(name = "file", required = false) MultipartFile file,
@@ -357,31 +299,4 @@ public class ParametabController {
         }
     }
 
-    /**
-     * Test API pour structLogo par default s'il n'est pas renseigné
-     */
-    @GetMapping("/test/{id}")
-    public ResponseEntity<DTOStructure> testing(@PathVariable("id") final String id) {
-
-        try {
-            Structure structure = structureService.retrieveStructureById(id);
-            if (structure == null) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            DTOStructure dtoStructure = structure2DTOStructure.toDTO(structure);
-            oldUrl = calculOldImageUrlPath(dtoStructure);
-            // manip structLogo
-            if (oldUrl != null) {
-                dtoStructure.setStructLogo(oldUrl.getLocalUrl());
-            } else {
-                dtoStructure.setStructLogo(logoStorageServiceImpl.getDefaultImageLink());
-            }
-
-            return new ResponseEntity<>(dtoStructure, HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.info("error get etab : ", e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }
