@@ -31,14 +31,16 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 public class DTOStructure extends Structure {
 
-    @Size(max = 25, message = "custom name must not exceed 25 characters.")
+    @Size(max = 56, message = "custom name must not exceed 56 characters.")
     private String structCustomDisplayName;
 
     private String structLogo;
 
     private String structSiteWeb;
 
-    public DTOStructure(String id, String name, String displayName, String description, Map<String, List<String>> otherAttributes, String structCustomDisplayName, String structLogo, String structSiteWeb) {
+    public DTOStructure(String id, String name, String displayName, String description,
+            Map<String, List<String>> otherAttributes, String structCustomDisplayName, String structLogo,
+            String structSiteWeb) {
         super(id, name, displayName, description, otherAttributes);
         this.structCustomDisplayName = structCustomDisplayName;
         this.structLogo = structLogo;
