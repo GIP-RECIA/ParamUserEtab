@@ -15,16 +15,21 @@
  */
 package fr.recia.paramuseretab.dao.bean;
 
+import fr.recia.paramuseretab.model.Groups;
 import fr.recia.paramuseretab.model.Person;
+import fr.recia.paramuseretab.service.IGroupService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,13 +40,25 @@ import java.util.regex.Pattern;
 @ConfigurationProperties(prefix = "userformatter")
 public class LdapUserGroupFormatter implements IUserFormatter, InitializingBean {
 
+    @Autowired
+    private IGroupService groupService;
+
     @Getter
     private String userGroupsRegex;
     private Pattern userGroupsRegexPattern;
 
+    @Getter
+    private String userENTGroupsRegex;
+    private Pattern userENTGroupsRegexPattern;
+
     public void setUserGroupsRegex(final String userGroupsRegex) {
         this.userGroupsRegex = userGroupsRegex;
         this.userGroupsRegexPattern = Pattern.compile(userGroupsRegex);
+    }
+
+    public void setUserENTGroupsRegex(final String userENTGroupsRegex) {
+        this.userENTGroupsRegex = userENTGroupsRegex;
+        this.userENTGroupsRegexPattern = Pattern.compile(userENTGroupsRegex);
     }
 
     @Override
@@ -64,18 +81,39 @@ public class LdapUserGroupFormatter implements IUserFormatter, InitializingBean 
      * the 'etablissement' and the UAI.
      *
      */
-    private List<String> format(List<String> inputs) {
+    private List<String> format(List<String> groups) {
 
         List<String> formattedList = new ArrayList<>();
+        final Collection<? extends Groups> allGroups = this.groupService.retrieveGroups();
 
-        for (String input : inputs) {
+        for (String input : groups) {
             if (input != null && !input.isEmpty()) {
-                Matcher groupMatcher = this.userGroupsRegexPattern.matcher(input);
-                if (groupMatcher.find()) {
-                    String group2 = groupMatcher.group(2);
-                    String group1 = groupMatcher.group(1);
-                    String etabName = "";
-                    List<String> listEtab = new ArrayList<>();
+                String etabName = "";
+
+                Matcher groupAdminCentral = this.userENTGroupsRegexPattern.matcher(input);
+                if (groupAdminCentral.find()) {
+                    String groupBranch = groupAdminCentral.group(1);
+                    for (Groups group : allGroups) {
+                        String cn = group.getName();
+                        String[] parts = cn.split(":");
+                        if (parts.length >= 4 && parts[0].equals(groupBranch)) {
+                            // Check if the uai part exists
+                            String[] secondPartSplit = parts[2].split("_");
+                            if (secondPartSplit.length >= 2) {
+                                String uai = secondPartSplit[1];
+                                etabName = secondPartSplit[0] + " (" + uai + ")";
+                            } else {
+                                etabName = secondPartSplit[0];
+                            }
+                            formattedList.add(etabName);
+                        }
+                    }
+                }
+
+                Matcher groupAdminLocal = this.userGroupsRegexPattern.matcher(input);
+                if (groupAdminLocal.find()) {
+                    String group2 = groupAdminLocal.group(2);
+                    String group1 = groupAdminLocal.group(1);
                     if (group1 != null) {
                         etabName = group1 + " (" + group2 + ")";
                     } else {
@@ -83,8 +121,9 @@ public class LdapUserGroupFormatter implements IUserFormatter, InitializingBean 
                     }
                     log.debug("Matcher found groups isMemberOf, and applied replacement value is : {}", etabName);
 
-                    listEtab.add(etabName);
-                    formattedList.addAll(listEtab);
+                    if (!formattedList.contains(etabName)) {
+                        formattedList.add(etabName);
+                    }
                 }
             }
         }

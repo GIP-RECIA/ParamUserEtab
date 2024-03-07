@@ -71,7 +71,7 @@ public class PersonAttributesMapper implements AttributesMapper<Person> {
         try {
             person = etabFormatter.formatPerson(person);
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("Error during format person: {} ", e.getMessage());
         }
 
         return person;

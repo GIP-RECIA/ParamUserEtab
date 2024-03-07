@@ -95,7 +95,7 @@ public class StructureAttributesMapper implements AttributesMapper {
             List<String> values = new ArrayList<>();
             final Attribute dirAttr = attrs.get(attrName);
             if (dirAttr != null) {
-                for (NamingEnumeration<String> ae = (NamingEnumeration<String>) dirAttr.getAll(); ae.hasMore(); ) {
+                for (NamingEnumeration<String> ae = (NamingEnumeration<String>) dirAttr.getAll(); ae.hasMore();) {
                     values.add(ae.next());
                 }
             }
@@ -117,11 +117,11 @@ public class StructureAttributesMapper implements AttributesMapper {
         Assert.hasText(struct.getId(), "No SIREN attribute found in LDAP for UniteAdministrativeImmatriculee !");
         if (isEtab) {
             Assert.hasText(((UniteAdministrativeImmatriculee) struct).getCode(),
-                "No UAI attribute found in LDAP for UniteAdministrativeImmatriculee !");
+                    "No UAI attribute found in LDAP for UniteAdministrativeImmatriculee !");
         }
         Assert.hasText(struct.getName(), "No Name attribute found in LDAP for UniteAdministrativeImmatriculee !");
         Assert.hasText(struct.getDisplayName(),
-            "No DisplayName attribute found in LDAP for UniteAdministrativeImmatriculee !");
+                "No DisplayName attribute found in LDAP for UniteAdministrativeImmatriculee !");
         /*
          * Assert.hasText(etab.getDescription(),
          * "No Description attribute found in LDAP for UniteAdministrativeImmatriculee !"

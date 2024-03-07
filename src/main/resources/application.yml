@@ -1,17 +1,15 @@
 spring:
     config:
         activate:
-            on-profile: 'default-config'
-
+            on-profile: "default-config"
 ---
-
 server:
     port: 8090
     servlet:
         context-path: /spring-api
 
 logging:
-    config: 'classpath:logback.xml'
+    config: "classpath:logback.xml"
 
 spring:
     application:
@@ -55,4 +53,4 @@ app:
             - DELETE
 
     soffit:
-        jwt-signature-key: ''
+        jwt-signature-key: ""

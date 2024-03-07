@@ -18,6 +18,7 @@
  */
 package fr.recia.paramuseretab.service;
 
+import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
 
 import java.util.Collection;
@@ -50,7 +51,7 @@ public interface IUniteAdministrativeImmatriculeService extends IStructureServic
     @Deprecated
     UniteAdministrativeImmatriculee retrieveEtablissementByCode(String code);
 
-    String getSiren(String code, String name);
+    Map<String, String> getSiren(String code, String name, Map<String, Structure> structs);
 
     String getEtabName(String id);
 

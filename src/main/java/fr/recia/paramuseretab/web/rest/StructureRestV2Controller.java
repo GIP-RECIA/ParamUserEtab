@@ -51,7 +51,7 @@ public class StructureRestV2Controller {
      */
     @GetMapping(value = "/struct/{id}", produces = "application/json")
     public ResponseEntity<? extends Structure> retrieveStructbInJson(@PathVariable("id") final String id,
-                                                                     HttpServletRequest request) {
+            HttpServletRequest request) {
         if (id != null)
             return new ResponseEntity<>(structureService.retrieveStructureById(id), HttpStatus.OK);
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -63,10 +63,10 @@ public class StructureRestV2Controller {
      */
     @GetMapping(value = "/structs/", produces = "application/json")
     public ResponseEntity<Map<String, ? extends Structure>> retrieveStructsInJson(
-        @RequestParam("ids") final List<String> ids, HttpServletRequest request) {
+            @RequestParam("ids") final List<String> ids, HttpServletRequest request) {
         if (ids != null && !ids.isEmpty()) {
             return new ResponseEntity<>(structureService.retrieveStructuresByIds(ids),
-                HttpStatus.OK);
+                    HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
@@ -85,9 +85,4 @@ public class StructureRestV2Controller {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/structures")
-    public ResponseEntity<Collection<? extends Structure>> index() {
-
-        return new ResponseEntity<>(structureDao.findAllStructures(), HttpStatus.OK);
-    }
 }

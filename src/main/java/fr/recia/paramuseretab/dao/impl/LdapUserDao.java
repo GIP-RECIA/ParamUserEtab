@@ -99,7 +99,7 @@ public class LdapUserDao implements IUserDao, InitializingBean {
         ModificationItem[] mods = null;
         if (struct instanceof UniteAdministrativeImmatriculee) {
             final Attribute replaceCurrentEtabAttr = new BasicAttribute(this.currentEtabCodeLdapKey,
-                ((UniteAdministrativeImmatriculee) struct).getCode());
+                    ((UniteAdministrativeImmatriculee) struct).getCode());
             mods = new ModificationItem[2];
             mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, replaceCurrentEtabAttr);
 
@@ -134,8 +134,8 @@ public class LdapUserDao implements IUserDao, InitializingBean {
         List<Person> allInfos;
         try {
             allInfos = this.ldapTemplate.search(this.userDn.replace(this.userIdTemplate, userId), this.personFiltre,
-                new PersonAttributesMapper(uid, currentStructIdLdapKey, structIdsInfoKey, groupAttributes,
-                    userFormatter));
+                    new PersonAttributesMapper(uid, currentStructIdLdapKey, structIdsInfoKey, groupAttributes,
+                            userFormatter));
         } catch (Exception e) {
             LOG.error("error :", e);
             allInfos = null;

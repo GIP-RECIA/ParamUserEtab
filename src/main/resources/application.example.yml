@@ -14,10 +14,9 @@ ldapformatter:
     index-list-replacement:1: ""
     index-list-replacement.2: ""
 
-
 userformatter:
     user-groups-regex: "[^:]+:admin:local:admin_(?:([^_]+)_)?([^:]+)$"
-
+    user-e-n-t-groups-regex: "([^:]+):admin:central"
 
 ## User Info cofiguration ##
 # server.error.whitelabel.enabled:false
@@ -97,8 +96,6 @@ ldap:
 # ldap.write.attribute.StructureSiteWeb=
 # ldap.write.attribute.StructureDisplayName=
 
-
-
 userdao:
     user-dn:
     current-etab-code-ldap-key: ESCOUAICourant
@@ -107,6 +104,11 @@ userdao:
     group-attributes: isMemberOf
     user-id-template:
     uid: uid
+
+groupdao:
+    group-base:
+    all-group-filter: (&(|(cn=*:Etablissements:*:Tous_*)(cn=*:Collectivites:*:Tous_*)(cn=*:Services_Academique:*:Tous_*))(!(cn=*:*:*:*:*)))
+    group-c-n: "cn"
 
 ## File upload
 logostorage:

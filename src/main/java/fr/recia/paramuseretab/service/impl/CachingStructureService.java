@@ -39,7 +39,10 @@ import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -65,6 +68,10 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
     @Getter
     @Setter
     private Cache etabsCodeIdCache;
+
+    @Setter
+    @Getter
+    private Set<String> idStructures = new HashSet<>();
 
     /**
      * Configured caching duration (default 1 hour).
@@ -97,6 +104,25 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
 
     @Getter
     private volatile HashMap<String, Instant> expiredIds = new HashMap<>();
+
+    @Override
+    public Map<String, Structure> retrieveAllStructures() {
+
+        final Map<String, Structure> structs = new HashMap<>();
+
+        this.forceLoadStructureCache();
+
+        for (final String id : this.idStructures) {
+            final Structure struct = this.retrieveStructureById(id);
+            if (struct != null) {
+                structs.put(id, struct);
+            }
+        }
+
+        log.debug("{} structure(s) found.", structs.size());
+
+        return structs;
+    }
 
     @Override
     public Map<String, Structure> retrieveStructuresByIds(final Collection<String> ids) {
@@ -158,7 +184,7 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
         Assert.notEmpty(codes, "No UniteAdministrativeImmatriculee code supplied !");
 
         final Map<String, UniteAdministrativeImmatriculee> etabs = new HashMap<>(
-            codes.size());
+                codes.size());
 
         this.forceLoadStructureCache();
 
@@ -285,14 +311,16 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
                 try {
                     this.structureCache.clear();
                     this.etabsCodeIdCache.clear();
+                    this.idStructures.clear();
                     final Instant refreshedInstant = new Instant().plus(this.cachingDuration);
                     for (final Structure struct : allstructs) {
                         log.debug("Adding to cache : {}", struct);
                         final String structCacheKey = this.genCacheKey(struct.getId());
                         this.structureCache.put(structCacheKey, struct);
+                        this.idStructures.add(struct.getId());
                         if (struct instanceof UniteAdministrativeImmatriculee) {
                             final String mappingIdCodeCacheKey = this
-                                .genCacheKeyForMapCodeId(((UniteAdministrativeImmatriculee) struct).getCode());
+                                    .genCacheKeyForMapCodeId(((UniteAdministrativeImmatriculee) struct).getCode());
                             this.etabsCodeIdCache.put(mappingIdCodeCacheKey, struct.getId());
                         }
                     }
@@ -397,27 +425,32 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
      * UAI or the name of isMemberOf
      */
     @Override
-    public String getSiren(String code, String name) {
+    public Map<String, String> getSiren(String code, String name, Map<String, Structure> structs) {
 
-        String siren = null;
+        Map<String, String> getInfoEtab = new HashMap<>();
 
         if (code != null) {
             UniteAdministrativeImmatriculee etab = this.retrieveEtablissementByCode(code);
-            siren = etab.getId(); // get id siren
-        } else {
-            final Collection<? extends Structure> allstructs = this.structureDao.findAllStructures();
-            if (allstructs != null && !allstructs.isEmpty()) {
+            getInfoEtab.put("id", etab.getId());
+            getInfoEtab.put("name", etab.getName() + " (" + code + ")");
 
-                for (Structure attributes : allstructs) {
+        } else {
+            if (structs != null && !structs.isEmpty()) {
+
+                for (Structure attributes : structs.values()) {
                     String attrName = attributes.getName();
 
-                    if (attrName.contains(name)) {
-                        siren = attributes.getId();
+                    // format the attrName if exists the character ' with a blank space
+                    String formattedAttrName = attrName.replace("'", " ");
+
+                    if (formattedAttrName.contains(name)) {
+                        getInfoEtab.put("id", attributes.getId());
+                        getInfoEtab.put("name", attrName);
                     }
                 }
             }
         }
-        return siren;
+        return getInfoEtab;
     }
 
     @Override

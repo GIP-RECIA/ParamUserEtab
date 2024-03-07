@@ -158,8 +158,9 @@ public class ParametabController {
         try {
             String userId = decodeJwt(authorizationHeader);
 
+            Map<String, Structure> getStructs = this.structureService.retrieveAllStructures();
             Person person = userInfoService.getPersonDetails(userId);
-            DTOPerson dto = person2dtoPersonImpl.toDTOParamEtab(person);
+            DTOPerson dto = person2dtoPersonImpl.toDTOParamEtab(person, getStructs);
             return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (HandledException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());

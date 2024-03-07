@@ -24,6 +24,13 @@ import java.util.Map;
 public interface IStructureService {
 
     /**
+     * Return a Collection of All Structure.
+     *
+     * @return a never null Map of Id, only Structure wich may be empty
+     */
+    Map<String, Structure> retrieveAllStructures();
+
+    /**
      * Return a Collection of Structure matching the supplied codes.
      *
      * @param ids List of ids of structures to retrive
@@ -46,8 +53,15 @@ public interface IStructureService {
      */
     void invalidateStructureById(final String id);
 
-    // essayer d'ajouter cette function, puis l'appliquer la function saveStructure dans cette methode
-    // on pourra donc faire le test unitaire avec ce service ??
+    /**
+     * Saving a structure after a modification in the database and ldap.
+     * 
+     * @param dto        DTO of Structures
+     * @param customName Display name of a structure
+     * @param siteWeb    Website of a structure
+     * @param logo       Path logo of a structure
+     * @param id         Id of a structure
+     */
     void updateStructure(DTOStructure dto, String customName, String siteWeb, String logo, String id);
 
 }
