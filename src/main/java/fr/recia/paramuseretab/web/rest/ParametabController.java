@@ -158,8 +158,8 @@ public class ParametabController {
         try {
             String userId = decodeJwt(authorizationHeader);
 
-            Map<String, Structure> getStructs = this.structureService.retrieveAllStructures();
             Person person = userInfoService.getPersonDetails(userId);
+            Map<String, Structure> getStructs = this.structureService.retrieveAllStructures();
             DTOPerson dto = person2dtoPersonImpl.toDTOParamEtab(person, getStructs);
             return new ResponseEntity<>(dto, HttpStatus.OK);
         } catch (HandledException ex) {
@@ -266,6 +266,7 @@ public class ParametabController {
                     // Parse the detailsJson string back to DTO
                     DTOStructure dto = new Gson().fromJson(detailsJson, DTOStructure.class);
 
+                    oldUrl = calculOldImageUrlPath(dto);
                     newUrl = calculNewImageUrlPath(dto, oldUrl);
                     String pathName = newUrl.getPathName();
                     String getNewURL = newUrl.getUrl();
