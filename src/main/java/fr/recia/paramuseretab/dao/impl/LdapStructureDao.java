@@ -102,6 +102,13 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
     @NonNull
     private String structureBase;
 
+    @NonNull
+    private String writeAttrStructureLogo;
+    @NonNull
+    private String writeAttrStructureSiteWeb;
+    @NonNull
+    private String writeAttrStructureDisplayName;
+
     @Override
     @SuppressWarnings("unchecked")
     public Collection<? extends Structure> findAllStructures() {
@@ -173,7 +180,7 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
         }
 
         this.ldapTemplate.modifyAttributes(dn, mods.toArray(new ModificationItem[mods.size()]));
-        log.info("Structure with ID {} updated in LDAP. Display name: {}. Logo: {}. Site web: {}.",
+        log.info("Structure with ID {} updated in LDAP. Attributes modified : {}.",
                 id, customName, logo, siteWeb);
 
     }
@@ -190,27 +197,6 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
     }
 
     @SuppressWarnings("unused")
-    private void updateForm1(String customName, String siteWeb, List<ModificationItem> mods) {
-
-        // update in database : sarapis
-
-        if (customName != null) {
-            Attribute updCustomName = new BasicAttribute(this.structDisplayNameLdapAttr, customName);
-            mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, updCustomName));
-        }
-
-        if (siteWeb != null) {
-            for (String attr : otherAttributes) {
-
-                if (attr.equals("ENTStructureSiteWeb")) {
-                    Attribute updSiteWeb = new BasicAttribute(attr, siteWeb);
-                    mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, updSiteWeb));
-                }
-            }
-        }
-    }
-
-    @SuppressWarnings("unused")
     private void updateLogo(DTOStructure dto, String logo, String id, List<ModificationItem> mods) {
         // save in database
         updateDataInDatabase(dto, null, null, logo, id);
@@ -220,13 +206,8 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
         String structLogo = listValue.get(2); // Third element in the list
 
         if (logo != null && !logo.equals(structLogo)) {
-            for (String attr : otherAttributes) {
-
-                if (attr.equals("ESCOStructureLogo")) {
-                    Attribute updLogo = new BasicAttribute(attr, logo);
-                    mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, updLogo));
-                }
-            }
+            Attribute updLogo = new BasicAttribute(this.writeAttrStructureLogo, logo);
+            mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, updLogo));
         }
     }
 
@@ -241,18 +222,13 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
         String structSiteWeb = listValue.get(1); // Second element in the list
 
         if (customName != null && !customName.equals(displayName)) {
-            Attribute updCustomName = new BasicAttribute(this.structDisplayNameLdapAttr, customName);
+            Attribute updCustomName = new BasicAttribute(this.writeAttrStructureDisplayName, customName);
             mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, updCustomName));
         }
 
         if (siteWeb != null && !siteWeb.equals(structSiteWeb)) {
-            for (String attr : otherAttributes) {
-
-                if (attr.equals("ENTStructureSiteWeb")) {
-                    Attribute updSiteWeb = new BasicAttribute(attr, siteWeb);
-                    mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, updSiteWeb));
-                }
-            }
+            Attribute updSiteWeb = new BasicAttribute(this.writeAttrStructureSiteWeb, siteWeb);
+            mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, updSiteWeb));
         }
     }
 
