@@ -23,7 +23,5 @@ public interface ILogoStorageService {
 
     IImageUrlPath makeImageUrlPath(String nom, int version);
 
-    public String save(MultipartFile logo, String id);
-
     public void saving(String pathName, MultipartFile logo, String id);
 }

@@ -106,7 +106,20 @@ public class ParametabController {
     private static boolean mkdir(String rep) {
         File file = new File(rep);
         // si le repertoire n'existe pas on le cree.
-        return file.mkdirs() || file.isDirectory();
+        boolean success = file.mkdirs() || file.isDirectory();
+
+        // set permission
+        if (success) {
+            try {
+                file.setReadable(true, false);
+                file.setExecutable(true, false);
+
+            } catch (Exception e) {
+                log.error("error set permission for file {} : {}", rep, e);
+            }
+
+        }
+        return success;
 
     }
 
@@ -121,6 +134,7 @@ public class ParametabController {
             }
             log.info("old is null");
             url = logoStorageService.makeImageUrlPath(str.getId(), version + 1);
+            log.debug("pathuser: {}", url.getPathUser());
             if (!mkdir(url.getPathUser())) {
                 url = null;
             }

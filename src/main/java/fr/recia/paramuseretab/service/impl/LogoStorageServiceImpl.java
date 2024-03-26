@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Slf4j
@@ -114,37 +117,6 @@ public class LogoStorageServiceImpl implements ILogoStorageService {
         return fileNameParts[fileNameParts.length - 1];
     }
 
-    // save file
-    @Override
-    public String save(MultipartFile logo, String id) {
-
-        // Determine the file name
-        String originalFileName = logo.getOriginalFilename(); // or generate a unique file name
-
-        String fileName = "logoportail0." + getFileExtension(originalFileName);
-
-        // Construct the destination path
-        String destinationPath = "uploads/file/" + id + "/" + fileName;
-
-        // Save the file to disk
-        try {
-            // Ensure the directories exist
-            Path directory = Paths.get("uploads/file/" + id);
-            Files.createDirectories(directory);
-
-            // Save the file
-            Path filePath = Paths.get(destinationPath);
-            Files.write(filePath, logo.getBytes());
-            System.out.println(filePath);
-        } catch (IOException e) {
-            // Handle the exception appropriately
-            e.printStackTrace();
-        }
-
-        // Return the file path
-        return destinationPath;
-    }
-
     @Override
     public void saving(String pathName, MultipartFile logo, String id) {
 
@@ -155,7 +127,14 @@ public class LogoStorageServiceImpl implements ILogoStorageService {
             // Save the file
             if (pathName != null) {
                 Path destinationPath = Paths.get(pathName);
+                Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
+                perms.add(PosixFilePermission.OWNER_READ);
+                perms.add(PosixFilePermission.OWNER_WRITE);
+                perms.add(PosixFilePermission.GROUP_READ);
+                perms.add(PosixFilePermission.OTHERS_READ);
                 Files.write(destinationPath, logo.getBytes());
+                Files.setPosixFilePermissions(destinationPath, perms);
+
                 log.info("destinationPath: {}", destinationPath);
             }
         } catch (IOException e) {

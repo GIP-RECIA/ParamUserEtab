@@ -181,7 +181,7 @@ public class LdapStructureDao implements IStructureDao/* , InitializingBean */ {
 
         this.ldapTemplate.modifyAttributes(dn, mods.toArray(new ModificationItem[mods.size()]));
         log.info("Structure with ID {} updated in LDAP. Attributes modified : {}.",
-                id, customName, logo, siteWeb);
+                id, mods);
 
     }
 
