@@ -33,9 +33,11 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.support.LdapNameBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.naming.Name;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.DirContext;
@@ -106,15 +108,15 @@ public class LdapUserDao implements IUserDao, InitializingBean {
         } else {
             mods = new ModificationItem[1];
         }
-        // final Name dn =
-        // LdapNameBuilder.newInstance(this.userDn.replace(this.userIdTemplate,
-        // userId)).build();
+        final Name dn = LdapNameBuilder.newInstance(this.userDn.replace(this.userIdTemplate,
+                userId)).build();
         mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, replaceCurrentStructAttr);
-        // this.ldapTemplate.modifyAttributes(dn, mods);
+        this.ldapTemplate.modifyAttributes(dn, mods);
 
         if (log.isDebugEnabled()) {
             log.debug("mods changeEtab : {}", Arrays.toString(mods));
         }
+        log.info("## info mods changeEtab : {}", Arrays.toString(mods));
 
     }
 

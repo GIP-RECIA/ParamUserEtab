@@ -19,13 +19,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import fr.recia.paramuseretab.model.Person;
 import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.service.IStructureService;
 import fr.recia.paramuseretab.service.IUserInfoService;
 import fr.recia.paramuseretab.service.IUserService;
-import fr.recia.paramuseretab.web.DTOPerson;
-import fr.recia.paramuseretab.web.Person2DTOPersonImpl;
 import io.jsonwebtoken.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -55,52 +53,42 @@ public class ChangeStructureRestController {
     @Autowired
     private IUserInfoService userInfoService;
 
-    @Autowired
-    private Person2DTOPersonImpl person2dtoPersonImpl;
-
     public String decodeJwt(String jwt) throws JsonProcessingException {
         String token = jwt.substring(7);
         String[] chunks = token.split("\\.");
 
         Base64.Decoder decoder = Base64.getUrlDecoder();
-        String payload = new String(decoder.decode(chunks[1]));
-
-        ObjectMapper objectMapper = new ObjectMapper();
+        String payload = null;
         try {
-            Map<String, Object> claims = objectMapper.readValue(payload, new TypeReference<Map<String, Object>>() {
-            });
-            String sub = (String) claims.get("sub");
-            return sub;
+            payload = new String(decoder.decode(chunks[1]));
+
+            return payload;
         } catch (IOException e) {
-            // Handle the exception, e.g., token parsing error
             e.printStackTrace();
-            return null; // or throw an exception
+            log.error("The token does not exist. {}", e);
+            return payload; // or throw an exception
         }
     }
 
     @GetMapping("/")
-    public ResponseEntity<DTOPerson> toDTOChangeEtab(
+    public ResponseEntity<Map<String, Object>> getInfos(
             @RequestHeader(name = "Authorization", required = true) String authorizationHeader) {
-
         try {
-            String userId = decodeJwt(authorizationHeader);
-
-            Person person = userInfoService.getPersonDetails(userId);
-
-            DTOPerson dto = person2dtoPersonImpl.toDTOChangeEtab(person);
-            return new ResponseEntity<>(dto, HttpStatus.OK);
+            String token = this.decodeJwt(authorizationHeader);
+            Map<String, Object> infos = userInfoService.getUserInfos(token);
+            return new ResponseEntity<>(infos, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<Void> changeEtab(
+    @PutMapping("/{id}")
+    public ResponseEntity<?> changeEtab(
             @RequestHeader(name = "Authorization", required = true) String authorizationHeader,
             @PathVariable("id") final String id) {
         try {
-            // String userID = userInfoService.getUserID();
             String userID = null;
+
             if (id != null && authorizationHeader != null) {
                 Structure structure = structureService.retrieveStructureById(id);
                 if (structure == null) {
@@ -110,11 +98,25 @@ public class ChangeStructureRestController {
                 }
 
                 // userId, StructID
-                userID = decodeJwt(authorizationHeader);
+                String token = this.decodeJwt(authorizationHeader);
+                Map<String, Object> infos = userInfoService.getUserInfos(token);
+                userID = (String) infos.get("id");
+                String logoutUrl = (String) infos.get("aud");
+                Map<String, ? extends Structure> changeableStructIds = (Map<String, ? extends Structure>) infos
+                        .get("sirenStructures");
+
+                if (!changeableStructIds.containsKey(id)) {
+                    log.warn("Attempt to switch to a not allowed Structure with id: [{}] !", id);
+                    return new ResponseEntity<>("not allowed to switch with id", HttpStatus.BAD_REQUEST);
+                }
+
                 userService.changeCurrentStructure(userID, structure);
-                structureService.invalidateStructureById(id); // refresh cache
-                return new ResponseEntity<>(HttpStatus.OK);
+                log.debug("user {} change the current structure to {}", userID, id);
+                // return new ResponseEntity<>(HttpStatus.OK);
+                return ResponseEntity.ok()
+                        .body("{\"message\": \"Data updated successfully\", \"redirectUrl\": \"" + logoutUrl + "\"}");
             }
+            log.info("id {} is null and token {} is null", id, authorizationHeader);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.getMessage();

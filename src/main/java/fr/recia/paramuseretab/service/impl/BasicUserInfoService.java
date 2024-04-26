@@ -21,7 +21,9 @@ package fr.recia.paramuseretab.service.impl;
 import fr.recia.paramuseretab.dao.IUserDao;
 import fr.recia.paramuseretab.dao.bean.IUserFormatter;
 import fr.recia.paramuseretab.model.Person;
+import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.security.HandledException;
+import fr.recia.paramuseretab.service.IStructureService;
 import fr.recia.paramuseretab.service.IUserInfoService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,8 +35,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -71,6 +80,9 @@ public class BasicUserInfoService implements IUserInfoService, InitializingBean 
 
     private String msg = "Unable to retrieve {} attribute in Portal UserInfo !";
 
+    @Autowired
+    private IStructureService structureService;
+
     @Override
     public void afterPropertiesSet() throws Exception {
         Assert.hasText(this.etabCodesInfoKey, "No Etab Codes user info key configured !");
@@ -79,22 +91,22 @@ public class BasicUserInfoService implements IUserInfoService, InitializingBean 
         Assert.hasText(this.currentStructIdInfoKey, "No Current Struct Id user info key configured !");
 
         final String[] etabs = System.getProperty("etablissement-swapper.userEtabs", "0450822x,0333333y,0377777U")
-            .split(",");
+                .split(",");
         final String[] current = System.getProperty("etablissement-swapper.userCurrentEtab", "0450822X").split(",");
         final String[] structs = System.getProperty("etablissement-swapper.userStructs",
-            "88888888888888,37373737373737,00000000000001").split(",");
+                "88888888888888,37373737373737,00000000000001").split(",");
         final String[] currentStruct = System.getProperty("etablissement-swapper.userCurrentStruct", "88888888888888")
-            .split(",");
+                .split(",");
         this.basicUserInfoMap.put(this.etabCodesInfoKey, Arrays.asList(etabs));
         this.basicUserInfoMap.put(this.currentEtabCodeInfoKey, Arrays.asList(current));
         this.basicUserInfoMap.put(this.structIdsInfoKey, Arrays.asList(structs));
         this.basicUserInfoMap.put(this.currentStructIdInfoKey, Arrays.asList(currentStruct));
         log.debug("basicUserInfoMap : {}", this.basicUserInfoMap);
 
-        this.emptyUserInfoMap.put(this.etabCodesInfoKey, Arrays.asList(new String[]{"1234567b"}));
-        this.emptyUserInfoMap.put(this.currentEtabCodeInfoKey, Arrays.asList(new String[]{"1234567B"}));
-        this.emptyUserInfoMap.put(this.structIdsInfoKey, Arrays.asList(new String[]{"88888888888888"}));
-        this.emptyUserInfoMap.put(this.currentStructIdInfoKey, Arrays.asList(new String[]{"88888888888888"}));
+        this.emptyUserInfoMap.put(this.etabCodesInfoKey, Arrays.asList(new String[] { "1234567b" }));
+        this.emptyUserInfoMap.put(this.currentEtabCodeInfoKey, Arrays.asList(new String[] { "1234567B" }));
+        this.emptyUserInfoMap.put(this.structIdsInfoKey, Arrays.asList(new String[] { "88888888888888" }));
+        this.emptyUserInfoMap.put(this.currentStructIdInfoKey, Arrays.asList(new String[] { "88888888888888" }));
     }
 
     @Override
@@ -112,6 +124,46 @@ public class BasicUserInfoService implements IUserInfoService, InitializingBean 
         }
 
         return allInfo;
+    }
+
+    @Override
+    public Map<String, Object> getUserInfos(String token) {
+        // Assemble all results into a JSON object
+        Map<String, Object> result = new HashMap<>();
+
+        // Deserialize the payload into a map
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> claims;
+        try {
+            claims = objectMapper.readValue(token, new TypeReference<Map<String, Object>>() {
+            });
+
+            // Extract user ID, user rights, and current state from claims
+            String userId = (String) claims.get("sub");
+            String url = (String) claims.get("aud");
+            List<String> escoSirens = (List<String>) claims.get("ESCOSIREN");
+            List<String> currentStruct = (List<String>) claims.get("ESCOSIRENCourant");
+
+            // Remove the current state from user rights if it exists
+            escoSirens.remove(currentStruct.get(0));
+
+            if (escoSirens.isEmpty()) {
+                log.error("escosiren is null");
+            }
+            Map<String, ? extends Structure> sirenStructures = structureService.retrieveStructuresByIds(escoSirens);
+            Structure structCurrent = structureService.retrieveStructureById(currentStruct.get(0));
+
+            result.put("id", userId);
+            result.put("aud", url);
+            result.put("structCurrent", structCurrent);
+            result.put("sirenStructures", sirenStructures);
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            // return result;
+        }
+
+        return result;
     }
 
     // @Override

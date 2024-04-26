@@ -18,6 +18,7 @@
  */
 package fr.recia.paramuseretab.service;
 
+import java.util.Map;
 import fr.recia.paramuseretab.model.Person;
 import fr.recia.paramuseretab.security.HandledException;
 
@@ -26,5 +27,6 @@ public interface IUserInfoService {
     Person getPersonDetails(String userId) throws HandledException;
 
     // String getUserID();
+    Map<String, Object> getUserInfos(String token);
 
 }
