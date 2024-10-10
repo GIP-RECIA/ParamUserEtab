@@ -76,10 +76,6 @@ security-configuration:
 ## LDAP Configuration ##
 
 ldap:
-    ldap-url:
-    manager-dn:
-    manager-password:
-    structure-base:
     all-struct-filter: (|(ObjectClass=ENTEtablissement)(ObjectClass=ENTServAc)(ObjectClass=ENTCollLoc))
     struct-id-ldap-attr: ENTStructureSIREN
     struct-name-ldap-attr: ENTStructureNomCourant
@@ -95,9 +91,6 @@ ldap:
     write-attr-structure-logo: ESCOStructureLogo
     write-attr-structure-site-web: ENTStructureSiteWeb
 
-# ldap.write.attribute.StructureLogo=
-# ldap.write.attribute.StructureSiteWeb=
-# ldap.write.attribute.StructureDisplayName=
 
 userdao:
     user-dn:
