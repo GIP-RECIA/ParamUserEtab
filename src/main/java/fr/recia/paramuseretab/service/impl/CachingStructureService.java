@@ -265,7 +265,7 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
 
         if (this.cacheLoadingNeeded()) {
             this.forceLoadStructureCache();
-        } else if (this.expiredIds.containsKey(id) && this.expiredIds.get(id).isBeforeNow()) {
+        } else if (this.expiredIds.containsKey(id) || this.expiredIds.get(id).isBeforeNow()) {
             this.loadingInProgress = true;
 
             log.debug("Refreshing cached structure with id [{}] ...", id);
@@ -457,6 +457,11 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
     public void updateStructure(DTOStructure dto, String customName, String siteWeb, String logo, String id) {
 
         this.structureDao.saveStructure(dto, customName, siteWeb, logo, id);
+        this.invalidateStructureById(id);
+
+        if (this.expiredIds.containsKey(id)) {
+            this.reloadStructureById(id);
+        }
 
     }
 

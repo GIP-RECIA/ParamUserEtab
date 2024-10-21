@@ -131,8 +131,9 @@ public class ParametabController {
             if (old != null) {
                 log.info("old not null");
                 version = Integer.parseInt(old.getVersion());
+            } else {
+                log.info("old is null");
             }
-            log.info("old is null");
             url = logoStorageService.makeImageUrlPath(str.getId(), version + 1);
             log.debug("pathuser: {}", url.getPathUser());
             if (!mkdir(url.getPathUser())) {
@@ -248,7 +249,7 @@ public class ParametabController {
                 dtoStructure.setStructSiteWeb(structDto.getStructSiteWeb());
                 structureService.updateStructure(dtoStructure, dtoStructure.getStructCustomDisplayName(),
                         dtoStructure.getStructSiteWeb(), null, dtoStructure.getId());
-                structureService.invalidateStructureById(id); // refresh cache
+                // structureService.invalidateStructureById(id); // refresh cache
                 return new ResponseEntity<>(dtoStructure, HttpStatus.OK);
             } else {
                 throw new HandledException("perte-connexion");
@@ -268,20 +269,20 @@ public class ParametabController {
     @PostMapping("/logoupload/{id}")
     public ResponseEntity<?> uploadFile(
             @RequestHeader(name = "Authorization", required = true) String authorizationHeader,
-            @RequestPart(name = "file", required = false) MultipartFile file,
-            @RequestPart(name = "details") String detailsJson, @PathVariable("id") final String id) {
+            @RequestPart(name = "file", required = false) MultipartFile file, @PathVariable("id") final String id) {
 
         try {
             String userId = decodeJwt(authorizationHeader);
             Person person = userInfoService.getPersonDetails(userId);
 
             if (person != null) {
-                if (detailsJson != null) {
-                    // Parse the detailsJson string back to DTO
-                    DTOStructure dto = new Gson().fromJson(detailsJson, DTOStructure.class);
+                if (id != null) {
+                    log.debug("idStruct: {}", id);
+                    Structure structure = structureService.retrieveStructureById(id);
+                    DTOStructure dtoUpd = structure2DTOStructure.toDTO(structure);
 
-                    oldUrl = calculOldImageUrlPath(dto);
-                    newUrl = calculNewImageUrlPath(dto, oldUrl);
+                    oldUrl = calculOldImageUrlPath(dtoUpd);
+                    newUrl = calculNewImageUrlPath(dtoUpd, oldUrl);
                     String pathName = newUrl.getPathName();
                     String getNewURL = newUrl.getUrl();
                     if (newUrl != null) {
@@ -294,11 +295,11 @@ public class ParametabController {
                                 HttpStatus.BAD_REQUEST);
                     }
 
-                    dto.setStructLogo(getNewURL);
+                    dtoUpd.setStructLogo(getNewURL);
 
                     oldUrl = newUrl;
-                    structureService.updateStructure(dto, null, null, dto.getStructLogo(), id);
-                    structureService.invalidateStructureById(id); // refresh cache
+                    structureService.updateStructure(dtoUpd, null, null, dtoUpd.getStructLogo(), id);
+                    // structureService.invalidateStructureById(id); // refresh cache
                     return new ResponseEntity<>(getNewURL, HttpStatus.OK);
                 }
                 return new ResponseEntity<>("Erreur : l'établissement n'est pas défini !", HttpStatus.BAD_REQUEST);
