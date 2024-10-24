@@ -431,8 +431,10 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
 
         if (code != null) {
             UniteAdministrativeImmatriculee etab = this.retrieveEtablissementByCode(code);
-            getInfoEtab.put("id", etab.getId());
-            getInfoEtab.put("name", etab.getName() + " (" + code + ")");
+            if (etab != null) {
+                getInfoEtab.put("id", etab.getId());
+                getInfoEtab.put("name", etab.getName() + " (" + code + ")");
+            }
 
         } else {
             if (structs != null && !structs.isEmpty()) {

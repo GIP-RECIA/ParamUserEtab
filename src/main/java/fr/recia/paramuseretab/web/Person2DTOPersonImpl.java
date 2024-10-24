@@ -68,6 +68,9 @@ public class Person2DTOPersonImpl {
                     listEtab.add(itemMap);
                 }
 
+                // Remove maps with null "etabName" or "idSiren" before sorting
+                listEtab.removeIf(map -> map.get("etabName") == null || map.get("idSiren") == null);
+
                 Collections.sort(listEtab,
                         (map1, map2) -> map1.get("etabName").compareToIgnoreCase(map2.get("etabName")));
 
