@@ -28,6 +28,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -54,6 +55,10 @@ public class SecurityConfiguration {
                 parametabProperties.getSoffit().getJwtSignatureKey());
         filter.setAuthenticationManager(authenticationManager());
         http.addFilter(filter);
+
+        http
+                .csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 
         http.authorizeHttpRequests(authz -> authz
                 .antMatchers("/health-check", "/rest/**").permitAll()
