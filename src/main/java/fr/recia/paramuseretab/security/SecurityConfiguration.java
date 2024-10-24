@@ -44,14 +44,6 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        final RequestMatcher pathMatcher = new AntPathRequestMatcher("/api/**");
-        final RequestMatcher inverseMatcher = new NegatedRequestMatcher(pathMatcher);
-
-        return web -> web.ignoring().requestMatchers(inverseMatcher);
-    }
-
-    @Bean
     public AuthenticationManager authenticationManager() {
         return new SoffitApiAuthenticationManager();
     }
@@ -59,16 +51,14 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         final AbstractPreAuthenticatedProcessingFilter filter = new SoffitApiPreAuthenticatedProcessingFilter(
-            parametabProperties.getSoffit().getJwtSignatureKey()
-        );
+                parametabProperties.getSoffit().getJwtSignatureKey());
         filter.setAuthenticationManager(authenticationManager());
         http.addFilter(filter);
 
         http.authorizeHttpRequests(authz -> authz
-            .antMatchers("/health-check").permitAll()
-            .antMatchers(HttpMethod.GET, "/api/**").authenticated()
-            .anyRequest().denyAll()
-        );
+                .antMatchers("/health-check").permitAll()
+                .antMatchers("/parametab/api/**", "/changeetab/api/**", "/rest/**").authenticated()
+                .anyRequest().denyAll());
 
         http.sessionManagement().sessionFixation().newSession();
 
