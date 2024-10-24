@@ -56,8 +56,8 @@ public class SecurityConfiguration {
         http.addFilter(filter);
 
         http.authorizeHttpRequests(authz -> authz
-                .antMatchers("/health-check").permitAll()
-                .antMatchers("/parametab/api/**", "/changeetab/api/**", "/rest/**").authenticated()
+                .antMatchers("/health-check", "/rest/**").permitAll()
+                .antMatchers("/parametab/api/**", "/changeetab/api/**").authenticated()
                 .anyRequest().denyAll());
 
         http.sessionManagement().sessionFixation().newSession();
