@@ -12,7 +12,7 @@
 
     <groupId>fr.recia.paramuseretab.api</groupId>
     <artifactId>esco-paramuseretab-api</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
     <packaging>war</packaging>
     <name>parametab-user-project</name>
     <description>API to expose structure and users, possibility to modify some structure properties and user current structure</description>
@@ -20,7 +20,7 @@
     <scm>
         <connection>scm:git:ssh://git@github.com/GIP-RECIA/ParamUserEtab.git</connection>
         <developerConnection>scm:git:ssh://git@github.com:GIP-RECIA/ParamUserEtab.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>0.0.2</tag>
         <url>https://github.com/GIP-RECIA/ParamUserEtab.git</url>
     </scm>
 
