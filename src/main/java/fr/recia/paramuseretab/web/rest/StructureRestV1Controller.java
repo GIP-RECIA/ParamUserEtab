@@ -17,6 +17,9 @@ package fr.recia.paramuseretab.web.rest;
 
 import fr.recia.paramuseretab.model.UniteAdministrativeImmatriculee;
 import fr.recia.paramuseretab.service.IUniteAdministrativeImmatriculeService;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -33,9 +37,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/rest/v1/structures")
+@Slf4j
 public class StructureRestV1Controller {
 
-    // @Autowired
+    @Autowired
     private IUniteAdministrativeImmatriculeService structureService;
 
     /*
@@ -44,11 +49,16 @@ public class StructureRestV1Controller {
      */
     @GetMapping(value = "/etab/{code}", produces = "application/json")
     public ResponseEntity<UniteAdministrativeImmatriculee> retrieveEtabInJson(@PathVariable("code") final String code,
-                                                                              HttpServletRequest request) {
-        if (code != null)
-            return new ResponseEntity<>(
-                structureService.retrieveEtablissementByCode(code.toUpperCase()), HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            HttpServletRequest request) {
+        if (code == null || code.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        UniteAdministrativeImmatriculee etab = structureService.retrieveEtablissementByCode(code.toUpperCase());
+        if (etab == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No etablissement found for the provided code.");
+        }
+        return new ResponseEntity<>(etab, HttpStatus.OK);
     }
 
     /*
@@ -57,16 +67,22 @@ public class StructureRestV1Controller {
      */
     @GetMapping(value = "/etabs/", produces = "application/json")
     public ResponseEntity<Map<String, UniteAdministrativeImmatriculee>> retrieveEtabsInJson(
-        @RequestParam("codes") final List<String> codes, HttpServletRequest request) {
+            @RequestParam("codes") final List<String> codes, HttpServletRequest request) {
 
-        if (codes != null && !codes.isEmpty()) {
-            Collection<String> converted = new ArrayList<>(codes.size());
-            for (String code : codes) {
-                converted.add(code.toUpperCase());
-            }
-            return new ResponseEntity<>(
-                structureService.retrieveEtablissementsByCodes(converted), HttpStatus.OK);
+        if (codes == null || codes.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Collection<String> converted = new ArrayList<>(codes.size());
+        for (String code : codes) {
+            converted.add(code.toUpperCase());
+        }
+
+        Map<String, UniteAdministrativeImmatriculee> etabs = structureService.retrieveEtablissementsByCodes(converted);
+        if (etabs == null || etabs.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No etablissement found for the provided codes.");
+        }
+
+        return new ResponseEntity<>(etabs, HttpStatus.OK);
     }
 }

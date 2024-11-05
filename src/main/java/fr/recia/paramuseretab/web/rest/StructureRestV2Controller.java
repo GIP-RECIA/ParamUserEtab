@@ -28,9 +28,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -52,9 +52,13 @@ public class StructureRestV2Controller {
     @GetMapping(value = "/struct/{id}", produces = "application/json")
     public ResponseEntity<? extends Structure> retrieveStructbInJson(@PathVariable("id") final String id,
             HttpServletRequest request) {
-        if (id != null)
-            return new ResponseEntity<>(structureService.retrieveStructureById(id), HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Structure struct = structureService.retrieveStructureById(id);
+        if (struct == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No etablissement found for the provided id.");
+        }
+        return new ResponseEntity<>(struct, HttpStatus.OK);
+
     }
 
     /*
@@ -64,11 +68,18 @@ public class StructureRestV2Controller {
     @GetMapping(value = "/structs/", produces = "application/json")
     public ResponseEntity<Map<String, ? extends Structure>> retrieveStructsInJson(
             @RequestParam("ids") final List<String> ids, HttpServletRequest request) {
-        if (ids != null && !ids.isEmpty()) {
-            return new ResponseEntity<>(structureService.retrieveStructuresByIds(ids),
-                    HttpStatus.OK);
+
+        if (ids == null || ids.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Map<String, ? extends Structure> structs = structureService.retrieveStructuresByIds(ids);
+        if (structs == null || structs.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No etablissement found for the provided ids.");
+
+        }
+        return new ResponseEntity<>(structs, HttpStatus.OK);
+
     }
 
     /*
