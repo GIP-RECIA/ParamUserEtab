@@ -19,6 +19,7 @@ import fr.recia.paramuseretab.config.ParametabProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.portal.soffit.security.SoffitApiAuthenticationManager;
 import org.apereo.portal.soffit.security.SoffitApiPreAuthenticatedProcessingFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -33,6 +34,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @Slf4j
 @Configuration
@@ -40,6 +42,9 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 public class SecurityConfiguration {
 
     private final ParametabProperties parametabProperties;
+
+    @Autowired
+    private CorsConfigurationSource corsConfigurationSource;
 
     public SecurityConfiguration(ParametabProperties parametabProperties) {
         this.parametabProperties = parametabProperties;
@@ -58,6 +63,7 @@ public class SecurityConfiguration {
         http.addFilter(filter);
 
         http.csrf(AbstractHttpConfigurer::disable);
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource));
 
         http.authorizeHttpRequests(authz -> authz
                 .antMatchers("/health-check", "/rest/**").permitAll()
