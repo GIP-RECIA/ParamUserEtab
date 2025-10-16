@@ -45,7 +45,6 @@ public class LogoStorageServiceImpl implements ILogoStorageService {
     private String prefixLocalUrl;
     private String defaultImageLink;
     private String formatImage;
-    private final Path root;
 
     protected class ImageUrlPath implements IImageUrlPath {
 
@@ -93,19 +92,6 @@ public class LogoStorageServiceImpl implements ILogoStorageService {
             return format;
         }
 
-    }
-
-    @Autowired
-    public LogoStorageServiceImpl(Environment env) {
-
-        root = Paths.get(env.getProperty("app.file.upload-dir", "./uploads/files")).toAbsolutePath().normalize();
-
-        try {
-            Files.createDirectories(root);
-        } catch (Exception e) {
-            log.info("error create folder", e);
-            throw new RuntimeException("Could not create the directory where the uploaded files will be stored.", e);
-        }
     }
 
     private String getFileExtension(String fileName) {
