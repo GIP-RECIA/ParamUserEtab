@@ -2,7 +2,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-bin 
+bin
 
 ### STS ###
 .apt_generated
@@ -55,3 +55,4 @@ lerna-debug.log*
 
 ### application.yml
 src/main/resources/config
+**/application-local.y*ml
