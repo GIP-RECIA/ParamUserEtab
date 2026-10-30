@@ -3,7 +3,7 @@ name: Project CI
 on:
   push:
     branches: ['main']
-  pull_request: 
+  pull_request:
     branches: ['main']
 
 jobs:
@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      matrix: 
-        java: ['11']
+      matrix:
+        java: ['25']
 
     name: Java ${{ matrix.java }}
 
