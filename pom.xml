@@ -51,7 +51,7 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
-                <version>1.6.3</version>
+                <version>1.6.6</version>
             </dependency>
             <!-- CVE-2026-110879 : RCE par contournement de PolymorphicTypeValidator (fix incomplet de CVE-2026-54512) -
                  jackson-databind 2.x (tire par jjwt) est aussi concerne, pas seulement la ligne 3.x ci-dessus -->
