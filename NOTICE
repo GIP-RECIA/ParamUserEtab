@@ -47,7 +47,7 @@ This project includes:
   Jakarta XML Binding API under Eclipse Distribution License - v 1.0
   JASYPT: Java Simplified Encryption under The Apache Software License, Version 2.0
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
-  javax.annotation API under CDDL + GPLv2 with classpath exception
+  jakarta.annotation API under CDDL + GPLv2 with classpath exception
   JBoss Logging 3 under Apache License, version 2.0
   JJWT :: API under Apache License, Version 2.0
   JJWT :: Extensions :: Jackson under Apache License, Version 2.0

@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleResponseStatusException(ResponseStatusException ex) {
         Map<String, String> response = new HashMap<>();
         response.put("error", ex.getReason());
-        return new ResponseEntity<>(response, ex.getStatus());
+        return new ResponseEntity<>(response, ex.getStatusCode());
     }
 
 }

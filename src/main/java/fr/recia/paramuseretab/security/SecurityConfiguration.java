@@ -15,25 +15,18 @@
  */
 package fr.recia.paramuseretab.security;
 
+import fr.recia.notifications.soffit_java_client.SoffitJwtAuthenticationFilter;
+import fr.recia.notifications.soffit_java_client.SoffitJwtValidator;
 import fr.recia.paramuseretab.config.ParametabProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.portal.soffit.security.SoffitApiAuthenticationManager;
-import org.apereo.portal.soffit.security.SoffitApiPreAuthenticatedProcessingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 @Slf4j
@@ -51,26 +44,20 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager() {
-        return new SoffitApiAuthenticationManager();
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        final AbstractPreAuthenticatedProcessingFilter filter = new SoffitApiPreAuthenticatedProcessingFilter(
-                parametabProperties.getSoffit().getJwtSignatureKey());
-        filter.setAuthenticationManager(authenticationManager());
-        http.addFilter(filter);
+        final SoffitJwtAuthenticationFilter filter = new SoffitJwtAuthenticationFilter(
+                new SoffitJwtValidator(parametabProperties.getSoffit().getJwtSignatureKey()));
 
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(cors -> cors.configurationSource(corsConfigurationSource));
+        http.addFilterBefore(filter, BasicAuthenticationFilter.class);
 
         http.authorizeHttpRequests(authz -> authz
-                .antMatchers("/health-check", "/rest/**").permitAll()
-                .antMatchers("/parametab/api/**", "/changeetab/api/**").authenticated()
+                .requestMatchers("/health-check", "/rest/**").permitAll()
+                .requestMatchers("/parametab/api/**", "/changeetab/api/**").authenticated()
                 .anyRequest().denyAll());
 
-        http.sessionManagement().sessionFixation().newSession();
+        http.sessionManagement(session -> session.sessionFixation().newSession());
 
         return http.build();
     }

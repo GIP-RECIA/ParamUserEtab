@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.11</version>
+        <version>4.1.2</version>
         <relativePath/>
     </parent>
 
@@ -36,13 +36,53 @@
     </distributionManagement>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>25</java.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- CVE-2026-19880 : path traversal via MDCBasedDiscriminator, fix simple
+                 logback-core doit rester sur la meme version que logback-classic, sinon AbstractMethodError au demarrage (incompatibilite binaire) -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>1.6.3</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>1.6.3</version>
+            </dependency>
+            <!-- CVE-2026-110879 : RCE par contournement de PolymorphicTypeValidator (fix incomplet de CVE-2026-54512) -
+                 jackson-databind 2.x (tire par jjwt) est aussi concerne, pas seulement la ligne 3.x ci-dessus -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.21.8</version>
+            </dependency>
+            <!-- GHSA-cxp5-3px4-pw24 / GHSA-wv8q-qhhj-9h54 (high) + GHSA-gx83-3vf8-gh7j / GHSA-q4xh-88c3-wmh7 / GHSA-wjgm-6hv5-3cvf (medium) :
+                 fix non backporte dans le BOM Boot 4.1.1 (gere 3.1.5) - a retirer une fois backporte -->
+            <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>3.1.8</version>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>3.1.8</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -56,22 +96,14 @@
             <!--scope>test</scope-->
         </dependency>
         <dependency>
-            <groupId>javax.cache</groupId>
-            <artifactId>cache-api</artifactId>
+            <groupId>fr.recia.notifications</groupId>
+            <artifactId>soffit-java-client</artifactId>
+            <version>0.0.3</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>2.15.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jasig.portal</groupId>
-            <artifactId>uPortal-soffit-renderer</artifactId>
-            <version>5.13.1</version>
         </dependency>
         <dependency>
             <groupId>org.mariadb.jdbc</groupId>
@@ -124,11 +156,21 @@
             <groupId>org.springframework.ldap</groupId>
             <artifactId>spring-ldap-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.ldap</groupId>
-            <artifactId>spring-ldap-test</artifactId>
-        </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>esco-releases</id>
+            <url>https://nexus.recia.dev/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>esco-snapshots</id>
+            <url>https://nexus.recia.dev/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
 
     <build>
         <!--resources>
@@ -186,6 +228,21 @@
                             <directory>.tmp</directory>
                         </fileset>
                     </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!-- https://github.com/cstamas/javacbug : bug connu du compiler-plugin qui corrompt son état interne en compilation in-process -->
+                    <fork>true</fork>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
