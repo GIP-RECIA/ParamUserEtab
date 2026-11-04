@@ -18,7 +18,6 @@ package fr.recia.paramuseretab.web.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import fr.recia.paramuseretab.dao.IStructureDao;
 import fr.recia.paramuseretab.model.Person;
 import fr.recia.paramuseretab.model.Structure;
@@ -32,6 +31,9 @@ import fr.recia.paramuseretab.web.DTOPerson;
 import fr.recia.paramuseretab.web.DTOStructure;
 import fr.recia.paramuseretab.web.Person2DTOPersonImpl;
 import fr.recia.paramuseretab.web.Structure2DTOStructureImpl;
+import fr.recia.paramuseretab.web.exception.PersonNotFoundException;
+import fr.recia.paramuseretab.web.exception.StructureNotFoundException;
+import fr.recia.paramuseretab.web.exception.StorageException;
 import io.jsonwebtoken.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +47,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -258,7 +259,6 @@ public class ParametabController {
             log.error("Verification failed: ", ex);
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            e.getMessage();
             log.info("error update : ", e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -275,41 +275,35 @@ public class ParametabController {
             String userId = decodeJwt(authorizationHeader);
             Person person = userInfoService.getPersonDetails(userId);
 
-            if (person != null) {
-                if (id != null) {
-                    log.debug("idStruct: {}", id);
-                    Structure structure = structureService.retrieveStructureById(id);
-                    DTOStructure dtoUpd = structure2DTOStructure.toDTO(structure);
-
-                    oldUrl = calculOldImageUrlPath(dtoUpd);
-                    newUrl = calculNewImageUrlPath(dtoUpd, oldUrl);
-                    if (newUrl != null) {
-                        String pathName = newUrl.getPathName();
-                        log.info("newUrl : {}", pathName);
-                        // save the logo to disk
-                        logoStorage.saving(pathName, file, id);
-                    } else {
-                        log.info("newUrl is null");
-                        return new ResponseEntity<>("erreur : impossible de sauvegarder l'image !",
-                                HttpStatus.BAD_REQUEST);
-                    }
-                    String getNewURL = newUrl.getUrl();
-                    dtoUpd.setStructLogo(getNewURL);
-
-                    oldUrl = newUrl;
-                    structureService.updateStructure(dtoUpd, null, null, dtoUpd.getStructLogo(), id);
-                    // structureService.invalidateStructureById(id); // refresh cache
-                    return new ResponseEntity<>(getNewURL, HttpStatus.OK);
-                }
-                return new ResponseEntity<>("Erreur : l'établissement n'est pas défini !", HttpStatus.BAD_REQUEST);
-            } else {
-                throw new HandledException("perte-connexion");
+            if (person == null) {
+                throw new PersonNotFoundException("Missing person");
             }
-        } catch (HandledException ex) {
-            log.error("Verification failed: ", ex);
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            e.getMessage();
+            if (id == null) {
+                throw new StructureNotFoundException("Missing structure");
+
+            }
+            log.debug("idStruct: {}", id);
+            Structure structure = structureService.retrieveStructureById(id);
+            DTOStructure dtoUpd = structure2DTOStructure.toDTO(structure);
+
+            oldUrl = calculOldImageUrlPath(dtoUpd);
+            newUrl = calculNewImageUrlPath(dtoUpd, oldUrl);
+            if (newUrl == null) {
+                throw new StorageException("No saving path.");
+            }
+
+            String pathName = newUrl.getPathName();
+            log.info("newUrl : {}", pathName);
+            // save the logo to disk
+            logoStorage.saving(pathName, file, id);
+            String getNewURL = newUrl.getUrl();
+            dtoUpd.setStructLogo(getNewURL);
+
+            oldUrl = newUrl;
+            structureService.updateStructure(dtoUpd, null, null, dtoUpd.getStructLogo(), id);
+            // structureService.invalidateStructureById(id); // refresh cache
+            return new ResponseEntity<>(getNewURL, HttpStatus.OK);
+        } catch (JsonProcessingException | HandledException e) {
             log.error("Error upload file : ", e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

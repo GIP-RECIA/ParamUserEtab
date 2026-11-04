@@ -18,6 +18,10 @@ package fr.recia.paramuseretab.security;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.recia.paramuseretab.web.exception.InvalidTokenException;
+import fr.recia.paramuseretab.web.exception.PersonNotFoundException;
+import fr.recia.paramuseretab.web.exception.StorageException;
+import fr.recia.paramuseretab.web.exception.StructureNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -30,6 +34,34 @@ public class GlobalExceptionHandler {
     // Handle generic Exception (for unexpected errors)
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<Map<String, String>> handleGenericException(InvalidTokenException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PersonNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleGenericException(PersonNotFoundException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(StructureNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleGenericException(StructureNotFoundException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(StorageException.class)
+    public ResponseEntity<Map<String, String>> handleGenericException(StorageException ex) {
         Map<String, String> response = new HashMap<>();
         response.put("error", ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
