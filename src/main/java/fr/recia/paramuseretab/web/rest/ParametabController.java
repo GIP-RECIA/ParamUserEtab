@@ -283,9 +283,8 @@ public class ParametabController {
 
                     oldUrl = calculOldImageUrlPath(dtoUpd);
                     newUrl = calculNewImageUrlPath(dtoUpd, oldUrl);
-                    String pathName = newUrl.getPathName();
-                    String getNewURL = newUrl.getUrl();
                     if (newUrl != null) {
+                        String pathName = newUrl.getPathName();
                         log.info("newUrl : {}", pathName);
                         // save the logo to disk
                         logoStorage.saving(pathName, file, id);
@@ -294,7 +293,7 @@ public class ParametabController {
                         return new ResponseEntity<>("erreur : impossible de sauvegarder l'image !",
                                 HttpStatus.BAD_REQUEST);
                     }
-
+                    String getNewURL = newUrl.getUrl();
                     dtoUpd.setStructLogo(getNewURL);
 
                     oldUrl = newUrl;
@@ -311,7 +310,7 @@ public class ParametabController {
             return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.getMessage();
-            log.info("Error upload file : ", e);
+            log.error("Error upload file : ", e);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
