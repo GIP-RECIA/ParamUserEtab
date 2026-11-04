@@ -37,12 +37,8 @@ import org.springframework.cache.Cache.ValueWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -103,7 +99,7 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
     private final Lock cacheWl = cacheRwl.writeLock();
 
     @Getter
-    private volatile HashMap<String, Instant> expiredIds = new HashMap<>();
+    private final ConcurrentHashMap<String, Instant> expiredIds = new ConcurrentHashMap<>();
 
     @Override
     public Map<String, Structure> retrieveAllStructures() {
@@ -265,7 +261,7 @@ public class CachingStructureService implements IUniteAdministrativeImmatriculeS
 
         if (this.cacheLoadingNeeded()) {
             this.forceLoadStructureCache();
-        } else if (this.expiredIds.containsKey(id) || this.expiredIds.get(id).isBeforeNow()) {
+        } else if (this.expiredIds.containsKey(id) && this.expiredIds.get(id).isBeforeNow()) {
             this.loadingInProgress = true;
 
             log.debug("Refreshing cached structure with id [{}] ...", id);
