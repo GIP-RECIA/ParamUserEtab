@@ -17,9 +17,11 @@ package fr.recia.paramuseretab.web.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.recia.paramuseretab.ParametabApplication;
+import fr.recia.paramuseretab.security.GlobalExceptionHandler;
 import fr.recia.paramuseretab.model.Person;
 import fr.recia.paramuseretab.model.Structure;
 import fr.recia.paramuseretab.service.IImageUrlPath;
+import fr.recia.paramuseretab.service.ILogoStorageService;
 import fr.recia.paramuseretab.service.IStructureService;
 import fr.recia.paramuseretab.service.IUserInfoService;
 import fr.recia.paramuseretab.service.IUserService;
@@ -30,11 +32,14 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -49,23 +54,25 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import jakarta.annotation.PostConstruct;
 import javax.crypto.SecretKey;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
+@ExtendWith(MockitoExtension.class)
 @SpringBootTest(classes = ParametabApplication.class, properties = "spring.config.name=application-test")
 @WebAppConfiguration
 public class ParametabControllerTest {
@@ -83,6 +90,12 @@ public class ParametabControllerTest {
 
     @Mock
     private Structure2DTOStructureImpl structure2dtoStructure;
+
+    @Mock
+    private ILogoStorageService logoStorage;
+
+    @Mock
+    private ILogoStorageService logoStorageService;
 
     @Spy
     @InjectMocks
@@ -109,7 +122,7 @@ public class ParametabControllerTest {
     private MockMultipartHttpServletRequestBuilder multipartReq;
     private String token;
 
-    @PostConstruct
+    @BeforeEach
     public void setup() {
 
         /**
@@ -133,14 +146,14 @@ public class ParametabControllerTest {
         otherAttrs.put("ENTStructureSiteWeb", Arrays.asList("etab01aze.com"));
         struct = new Structure("ABCD123", "Etablissement A1", "Etab A1", "Etab public", otherAttrs);
         person = new Person("admin123", "4250xx", siren, isMemberOf);
-        mvc = MockMvcBuilders.standaloneSetup(parametabController).build();
+        mvc = MockMvcBuilders.standaloneSetup(parametabController)
+            .setControllerAdvice(new GlobalExceptionHandler())
+            .build();
 
         file = new MockMultipartFile("file", "test.jpg", "image/jpeg", "test image".getBytes());
 
         // Prepare the detailJson
         detailsJson = "{ \"id\":\"ABCD123\",\"name\":\"Etablissement A1\",\"displayName\":\"Etab A1\",\"description\":\"Etab public\",\"otherAttributes\":{\"ENTStructureSiteWeb\":[\"etab01aze.com\"],\"ESCOStructureLogo\":[\"image0.png\"]},\"structCustomDisplayName\":null,\"structLogo\":null,\"structSiteWeb\":null}";
-
-        multipartReq = MockMvcRequestBuilders.multipart("/parametab/fileUpload/" + struct.getId());
 
         SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         token = Jwts.builder()
@@ -148,6 +161,9 @@ public class ParametabControllerTest {
             .claim("role", "admin")
             .signWith(secretKey)
             .compact();
+
+        multipartReq = MockMvcRequestBuilders.multipart("/parametab/api/logoupload/" + struct.getId())
+            .header("Authorization", "Bearer " + token);
     }
 
     /**
@@ -170,7 +186,7 @@ public class ParametabControllerTest {
         // Mockito.when(structureDao.findOneStructureById(dtoStructure.getId())).thenReturn(dtoStructure);
 
         String someDecodedToken = "admin123";
-        Mockito.when(parametabController.decodeJwt(token)).thenReturn(someDecodedToken);
+        Mockito.when(parametabController.decodeJwt("Bearer " + token)).thenReturn(someDecodedToken);
 
         when(iUserInfoService.getPersonDetails(someDecodedToken)).thenReturn(person);
 
@@ -180,10 +196,8 @@ public class ParametabControllerTest {
         doNothing().when(structureService).updateStructure(updateForm, updateForm.getStructCustomDisplayName(),
             updateForm.getStructSiteWeb(), null, updateForm.getId());
 
-        doNothing().when(structureService).invalidateStructureById(updateForm.getId());
-
         MockHttpServletRequestBuilder mockReq = MockMvcRequestBuilders
-            .put("/test/api/updateV2/" + struct.getId())
+            .put("/parametab/api/update/" + struct.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .characterEncoding("UTF-8")
@@ -210,7 +224,7 @@ public class ParametabControllerTest {
     public void testGetInfoEtab() throws Exception {
 
         when(structureService.retrieveStructureById(struct.getId())).thenReturn(struct);
-        MockHttpServletRequestBuilder mockReq = MockMvcRequestBuilders.get("/test/api/parametab/" + struct.getId())
+        MockHttpServletRequestBuilder mockReq = MockMvcRequestBuilders.get("/parametab/api/" + struct.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .characterEncoding("UTF-8")
@@ -224,11 +238,18 @@ public class ParametabControllerTest {
     @Test
     public void testUploadFile_Success() throws Exception {
 
-        ParametabController spyParam = spy(parametabController);
+        DTOStructure dtoUpd = new DTOStructure();
+        dtoUpd.setId(struct.getId());
 
-        IImageUrlPath newURL = mock(IImageUrlPath.class);
-        // doReturn(newURL).when(spyParam).calculNewImageUrlPath(any(DTOStructure.class),
-        // any(IImageUrlPath.class));
+        IImageUrlPath newUrl = mock(IImageUrlPath.class);
+        when(newUrl.getPathName()).thenReturn("target/test-logos/" + struct.getId() + "/logo0.jpg");
+        when(newUrl.getPathUser()).thenReturn("target/test-logos/" + struct.getId());
+        when(newUrl.getUrl()).thenReturn("/annuaires_images/logos/" + struct.getId() + "/logo0.jpg?0");
+
+        when(iUserInfoService.getPersonDetails("admin123")).thenReturn(person);
+        when(structureService.retrieveStructureById(struct.getId())).thenReturn(struct);
+        when(structure2dtoStructure.toDTO(struct)).thenReturn(dtoUpd);
+        when(logoStorageService.makeImageUrlPath(anyString(), anyInt())).thenReturn(newUrl);
 
         // Perform the file upload request
         multipartReq.part(new MockPart("details", detailsJson.getBytes()));
@@ -238,6 +259,7 @@ public class ParametabControllerTest {
 
         // Assert the response
         Assertions.assertEquals(HttpStatus.OK.value(), res.getResponse().getStatus());
+        verify(logoStorage).saving(newUrl.getPathName(), file, struct.getId());
     }
 
     @Test
@@ -256,16 +278,32 @@ public class ParametabControllerTest {
     @Test
     public void testUploadFile_ErrorSavingImage() throws Exception {
 
+        DTOStructure dtoUpd = new DTOStructure();
+        dtoUpd.setId(struct.getId());
+
+        // A regular file, used as the parent of the "directory" path below, so mkdir() can never succeed.
+        File blocker = new File("target/test-logos-blocker-" + struct.getId());
+        blocker.getParentFile().mkdirs();
+        blocker.createNewFile();
+
+        IImageUrlPath newUrl = mock(IImageUrlPath.class);
+        when(newUrl.getPathUser()).thenReturn(blocker.getPath() + "/sub");
+
+        when(iUserInfoService.getPersonDetails("admin123")).thenReturn(person);
+        when(structureService.retrieveStructureById(struct.getId())).thenReturn(struct);
+        when(structure2dtoStructure.toDTO(struct)).thenReturn(dtoUpd);
+        when(logoStorageService.makeImageUrlPath(anyString(), anyInt())).thenReturn(newUrl);
+
         // Perform the file upload request
         multipartReq.part(new MockPart("details", detailsJson.getBytes()));
 
         // Mock the required dependencies and set up the test environnement
         MvcResult res = mvc.perform(multipartReq.file(file))
-            .andExpect(MockMvcResultMatchers.status().isBadRequest())
+            .andExpect(MockMvcResultMatchers.status().isInternalServerError())
             .andReturn();
 
         // Assert the response
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST.value(), res.getResponse().getStatus());
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), res.getResponse().getStatus());
 
     }
 
@@ -273,15 +311,22 @@ public class ParametabControllerTest {
     public void testChangeEtab() throws Exception {
 
         log.info("*** Test changing the current etab ***");
-        String userID = null;
+        String userID = "admin123";
 
-        // when(iUserInfoService.getUserID()).thenReturn(userID);
         when(structureService.retrieveStructureById(struct.getId())).thenReturn(struct);
+
+        Map<String, Object> infos = new HashMap<>();
+        infos.put("id", userID);
+        infos.put("aud", "http://logout.url");
+        Map<String, Structure> sirenStructures = new HashMap<>();
+        sirenStructures.put(struct.getId(), struct);
+        infos.put("sirenStructures", sirenStructures);
+        when(iUserInfoService.getUserInfos(anyString())).thenReturn(infos);
 
         doNothing().when(iUserService).changeCurrentStructure(userID, struct);
         log.info("person : " + person.getUid());
 
-        MockHttpServletRequestBuilder mockReq = MockMvcRequestBuilders.put("/rest/change/" + struct.getId())
+        MockHttpServletRequestBuilder mockReq = MockMvcRequestBuilders.put("/changeetab/api/" + struct.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .characterEncoding("UTF-8")
