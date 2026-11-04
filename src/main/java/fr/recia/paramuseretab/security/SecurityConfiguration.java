@@ -53,7 +53,7 @@ public class SecurityConfiguration {
         http.addFilterBefore(filter, BasicAuthenticationFilter.class);
 
         http.authorizeHttpRequests(authz -> authz
-                .requestMatchers("/health-check", "/rest/**").permitAll()
+                .requestMatchers("/health-check", "/rest/**", "/error").permitAll()
                 .requestMatchers("/parametab/api/**", "/changeetab/api/**").authenticated()
                 .anyRequest().denyAll());
 
